@@ -34,7 +34,8 @@ export const formatDate = ({
         en: 'en-US'
     };
 
-    const localeTime = localeMapping[locale] || 'ar-EG';
+    // const localeTime = localeMapping[locale] || 'ar-EG';
+    const localeTime = localeMapping['en'];
     const formatter = new Intl.DateTimeFormat(localeTime, options);
 
     return formatter.format(toDate);

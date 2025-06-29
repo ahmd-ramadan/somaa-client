@@ -1,3 +1,9 @@
+import FacebookIcon from '@/components/icons/Facebook';
+import InstagramIcon from '@/components/icons/Instagram';
+import LinkedInIcon from '@/components/icons/LinkedIn';
+import TikTokIcon from '@/components/icons/TikTok';
+import XIcon from '@/components/icons/X';
+import YoutubeIcon from '@/components/icons/Youtube';
 import { PlatformsEnum } from '@/interfaces/analysis.types';
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
 import React, { ReactNode } from 'react';
@@ -5,15 +11,17 @@ import React, { ReactNode } from 'react';
 export const getPlatformIcon = (platform: PlatformsEnum): ReactNode => {
     switch (platform) {
         case PlatformsEnum.FACEBOOK:
-            return <Facebook className="w-5 h-5 text-blue-500" />;
+            return <FacebookIcon width='20px' height='20px'/>;
         case PlatformsEnum.X:
-            return <Twitter className="w-5 h-5 text-blue-400" />;
+            return <XIcon width='20px' height='20px' />;
         case PlatformsEnum.INSTAGRAM:
-            return <Instagram className="w-5 h-5 text-pink-500" />;
+            return <InstagramIcon width='20px' height='20px' />;
         case PlatformsEnum.LINKEDIN:
-            return <Linkedin className="w-5 h-5 text-blue-600" />;
+            return <LinkedInIcon  width='20px' height='20px'/>;
         case PlatformsEnum.YOUTUBE:
-            return <Youtube className="w-5 h-5 text-red-500" />;
+            return <YoutubeIcon width='20px' height='20px'/>;
+        case PlatformsEnum.TIKTOK:
+            return <TikTokIcon width='20px' height='20px'/>;
         default:
             return null;
     }
@@ -22,16 +30,18 @@ export const getPlatformIcon = (platform: PlatformsEnum): ReactNode => {
 export const getPlatformName = (platform: PlatformsEnum): string => {
     switch (platform) {
         case PlatformsEnum.FACEBOOK:
-            return 'Facebook';
+            return 'فيسبوك';
         case PlatformsEnum.X:
-            return 'Twitter';
+            return 'إكس';
         case PlatformsEnum.INSTAGRAM:
-            return 'Instagram';
+            return 'إنستجرام';
         case PlatformsEnum.LINKEDIN:
-            return 'LinkedIn';
+            return 'لينكدإن';
         case PlatformsEnum.YOUTUBE:
-            return 'YouTube';
+            return 'يوتيوب';
+        case PlatformsEnum.TIKTOK:
+            return 'تيكتوك';
         default:
-            return 'Unknown';
+            return 'منصة';
     }
 }; 

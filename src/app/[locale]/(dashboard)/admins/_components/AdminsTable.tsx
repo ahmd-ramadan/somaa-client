@@ -4,8 +4,6 @@ import { formatDate } from '@/utils/formatDateAndTime';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { IAdmin } from '@/interfaces';
-import EditIcon from '@/components/icons/Edit';
-import DeleteIcon from '@/components/icons/Delete';
 import UpdatePermissions from './UpdateAdminPermissions';
 import Modal from '@/components/ui/Modal';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
@@ -13,7 +11,7 @@ import { deleteAdmin } from '@/lib/features/admin/adminThunks';
 import toast from 'react-hot-toast';
 import { handleError } from '@/utils/errorUtils';
 import { RootState } from '@/lib/store';
-import { CheckIcon } from 'lucide-react';
+import { CheckIcon, EditIcon, Trash2 } from 'lucide-react';
 
 interface AdminsTableProps {
     admins: IAdmin[];
@@ -105,10 +103,7 @@ const AdminsTable = ({ admins }: AdminsTableProps) => {
                                 { !isDeleted && 
                                     <>
                                         <EditIcon
-                                            width="20px"
-                                            height="20px"
-                                            color='#004080'
-                                            className="p-1 text-adminPrimary hover:bg-adminPrimary hover:text-white rounded-md cursor-pointer"
+                                            className="w-5 h-5 p-1 text-primary hover:bg-primary hover:text-white rounded-md cursor-pointer"
                                             onClick={() => {
                                                 setSelectedAdmin(admin);
                                                 setIsUpdateModalOpen(true)
@@ -117,10 +112,8 @@ const AdminsTable = ({ admins }: AdminsTableProps) => {
                                         <Modal isOpen={isUpdateModaleOpen} closeModal={closeUpdateModale} title={t("updatePerModalTitle")}>
                                             <UpdatePermissions admin={selectedAdmin} />
                                         </Modal>
-                                        <DeleteIcon
-                                            width="20px"
-                                            height="20px"
-                                            className="p-1 bg- text-red-600 hover:text-white hover:bg-red-600 rounded-md"
+                                        <Trash2
+                                            className="w-5 h-5 p-1 bg- text-red-600 hover:text-white hover:bg-red-600 rounded-md"
                                             onClick={() => {
                                                 setSelectedAdmin(admin);
                                                 setIsDelModaOpen(true);

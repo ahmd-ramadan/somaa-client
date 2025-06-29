@@ -130,28 +130,28 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                     <div className="bg-red-50 p-3 rounded-lg">
                         <div className="flex items-center gap-2">
                             <Heart className="w-5 h-5 text-red-500" />
-                            <span className="font-medium text-primary">{analysis.statistics.reactions}</span>
+                            <span className="font-medium text-primary">{analysis.statistics.reactions.toLocaleString()}</span>
                         </div>
                         {/* <p className="text-sm text-primary">Reactions</p> */}
                     </div>
                     <div className="bg-green-50 p-3 rounded-lg">
                         <div className="flex items-center gap-2">
                             <MessageCircle className="w-5 h-5 text-green-500" />
-                            <span className="font-medium text-primary">{analysis.statistics.comments}</span>
+                            <span className="font-medium text-primary">{analysis.statistics.comments.toLocaleString()}</span>
                         </div>
                         {/* <p className="text-sm text-primary">Comments</p> */}
                     </div>
                     <div className="bg-blue-50 p-3 rounded-lg">
                         <div className="flex items-center gap-2">
                             <Share2 className="w-5 h-5 text-blue-500" />
-                            <span className="font-medium text-primary">{analysis.statistics.shares}</span>
+                            <span className="font-medium text-primary">{analysis.statistics.shares.toLocaleString()}</span>
                         </div>
                         {/* <p className="text-sm text-primary">Shares</p> */}
                     </div>
                     <div className="bg-purple-50 p-3 rounded-lg">
                         <div className="flex items-center gap-2">
                             <Eye className="w-5 h-5 text-purple-500" />
-                            <span className="font-medium text-primary">{analysis.statistics.views}</span>
+                            <span className="font-medium text-primary">{analysis.statistics.views.toLocaleString()}</span>
                         </div>
                         {/* <p className="text-sm text-primary">Views</p> */}
                     </div>

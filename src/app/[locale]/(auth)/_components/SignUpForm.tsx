@@ -106,7 +106,7 @@ const SignUpForm = () => {
                         {...register(name)}
                         placeholder={t(label)}
                         autoComplete={name === 'email' ? 'new-email' : name === 'password' ? 'new-password' : ''}
-                        className={`flex-1 focus:outline-none`}
+                        className={`flex-1 focus:outline-none w-full`}
                     />
                     
                     {   type === 'password' && (

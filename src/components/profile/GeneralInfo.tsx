@@ -65,11 +65,11 @@ const ProfileGeneralInfoSection = () => {
                 phone: data.phone
             }
             const action = await dispatch(updateUserProfile({ token: token as string, data: formData }));
-            const { success, msgEn, msgAr } = action.payload as any;
+            const { success, message } = action.payload as any;
             if (success) {
-                toast.success(getLocalizedMessage({locale, msgEn, msgAr, msg: 'تم تحديث البيانات بنجاح'}));
+                toast.success(message ||  'تم تحديث البيانات بنجاح');
             } else {
-                toast.error(getLocalizedMessage({locale, msgEn, msgAr, msg: 'فشل في تحديث البيانات'}));
+                toast.error(message || 'فشل في تحديث البيانات');
             }
         } catch (error) {
             const { message } = handleError(error); 
@@ -78,6 +78,9 @@ const ProfileGeneralInfoSection = () => {
     };
     
     const ProfileIcons = {
+        // name: <User className='h-7 w-7 text-primary fill-primary'/>,
+        // email: <Mail className="h-6 w-6 fill-primary text-white" />,
+        // phone: <Phone className='h-6 w-6 text-primary fill-primary'/>
         name: <FullProfileIcon width="20px" height="20px" />,
         email: <EmailFormIcon width='20px' height='20px' />,
         phone: <PhoneIcon width='20px' height='20px' color="var(--color-primary)"/>

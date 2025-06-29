@@ -783,28 +783,28 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                     <div className="bg-red-50 p-3 rounded-lg">
                         <div className="flex items-center gap-2">
                             <Heart className="w-5 h-5 text-red-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.reactions}</span>
+                            <span className="font-medium text-primary">{editedAnalysis.statistics.reactions.toLocaleString()}</span>
                         </div>
                         <p className="text-sm text-primary">Reactions</p>
                     </div>
                     <div className="bg-green-50 p-3 rounded-lg">
                         <div className="flex items-center gap-2">
                             <MessageCircle className="w-5 h-5 text-green-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.comments}</span>
+                            <span className="font-medium text-primary">{editedAnalysis.statistics.comments.toLocaleString()}</span>
                         </div>
                         <p className="text-sm text-primary">Comments</p>
                     </div>
                     <div className="bg-blue-50 p-3 rounded-lg">
                         <div className="flex items-center gap-2">
                             <Share2 className="w-5 h-5 text-blue-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.shares}</span>
+                            <span className="font-medium text-primary">{editedAnalysis.statistics.shares.toLocaleString()}</span>
                         </div>
                         <p className="text-sm text-primary">Shares</p>
                     </div>
                     <div className="bg-purple-50 p-3 rounded-lg">
                         <div className="flex items-center gap-2">
                             <Eye className="w-5 h-5 text-purple-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.views}</span>
+                            <span className="font-medium text-primary">{editedAnalysis.statistics.views.toLocaleString()}</span>
                         </div>
                         <p className="text-sm text-primary">Views</p>
                     </div>
@@ -822,7 +822,12 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                             <Calendar className="w-4 h-4" />
                             {t("createdAt")}
                         </h4>
-                        <p className="text-primary">{formatDate({ locale, date: editedAnalysis.createdAt, withTime: true })}</p>
+                        <input
+                            type="datetime-local"
+                            className="w-full rounded-lg border border-primary p-2 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                            value={editedAnalysis.createdAt ? new Date(editedAnalysis.createdAt).toISOString().slice(0, 16) : ""}
+                            onChange={e => handleInputChange('createdAt', new Date(e.target.value).toISOString())}
+                        />
                     </div>
                     <div className="space-y-2">
                         <h4 className="font-medium text-primary flex items-center gap-2">

@@ -1,29 +1,13 @@
-import { AnalysisClassifyEnum, IAnalysis, PlatformsEnum, ContentTypesEnum } from "@/interfaces/analysis.types";
+import { AnalysisClassifyEnum, IAnalysis, PlatformsEnum, ContentTypesEnum, TweetTypesEnum } from "@/interfaces/analysis.types";
 import { useTranslations } from "next-intl";
 import { X, Filter, ChevronDown, Layers } from 'lucide-react';
 import { useState, useEffect, useRef } from "react";
 import { useAppDispatch } from "@/lib/hooks";
 import { fetchAllAnalysis } from "@/lib/features/socialMedia/analysisThunks";
+import { FixedSizeList as List } from 'react-window';
+import { FilterState } from "@/hooks/useAnalysisFilters";
 
 type StatisticType = 'reactions' | 'comments' | 'shares' | 'views' | 'appearance';
-
-interface FilterState {
-    platform?: PlatformsEnum[];
-    classify?: AnalysisClassifyEnum[];
-    contentType?: ContentTypesEnum[];
-    sector?: string[];
-    subAnalysis?: string[];
-    dateRange?: {
-        start?: Date;
-        end?: Date;
-    };
-    statistics?: {
-        [key in StatisticType]?: { min?: number; max?: number };
-    };
-    selectedStatistic?: StatisticType;
-    addedBy?: string[];
-    url?: string[];
-}
 
 interface GroupingState {
     sector?: boolean;
@@ -32,6 +16,8 @@ interface GroupingState {
     subAnalysis?: boolean;
     classify?: boolean;
     contentType?: boolean;
+    tweetType?: boolean;
+    publisher?: boolean;
 }
 
 interface AnalysisFiltersProps {
@@ -143,7 +129,7 @@ const AnalysisFilters = ({
             startDate: start,
             endDate: end
         }));
-    }, [dispatch, filters]);
+    }, [dispatch]);
 
     // Get unique values for each filter type
     const getFilterOptions = (type: keyof FilterState): string[] => {
@@ -156,8 +142,12 @@ const AnalysisFilters = ({
                 return Object.values(AnalysisClassifyEnum);
             case 'contentType':
                 return Object.values(ContentTypesEnum);
+            case 'tweetType':
+                return Object.values(TweetTypesEnum);
             case 'addedBy':
                 return Array.from(new Set(allAnalysis.map(a => a.addedByData?.name).filter(Boolean)));
+            case 'publisher':
+                return Array.from(new Set(allAnalysis.map(a => a.publisher.name).filter(Boolean)));
             default:
                 return [];
         }
@@ -194,6 +184,31 @@ const AnalysisFilters = ({
                 }
             });
             newFilters[selectedFilterType] = currentValues as any;
+        } else if (selectedFilterType === 'publisher') {
+            // For publisher, search in name or handle
+            const matchingPublishers = allAnalysis
+                .filter(analysis => {
+                    const name = analysis.publisher.name.toLowerCase();
+                    const handle = analysis.publisher.handle?.toLowerCase() || '';
+                    const searchValue = value.toLowerCase();
+                    return name.includes(searchValue) || handle.includes(searchValue);
+                })
+                .map(analysis => analysis.publisher.name);
+            
+            const uniqueMatchingPublishers = Array.from(new Set(matchingPublishers));
+            const currentValues = newFilters[selectedFilterType] as string[];
+            uniqueMatchingPublishers.forEach(publisher => {
+                if (!currentValues.includes(publisher)) {
+                    currentValues.push(publisher);
+                }
+            });
+            newFilters[selectedFilterType] = currentValues as any;
+        } else if (selectedFilterType === 'tweetType') {
+            // For tweetType, add the exact value if it doesn't exist
+            const currentValues = newFilters[selectedFilterType] as string[];
+            if (!currentValues.includes(value)) {
+                newFilters[selectedFilterType] = [...currentValues, value] as any;
+            }
         } else {
             // For other filter types, add the value if it doesn't exist
             const currentValues = newFilters[selectedFilterType] as string[];
@@ -422,6 +437,30 @@ const AnalysisFilters = ({
             if (matchingValues.length > 0) {
                 newFilters[type] = matchingValues as any;
             }
+        } else if (type === 'publisher') {
+            // For publisher, search in name or handle
+            const matchingPublishers = allAnalysis
+                .filter(analysis => {
+                    const name = analysis.publisher.name.toLowerCase();
+                    const handle = analysis.publisher.handle?.toLowerCase() || '';
+                    const searchValue = filterTypeSearch.toLowerCase();
+                    return name.includes(searchValue) || handle.includes(searchValue);
+                })
+                .map(analysis => analysis.publisher.name);
+            
+            const uniqueMatchingPublishers = Array.from(new Set(matchingPublishers));
+            if (uniqueMatchingPublishers.length > 0) {
+                newFilters[type] = uniqueMatchingPublishers as any;
+            }
+        } else if (type === 'tweetType') {
+            // For tweetType, add the exact value if it exists in options
+            const matchingValues = getFilterOptions(type).filter(option => 
+                option.toLowerCase().includes(filterTypeSearch.toLowerCase())
+            );
+            
+            if (matchingValues.length > 0) {
+                newFilters[type] = matchingValues as any;
+            }
         } else {
             // For other filter types, add the exact value
             const currentValues = newFilters[type] as string[];
@@ -477,6 +516,8 @@ const AnalysisFilters = ({
                                             <option value="subAnalysis">{t("subAnalysis")}</option>
                                             <option value="classify">{t("classification")}</option>
                                             <option value="contentType">{t("contentType")}</option>
+                                            <option value="tweetType">{t("tweetType")}</option>
+                                            <option value="publisher">{t("publisher")}</option>
                                             <option value="addedBy">{t("addedBy")}</option>
                                             <option value="dateRange">{t("timeRange")}</option>
                                         </select>
@@ -568,7 +609,11 @@ const AnalysisFilters = ({
                                                     onClick={() => handleFilterSelect(option)}
                                                     className="w-full px-4 py-2.5 text-sm hover:bg-white border-b border-gray-200 last:border-b-0 transition-colors"
                                                 >
-                                                    {option}
+                                                    { selectedFilterType === 'contentType' 
+                                                        || selectedFilterType === 'classify' 
+                                                        || selectedFilterType === 'tweetType' 
+                                                        ? t(option) : option
+                                                    }
                                                 </button>
                                             ))}
                                         </div>
@@ -635,6 +680,14 @@ const AnalysisFilters = ({
                                             {t("contentType")}
                                         </button>
                                         <button
+                                            onClick={() => toggleGrouping('publisher')}
+                                            className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
+                                                groupings.publisher ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                            }`}
+                                        >
+                                            {t("publisher")}
+                                        </button>
+                                        <button
                                             onClick={() => toggleGrouping('addedBy')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
                                                 groupings.addedBy ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
@@ -649,6 +702,14 @@ const AnalysisFilters = ({
                                             }`}
                                         >
                                             {t("platform")}
+                                        </button>
+                                        <button
+                                            onClick={() => toggleGrouping('tweetType')}
+                                            className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
+                                                groupings.tweetType ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                            }`}
+                                        >
+                                            {t("tweetType")}
                                         </button>
                                     </div>
                                 </div>
@@ -679,6 +740,8 @@ const AnalysisFilters = ({
                                         subAnalysis: t("subAnalysis"),
                                         classify: t("classification"),
                                         contentType: t("contentType"),
+                                        tweetType: t("tweetType"),
+                                        publisher: t("publisher"),
                                         addedBy: t("addedBy"),
                                         platform: t("platform")
                                     }).map(([key, label]) => {
@@ -707,7 +770,12 @@ const AnalysisFilters = ({
                                 return (
                                     <div key={type} className="flex items-center gap-1 bg-white px-1 rounded-full text-xs shadow-sm border border-gray-200">
                                         <span className="font-medium text-gray-700">{t(type)}:</span>
-                                        <span className="text-gray-600">{values.join(' - ')}</span>
+                                        <span className="text-gray-600">{values.map(v => {
+                                            return (type === 'classify' && Object.values(AnalysisClassifyEnum).includes(v as any))
+                                                || (type === 'contentType' && Object.values(ContentTypesEnum).includes(v as any))
+                                                || (type === 'tweetType' && Object.values(TweetTypesEnum).includes(v as any)) 
+                                            ? t(v) : v;
+                                        }).join(' - ')}</span>
                                         <button 
                                             onClick={() => {
                                                 const newFilters = { ...filters };
@@ -730,6 +798,7 @@ const AnalysisFilters = ({
                                             onClick={() => {
                                                 const newFilters = { ...filters };
                                                 newFilters.dateRange = undefined;
+                                                dispatch(fetchAllAnalysis({}));
                                                 setFilters(newFilters);
                                             }} 
                                             className="text-gray-400 hover:text-red-500 transition-colors"
@@ -749,6 +818,7 @@ const AnalysisFilters = ({
                                     <div key={type} className="flex items-center gap-1 bg-adminPrimary/10 px-2 py-.5 rounded-full text-xs shadow-sm border border-adminPrimary/20">
                                         <span className="font-medium text-adminPrimary">{t("groupBy")}:</span>
                                         <span className="text-adminPrimary">{t(type)}</span>
+                                        
                                         <button 
                                             onClick={() => {
                                                 setGroupings({

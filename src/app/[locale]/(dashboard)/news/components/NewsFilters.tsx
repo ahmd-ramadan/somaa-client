@@ -114,7 +114,7 @@ const NewsFilters = ({
             startDate: start,
             endDate: end
         }));
-    }, [dispatch, filters]);
+    }, [dispatch]);
 
     // Get unique values for each filter type
     const getFilterOptions = (type: keyof FilterState): string[] => {
@@ -546,7 +546,10 @@ const NewsFilters = ({
                                 return (
                                     <div key={type} className="flex items-center gap-1 bg-white px-1 rounded-full text-xs shadow-sm border border-gray-200">
                                         <span className="font-medium text-gray-700">{t(type)}:</span>
-                                        <span className="text-gray-600">{values.join(' - ')}</span>
+                                        { 
+                                            type === 'classify' ? <span className="text-gray-600">{values.map(v => t(v)).join(' - ')}</span>
+                                            : <span className="text-gray-600">{values.join(' - ')}</span>
+                                        }
                                         <button 
                                             onClick={() => {
                                                 const newFilters = { ...filters };

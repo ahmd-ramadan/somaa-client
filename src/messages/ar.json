@@ -252,6 +252,11 @@
     "SocialMediaPage": {
         "socialMediaPageTitle": "التواصل الإجتماعي",
         "AllAnalysisTable": {
+            "noResultsFound": "",
+            "loadingData": "",
+            "fetchingFromDatabase": "",
+            "allAnalysis": "كل الرصد",
+            "groupOfAnalaysis":"",
             "allSectors": "كل القطاعات",
             "allSubAnalysis": "كل التحليلات",
             "subAnalysis": "التحليلات",
@@ -262,6 +267,10 @@
             "statistics": "الإحصائيات",
             "sector": "القطاع",
             "analysis": "التحليلات",
+            "tweetType": "نوع المنشور",
+            "tweet": "منشور",
+            "reply": "رد",
+            "quote": "مقتبس",
             "content": "المحتوي",
             "createdAt": "التاريخ",
             "classify": "التصنيف",
@@ -358,7 +367,9 @@
             "groupOfAnalaysisModalPharse": "هل أنت متأكد أنك تريد تحديث نتائج الرصد المحددة؟ هذا الإجراء لايمكن التراجع فيه",
             "confirmBtn": "تأكيد",
             "cancelBtn": "إلغاء",
-            "updategroupOfAnalysis": "تحديث الرصد"
+            "updategroupOfAnalysis": "تحديث الرصد",
+            "sort": "",
+            "groupOfAnalysis": ""
         },
         "AddAnalysis": {
             "url": "المصدر",
@@ -451,12 +462,18 @@
             "totalShares": "إجمالي المشاراكات",
             "totalViews": "إجمالي المشاهدات",
             "totalAppearance": "إجمالي الظهور",
-            "selectTemplate": "حدد القالب"
+            "selectTemplate": "حدد القالب",
+            "tweetType": "نوع المنشور",
+            "tweet": "منشور",
+            "reply": "رد",
+            "quote": "مقتبس"
         }
     },
     "NewsPage": {
         "NewsPageTitle": "الأخبار",
         "AllNewsTable": {
+            "itemsSelected": "العناصر المحددة",
+            "clearSelection": "إلغاء التحديد",
             "allSectors": "كل القطاعات",
             "allAddedBy": "كل الراصدين",
             "enterUrl": "أضف الرابط",

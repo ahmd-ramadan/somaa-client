@@ -9,6 +9,8 @@ export interface FilterState {
     contentType?: ContentTypesEnum[];
     sector?: string[];
     subAnalysis?: string[];
+    publisher?: string[];
+    tweetType?: string[];
     dateRange?: {
         start?: Date;
         end?: Date;
@@ -30,11 +32,13 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
     const [filters, setFilters] = useState<FilterState>({});
     const [groupBy, setGroupBy] = useState<GroupByState>({ field: null });
     const [showFilters, setShowFilters] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(50);
 
     // Filter the analysis data
     const filteredAnalysis = allAnalysis.filter(analysis => {
         if (!filters.platform?.length && !filters.classify?.length && !filters.contentType?.length && !filters.sector?.length && 
-            !filters.dateRange && !filters.statistics && !filters.subAnalysis?.length && !filters.addedBy?.length && !filters.url?.length) {
+            !filters.dateRange && !filters.statistics && !filters.subAnalysis?.length && !filters.addedBy?.length && !filters.url?.length && !filters.publisher?.length && !filters.tweetType?.length) {
             return true;
         }
 
@@ -64,6 +68,20 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
                 analysis.subAnalysis.body.toLowerCase().includes(filterSubAnalysis.toLowerCase())
             );
             if (!subAnalysisMatches) matches = false;
+        }
+
+        if (filters.publisher?.length) {
+            const publisherMatches = filters.publisher.some(filterPublisher => {
+                const name = analysis.publisher.name.toLowerCase();
+                const handle = analysis.publisher.handle?.toLowerCase() || '';
+                const searchValue = filterPublisher.toLowerCase();
+                return name.includes(searchValue) || handle.includes(searchValue);
+            });
+            if (!publisherMatches) matches = false;
+        }
+
+        if (filters.tweetType?.length && !filters.tweetType.includes(analysis.tweetType)) {
+            matches = false;
         }
 
         if (filters.addedBy?.length && !filters.addedBy.includes(analysis.addedByData?.name || '')) {
@@ -107,8 +125,15 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
         return matches;
     });
 
+    // Calculate pagination
+    const totalItems = filteredAnalysis.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedAnalysis = filteredAnalysis.slice(startIndex, endIndex);
+
     // Group the filtered data if grouping is enabled
-    const groupedAnalysis = groupBy.field ? filteredAnalysis.reduce((acc, analysis) => {
+    const groupedAnalysis = groupBy.field ? paginatedAnalysis.reduce((acc, analysis) => {
         let key: string;
         
         if (groupBy.field === 'date' && groupBy.dateUnit) {
@@ -137,7 +162,7 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
         }
         acc[key].push(analysis);
         return acc;
-    }, {} as Record<string, IAnalysis[]>) : { 'All': filteredAnalysis };
+    }, {} as Record<string, IAnalysis[]>) : { 'All': paginatedAnalysis };
 
     return {
         filters,
@@ -146,7 +171,17 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
         setGroupBy,
         showFilters,
         setShowFilters,
-        filteredAnalysis,
-        groupedAnalysis
+        filteredAnalysis: paginatedAnalysis,
+        groupedAnalysis,
+        pagination: {
+            currentPage,
+            setCurrentPage,
+            itemsPerPage,
+            setItemsPerPage,
+            totalItems,
+            totalPages,
+            hasNextPage: currentPage < totalPages,
+            hasPrevPage: currentPage > 1
+        }
     };
 }; 

@@ -69,12 +69,12 @@ const ProfilePasswordSection = () => {
                 newPassword: data.newPassword 
             }
             const action = await dispatch(updateUserPassword({ token: token as string, data: formData }));
-            const { success, msgEn, msgAr } = action.payload as any;
+            const { success, message } = action.payload as any;
             if (success) {
-                toast.success(getLocalizedMessage({locale, msgEn, msgAr, msg: 'تم تحديث كلمة المرور بنجاح'}));
+                toast.success(message ||  'تم تحديث كلمة المرور بنجاح');
                 router.push(`/${locale}/login`);
             } else {
-                toast.error(getLocalizedMessage({locale, msgEn, msgAr, msg: 'فشل في تحديث كلمة المرور'}));
+                toast.error(message || 'فشل في تحديث كلمة المرور');
             }
         } catch (error) {
             const { message } = handleError(error); 

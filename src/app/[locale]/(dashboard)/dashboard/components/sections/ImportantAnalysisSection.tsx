@@ -41,26 +41,33 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
     };
 
     return (
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-2 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col">
-            <div className="flex items-center justify-between mb-2">
+        <div
+            className={
+                "rounded-lg shadow-lg border border-gray-700/50 p-1 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col " +
+                (importantAnalysis.length === 0
+                    ? "bg-gradient-to-br from-primary via-blue-800 to-blue-700"
+                    : "bg-primary animate-pulse")
+            }
+        >
+            <div className="p-1 flex items-center justify-between">
                 <div className="flex gap-1 items-center">
                     <button 
                         onClick={toggleImportantAnalysisAnimation}
-                        className="p-1 rounded-full hover:bg-gray-700 transition-colors"
+                        className="rounded-full hover:bg-gray-700 transition-colors"
                     >
                         {isImportantAnalysisAnimating ? (
-                            <Pause className="h-4 w-4 text-gray-300" />
+                            <Pause className="h-4 w-4 text-blue-400" />
                         ) : (
-                            <Play className="h-4 w-4 text-gray-300" />
+                            <Play className="h-4 w-4 text-blue-400" />
                         )}
                     </button>
-                    <h3 className="text-sm font-semibold text-gray-300 flex items-center gap-1">
-                        <Bell className="w-5 h-5" />
+                    <h3 className="text-sm text-gray-300 flex items-center gap-1">
+                        {/* <Bell className="w-5 h-5 text-blue-400" /> */}
                         الرصد الهام
                     </h3>
                 </div>
-                <div className="p-1 flex items-center justify-center">
-                    <span className="text-lg font-bold text-gray-300">{importantAnalysis.length}</span>
+                <div className="flex items-center justify-center">
+                    <span className="text-sm text-gray-300">{importantAnalysis.length.toLocaleString()}</span>
                 </div>
             </div>
             
@@ -103,8 +110,8 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
                                                 </span>
                                                 <div className="flex gap-2">
                                                     <div className="flex items-center gap-1">
-                                                        <Users className="w-3 h-3 text-gray-300" fill="white"/>
-                                                        <span className="text-xs font-medium text-gray-300">{analysis.publisher.followers}</span>
+                                                        <Users className="w-3 h-3 text-blue-400"/>
+                                                        <span className="text-xs font-medium text-gray-300">{analysis.publisher.followers.toLocaleString()}</span>
                                                     </div>
                                                     <span className="text-xs text-gray-400">
                                                         {formatDistanceToNow({ date: analysis.createdAt, locale }) }
@@ -118,7 +125,7 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
                                             analysis.classify === AnalysisClassifyEnum.POSITIVE 
                                                 ? 'bg-green-500/20 text-green-400' 
                                                 : analysis.classify === AnalysisClassifyEnum.NEUTRAL 
-                                                ? 'bg-blue-500/20 text-blue-400'
+                                                ? 'bg-gray-500/20 text-gray-400'
                                                 : 'bg-red-500/20 text-red-400'
                                         }`}>
                                             {analysis.classify === AnalysisClassifyEnum.POSITIVE 
@@ -138,24 +145,24 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
                                         {/* Statistics */}
                                         <div className="flex items-center justify-around text-xs text-gray-400">
                                             <div className="flex items-center gap-1">
-                                                <EyeIcon className="w-3 h-3" fill="white"/>
-                                                {analysis.statistics?.views || 0}
+                                                <EyeIcon className="w-3 h-3 text-blue-400"/>
+                                                {analysis.statistics?.views.toLocaleString() || 0}
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <Share2 className="w-3 h-3" fill="white"/>
-                                                {analysis.statistics?.shares || 0}
+                                                <Share2 className="w-3 h-3 text-blue-400"/>
+                                                {analysis.statistics?.shares.toLocaleString() || 0}
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <Heart className="w-3 h-3" fill="white"/>
-                                                {analysis.statistics?.reactions || 0}
+                                                <Heart className="w-3 h-3 text-blue-400"/>
+                                                {analysis.statistics?.reactions.toLocaleString() || 0}
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <MessageCircle className="w-3 h-3" fill="white"/>
-                                                {analysis.statistics?.comments || 0}
+                                                <MessageCircle className="w-3 h-3 text-blue-400"/>
+                                                {analysis.statistics?.comments.toLocaleString() || 0}
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <BarChart className="w-3 h-3" fill="white"/>
-                                                {analysis.statistics?.appearance || 0}
+                                                <BarChart className="w-3 h-3 text-blue-400"/>
+                                                {analysis.statistics?.appearance.toLocaleString() || 0}
                                             </div>
                                         </div>
                                     </div>

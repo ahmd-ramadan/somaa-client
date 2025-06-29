@@ -1,11 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { DashboardClassificationsDefault, IDashboardClassify } from "./types";
-import { Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { AnalysisClassifyEnum, IAnalysis } from "@/interfaces/analysis.types";
 import { INews, NewsClassifyEnum } from "@/interfaces/news.types";
-
-
+import { Frown, Meh, Smile } from "lucide-react";
 
 interface ClassificationSectionProps {
     allAnalysis: IAnalysis[];
@@ -40,38 +38,41 @@ const ClassificationSection = ({ allAnalysis, allNews }: ClassificationSectionPr
     const getClassificationIcon = (type: AnalysisClassifyEnum) => {
         switch (type) {
             case AnalysisClassifyEnum.POSITIVE:
-                return <TrendingUp className="w-8 h-8 text-green-500" />;
+                // return <span className="text-4xl animate-bounce">😊</span>;
+                return <Smile className="text-green-400 w-12 h-12"/>
             case AnalysisClassifyEnum.NEUTRAL:
-                return <Minus className="w-8 h-8 text-blue-500" />;
+                // return <span className="text-4xl animate-pulse">😐</span>;
+                return <Meh className="text-gray-400 w-12 h-12"/>
             case AnalysisClassifyEnum.NEGATIVE:
-                return <TrendingDown className="w-8 h-8 text-red-500" />;
+                // return <span className="text-4xl animate-ping">😠</span>;
+                return <Frown className="text-red-400 w-12 h-12"/>
         }
     };
 
     return (
-        <div className="flex items-center justify-center p-4 bg-gray-700/50 rounded-lg">
-            <div className="flex items-center justify-between gap-6 w-full">
+        <div className="w-1/6 p-2 bg-gray-700/50 rounded-lg">
+            <div className="flex flex-col items-center justify-between gap-6">
                 {allCalssifications.map((cls, index) => (
                     <motion.div 
                         key={index} 
-                        className="flex flex-col items-center hologram-effect animate-float"
+                        className="flex items-center"
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         whileHover={{ scale: 1.1 }}
                         transition={{ duration: 0.3, delay: index * 0.1 }}
                     >
-                        <div className={`w-16 h-16 rounded-xl border-2 ${
+                        <div className={`w-12 h-12 ${
                             cls.type === AnalysisClassifyEnum.POSITIVE ? 'border-green-500 bg-green-500/10' : 
-                            cls.type === AnalysisClassifyEnum.NEUTRAL ? 'border-blue-500 bg-blue-500/10' : 
+                            cls.type === AnalysisClassifyEnum.NEUTRAL ? 'border-gray-500 bg-gray-500/10' : 
                             'border-red-500 bg-red-500/10'
-                        } flex items-center justify-center shadow-lg`}>
+                        } flex items-center justify-center shadow-lg rounded-full`}>
                             {getClassificationIcon(cls.type)}
                         </div>
-                        <div className={`mt-2 px-3 py-1 rounded-full ${
+                        <div className={`px-3 py-1 rounded-full ${
                             cls.type === AnalysisClassifyEnum.POSITIVE ? 'bg-green-500/20 text-green-400' : 
-                            cls.type === AnalysisClassifyEnum.NEUTRAL ? 'bg-blue-500/20 text-blue-400' : 
+                            cls.type === AnalysisClassifyEnum.NEUTRAL ? 'bg-gray-500/20 text-gray-400' : 
                             'bg-red-500/20 text-red-400'
-                        } text-lg font-bold`}>
+                        } text-xl font-bold`}>
                             {cls.count}
                         </div>
                     </motion.div>

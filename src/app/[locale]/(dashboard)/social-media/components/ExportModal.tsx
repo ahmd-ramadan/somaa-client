@@ -151,9 +151,9 @@ const ExportModal = ({ isOpen, onClose, data }: ExportModalProps) => {
         let sortedData = [...data];
         if (selectedColumns.some(col => col.id === 'total')) {
             sortedData.sort((a, b) => {
-                const totalA = a.statistics.views + a.statistics.reactions + 
+                const totalA = a.statistics.reactions + 
                              a.statistics.comments + a.statistics.shares;
-                const totalB = b.statistics.views + b.statistics.reactions + 
+                const totalB = b.statistics.reactions + 
                              b.statistics.comments + b.statistics.shares;
                 
                 if (sortOrder === 'asc') {
@@ -190,20 +190,20 @@ const ExportModal = ({ isOpen, onClose, data }: ExportModalProps) => {
                             row[t(col.id)] = item.subAnalysis.body;
                             break;
                         case 'reactions':
-                            row[t(col.id)] = item.statistics.reactions;
+                            row[t(col.id)] = item.statistics.reactions.toLocaleString();
                             break;
                         case 'comments':
-                            row[t(col.id)] = item.statistics.comments;
+                            row[t(col.id)] = item.statistics.comments.toLocaleString();
                             break;
                         case 'shares':
-                            row[t(col.id)] = item.statistics.shares;
+                            row[t(col.id)] = item.statistics.shares.toLocaleString();
                             break;
                         case 'views':
-                            row[t(col.id)] = item.statistics.views;
+                            row[t(col.id)] = item.statistics.views.toLocaleString();
                             break;
                         case 'total':
-                            row[t(col.id)] = item.statistics.views + item.statistics.reactions + 
-                                           item.statistics.comments + item.statistics.shares;
+                            row[t(col.id)] = (item.statistics.reactions + 
+                                           item.statistics.comments + item.statistics.shares).toLocaleString();
                             break;
                         case 'createdAt':
                             row[t(col.id)] = new Date(item.createdAt).toLocaleString();
@@ -232,12 +232,12 @@ const ExportModal = ({ isOpen, onClose, data }: ExportModalProps) => {
 
         // Add statistics table
         const statsData = [
-            { [t("statistic")]: t("totalPosts"), [t("value")]: stats.totalPosts },
-            { [t("statistic")]: t("totalReactions"), [t("value")]: selectedColumns.some(col => col.id === 'reactions') ? stats.totalReactions : t("notSelected") },
-            { [t("statistic")]: t("totalComments"), [t("value")]: selectedColumns.some(col => col.id === 'comments') ? stats.totalComments : t("notSelected") },
-            { [t("statistic")]: t("totalShares"), [t("value")]: selectedColumns.some(col => col.id === 'shares') ? stats.totalShares : t("notSelected") },
-            { [t("statistic")]: t("totalViews"), [t("value")]: selectedColumns.some(col => col.id === 'views') ? stats.totalViews : t("notSelected") },
-            { [t("statistic")]: t("totalAppearance"), [t("value")]: stats.totalAppearance }
+            { [t("statistic")]: t("totalPosts"), [t("value")]: stats.totalPosts.toLocaleString() },
+            { [t("statistic")]: t("totalReactions"), [t("value")]: selectedColumns.some(col => col.id === 'reactions') ? stats.totalReactions.toLocaleString() : t("notSelected") },
+            { [t("statistic")]: t("totalComments"), [t("value")]: selectedColumns.some(col => col.id === 'comments') ? stats.totalComments.toLocaleString() : t("notSelected") },
+            { [t("statistic")]: t("totalShares"), [t("value")]: selectedColumns.some(col => col.id === 'shares') ? stats.totalShares.toLocaleString() : t("notSelected") },
+            { [t("statistic")]: t("totalViews"), [t("value")]: selectedColumns.some(col => col.id === 'views') ? stats.totalViews.toLocaleString() : t("notSelected") },
+            { [t("statistic")]: t("totalAppearance"), [t("value")]:  selectedColumns.some(col => col.id === 'appearance') ? stats.totalAppearance.toLocaleString() : t("notSelected") }
         ];
 
         // Add 5 empty rows after main data
@@ -287,20 +287,20 @@ const ExportModal = ({ isOpen, onClose, data }: ExportModalProps) => {
                         cellValue = item.subAnalysis.body;
                         break;
                     case 'reactions':
-                        cellValue = item.statistics.reactions.toString();
+                        cellValue = item.statistics.reactions.toLocaleString();
                         break;
                     case 'comments':
-                        cellValue = item.statistics.comments.toString();
+                        cellValue = item.statistics.comments.toLocaleString();
                         break;
                     case 'shares':
-                        cellValue = item.statistics.shares.toString();
+                        cellValue = item.statistics.shares.toLocaleString();
                         break;
                     case 'views':
-                        cellValue = item.statistics.views.toString();
+                        cellValue = item.statistics.views.toLocaleString();
                         break;
                     case 'total':
-                        cellValue = (item.statistics.views + item.statistics.reactions + 
-                                   item.statistics.comments + item.statistics.shares).toString();
+                        cellValue = (item.statistics.reactions + 
+                                   item.statistics.comments + item.statistics.shares).toLocaleString();
                         break;
                     case 'createdAt':
                         cellValue = new Date(item.createdAt).toLocaleString();

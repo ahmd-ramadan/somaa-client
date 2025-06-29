@@ -3,7 +3,6 @@
 import { formatDate } from '@/utils/formatDateAndTime';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import DeleteIcon from '@/components/icons/Delete';
 import Modal from '@/components/ui/Modal';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import toast from 'react-hot-toast';
@@ -11,7 +10,7 @@ import { handleError } from '@/utils/errorUtils';
 import { ILoggedInUser } from '@/interfaces';
 import { RootState } from '@/lib/store';
 import { approveOnUser, deleteUser } from '@/lib/features/user/userThunks';
-import { Check, Delete, Trash, Trash2 } from 'lucide-react';
+import { Check, Trash2 } from 'lucide-react';
 
 interface UsersTableProps {
     users: ILoggedInUser[];

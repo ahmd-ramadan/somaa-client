@@ -88,7 +88,7 @@ const authSlice = createSlice({
                     state.loginStatus = 'succeeded';
                     state.accessToken = data?.token;
                     state.loggedInUser = data; 
-                    console.log(data)
+                    // console.log(data)
                 } else {
                     state.loginStatus = 'failed';
                     

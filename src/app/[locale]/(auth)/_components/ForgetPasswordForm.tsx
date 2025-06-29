@@ -94,7 +94,7 @@ const ForgetPasswordForm = () => {
                             type="email"
                             {...register('email')}
                             placeholder="you@example.com"
-                            className="flex-1 focus:outline-none" 
+                            className="flex-1 focus:outline-none w-full" 
                         />
                         {errors.email && (
                             <FormatErrorMessage message={errors.email?.message as string} field={t('email')} />

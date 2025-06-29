@@ -41,7 +41,7 @@ const SubAnalysisSection = ({ allAnalysis }: ISubAnalysisSectionProps) => {
             }
         });
         
-        return Array.from(analysisMap.entries()).map(([name, data]) => ({
+        const response = Array.from(analysisMap.entries()).map(([name, data]) => ({
             name,
             count: data.count,
             classifications: Array.from(data.classifications.entries()).map(([type, count]) => ({
@@ -49,6 +49,7 @@ const SubAnalysisSection = ({ allAnalysis }: ISubAnalysisSectionProps) => {
                 count
             }))
         }));
+        return response.sort((a, b) => b.count - a.count).slice(0, Math.min(response.length, 5))
     };
     
     // Update data when the allAnalysis prop changes
@@ -107,26 +108,26 @@ const SubAnalysisSection = ({ allAnalysis }: ISubAnalysisSectionProps) => {
     return (
         <div className="w-1/2 h-full p-1 overflow-hidden bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 hover:shadow-xl transition-all duration-300">
             {/* Header Section */}
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between p-1">
                 <div className="flex gap-1 items-center">
                     <button
                         onClick={toggleSubAnalysisAnimation}
-                        className="p-1 rounded-full hover:bg-gray-700 transition-colors"
+                        className="rounded-full hover:bg-gray-700 transition-colors"
                         aria-label={isSubAnalysisAnimating ? "Pause animation" : "Play animation"}
                     >
                         {isSubAnalysisAnimating ? (
-                            <Pause className="h-4 w-4 text-gray-300" />
+                            <Pause className="h-4 w-4 text-blue-400" />
                         ) : (
-                            <Play className="h-4 w-4 text-gray-300" />
+                            <Play className="h-4 w-4 text-blue-400" />
                         )}
                     </button>
-                    <h3 className="text-sm font-semibold text-blue-400 flex items-center gap-1">
-                        <BarChart className="w-5 h-5" />
-                        التحليلات الفرعية
+                    <h3 className="text-sm text-gray-300 flex items-center gap-1">
+                        {/* <BarChart className="w-5 h-5 text-blue-400" /> */}
+                        التحليلات الأبرز
                     </h3>
                 </div>
-                <div className="p-1 flex items-center justify-center">
-                    <span className="text-lg font-semibold text-blue-400">{allSubAnalysis.length}</span>
+                <div className="flex items-center justify-center">
+                    <span className="text-sm text-gray-300">{allSubAnalysis.length.toLocaleString()}</span>
                 </div>
             </div>
             

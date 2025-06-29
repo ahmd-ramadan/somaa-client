@@ -69,6 +69,7 @@ export interface ICreateNewsQuery {
     isFlagged?: boolean,
     isHighlighted?: boolean,
     note?: string,
+    newspaper: string
 }
 
 export interface ICreateNewsData extends ICreateNewsQuery{

@@ -18,8 +18,8 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
     }, [allAnalysis])
 
     const derivePublishers = (analysisData: IAnalysis[]): IDashboardPublisher[] => {
-        const analysisMap = new Map<string, { total: number, avatar: string, shares: number, views: number, appearance: number, reactions: number, comments: number  }>();
-        for(const { publisher: { name, avatar }, statistics: { shares, views, appearance, reactions, comments }} of analysisData) {
+        const analysisMap = new Map<string, { total: number, avatar: string, handle: number, shares: number, views: number, appearance: number, reactions: number, comments: number  }>();
+        for(const { publisher: { name, avatar, handle }, statistics: { shares, views, appearance, reactions, comments }} of analysisData) {
             const totalStatistics = shares + reactions + appearance + views + comments;
             
             if(analysisMap.has(name)) {
@@ -27,6 +27,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                 analysisMap.set(name, { 
                     total: publisherObject?.total + totalStatistics, 
                     avatar, 
+                    handle,
                     comments: publisherObject?.comments + comments,
                     appearance: publisherObject?.appearance + appearance,
                     reactions: publisherObject?.reactions + reactions,
@@ -34,7 +35,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                     views: publisherObject?.views + views
                 })
             } else {
-                analysisMap.set(name, { total: totalStatistics, avatar, shares, views, appearance, reactions, comments })
+                analysisMap.set(name, { total: totalStatistics, avatar, shares, views, appearance, reactions, comments, handle })
             }
         } 
         
@@ -65,32 +66,6 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
             },
         },
     });
-    
-    const publisherVariants = {
-        animate: {
-            opacity: 1,
-            x: 0,
-            scale: 1,
-            borderRadius: "50%",
-            transition: {
-                duration: 0.5,
-            }
-        },
-        initial: {
-            opacity: 0,
-            x: 100,
-            scale: 0.8,
-            borderRadius: "8px",
-        },
-        continuous: {
-            x: [100, -100],
-            transition: {
-                duration: 20,
-                repeat: Infinity,
-                ease: "linear"
-            }
-        }
-    };
     
     return (
         <div className="bg-gray-900  transition-all duration-300 flex-1">

@@ -17,6 +17,7 @@ export enum AnalysisClassifyEnum {
 
 export interface IAnalysisModel extends IDBModel {
     url: string;
+    tweetType: TweetTypesEnum,
     subAnalysis: ISubAnalysisData;
     platform: PlatformsEnum;
     content: IContentData;
@@ -31,6 +32,11 @@ export interface IAnalysisModel extends IDBModel {
     addedBy: string;
 }
 
+export enum TweetTypesEnum {
+    TWEET = 'tweet',
+    REPLY = 'reply',
+    QUOTE = 'quote'
+}
 
 export enum ContentTypesEnum {
     TEXT = 'text',

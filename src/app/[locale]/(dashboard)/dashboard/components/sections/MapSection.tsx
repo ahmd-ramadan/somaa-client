@@ -3,6 +3,7 @@
 import { IAnalysis } from "@/interfaces/analysis.types"
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from "react";
+import { MapLocation } from "./MapComponent";
 
 interface IMapSectionProps {
     allAnalysis: IAnalysis[]
@@ -14,7 +15,7 @@ const MapWithNoSSR = dynamic(
     {
         ssr: false,
         loading: () => (
-            <div className="aspect-video bg-gray-800 rounded-lg flex-grow flex items-center justify-center text-gray-400">
+            <div className="aspect-video bg-gray-800 rounded-lg flex-grow flex items-center justify-center text-gray-400 h-full">
                 Loading map...
             </div>
         ),
@@ -22,7 +23,7 @@ const MapWithNoSSR = dynamic(
 );
 const MapSection = ({ allAnalysis }: IMapSectionProps) => {
 
-    const [lastAnalysisLocation, setLastAnalysisLocation] = useState<any>(null)
+    const [lastAnalysisLocation, setLastAnalysisLocation] = useState<MapLocation>({ lat: 31.9522, lng: 35.9231 })
     const [mapCenter, setMapCenter] = useState<[number, number]>([31.9522, 35.9231]); // Default to Jordan
     const [isMounted, setIsMounted] = useState(false);
 
@@ -30,16 +31,17 @@ const MapSection = ({ allAnalysis }: IMapSectionProps) => {
         setIsMounted(true);
     }, []);
     useEffect(() => {
-        if(allAnalysis) setLastAnalysisLocation(deriveLastAnalysisLocation)
+        if(allAnalysis) setLastAnalysisLocation(deriveLastAnalysisLocation(allAnalysis))
     }, [allAnalysis])
 
-    const deriveLastAnalysisLocation = (analysisData: IAnalysis[]): any => {
-        // Implementation needed
-        return null;
+    const deriveLastAnalysisLocation = (analysisData: IAnalysis[]): MapLocation => {
+        const location = analysisData.at(-1)?.location
+        console.log(location);
+        return { lat: location?.lat as number, lng: location?.lng as number }
     }
 
     return (
-        <div className="w-4/5 bg-gray-800/50 backdrop-blur-sm rounded-lg shadow border border-gray-700/50 hover:shadow-xl transition-all duration-300 flex flex-col">
+        <div className="w-5/6 bg-gray-800/50 backdrop-blur-sm rounded-lg shadow border border-gray-700/50 hover:shadow-xl transition-all duration-300 flex flex-col">
         {/* <h3 className="text-lg font-semibold text-blue-400 mb-4 flex items-center gap-2">
             <MapPin className="w-5 h-5" />
             خريطة التحليلات

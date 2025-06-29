@@ -79,26 +79,26 @@ const PlatformsSections = ({ allAnalysis }: IPlatformsSectionProps) => {
     return (
         <div className="w-1/2 h-full p-1 overflow-hidden bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 hover:shadow-xl transition-all duration-300">
             {/* Header Section */}
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between p-1">
                 <div className="flex gap-1 items-center">
                     <button
                         onClick={togglePlatformsAnimation}
-                        className="p-1 rounded-full hover:bg-gray-700 transition-colors"
+                        className="rounded-full hover:bg-gray-700 transition-colors"
                         aria-label={isPlatformsAnimating ? "Pause animation" : "Play animation"}
                     >
                         {isPlatformsAnimating ? (
-                            <Pause className="h-4 w-4 text-gray-300" />
+                            <Pause className="h-4 w-4 text-blue-400" />
                         ) : (
-                            <Play className="h-4 w-4 text-gray-300" />
+                            <Play className="h-4 w-4 text-blue-400" />
                         )}
                     </button>
-                    <h3 className="text-sm font-semibold text-gray-300 flex items-center gap-1">
-                        <Globe className="w-5 h-5" />
+                    <h3 className="text-sm text-gray-300 flex items-center gap-1">
+                        {/* <Globe className="w-5 h-5 text-blue-400" /> */}
                         المنصات
                     </h3>
                 </div>
-                <div className="p-1 flex items-center justify-center">
-                    <span className="text-lg font-semibold text-gray-300">{allPlatforms.length}</span>
+                <div className="flex items-center justify-center">
+                    <span className="text-sm text-gray-300">{allPlatforms.length.toLocaleString()}</span>
                 </div>
             </div>
 

@@ -201,27 +201,25 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
     };
 
     const validateChanges = (): boolean => {
-        // Validate required fields
-        if (!changedFields.title) {
+        // Always require title (not just if changed)
+        if (!editedNews.title || editedNews.title.trim() === "") {
             toast.error(t("invalidTitle"));
             return false;
         }
 
+        // Validate enums
         if (changedFields.classify && !Object.values(NewsClassifyEnum).includes(changedFields.classify)) {
             toast.error(t("invalidClassification"));
             return false;
         }
-        
         if (changedFields.geoClassify && !Object.values(NewsGeographicalClassifyEnum).includes(changedFields.geoClassify)) {
             toast.error(t("invalidGeoClassification"));
             return false;
         }
-
         if (changedFields.adType && !Object.values(NewsAdTypesEnum).includes(changedFields.adType)) {
             toast.error(t("invalidAdType"));
             return false;
         }
-
         if (changedFields.pressType && !Object.values(NewsPressTypesEnum).includes(changedFields.pressType)) {
             toast.error(t("invalidPressType"));
             return false;
@@ -231,6 +229,24 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
         if (changedFields['sector.sectorId'] && !changedFields['sector.name']) {
             toast.error(t("sectorNameRequired"));
             return false;
+        }
+
+        // Validate createdAt
+        if (changedFields.createdAt) {
+            const date = new Date(changedFields.createdAt);
+            if (isNaN(date.getTime())) {
+                toast.error(t("invalidDate"));
+                return false;
+            }
+            if (date > new Date()) {
+                toast.error(t("dateInFuture"));
+                return false;
+            }
+            // Optional: check for minimum date
+            // if (date < new Date('2000-01-01')) {
+            //     toast.error(t("dateTooOld"));
+            //     return false;
+            // }
         }
 
         return true;
@@ -478,7 +494,13 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
                             <Calendar className="w-4 h-4" />
                             {t("createdAt")}
                         </h4>
-                        <p className="text-primary">{formatDate({ locale, date: editedNews.createdAt, withTime: true })}</p>
+                        <input
+                            type="datetime-local"
+                            className="w-full rounded-lg border border-primary p-2 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                            value={editedNews.createdAt ? new Date(editedNews.createdAt).toISOString().slice(0, 16) : ""}
+                            max={new Date().toISOString().slice(0, 16)}
+                            onChange={e => handleInputChange('createdAt', new Date(e.target.value).toISOString())}
+                        />
                     </div>
                     <div className="space-y-2">
                         <h4 className="font-medium text-primary flex items-center gap-2">

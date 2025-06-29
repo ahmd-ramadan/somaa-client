@@ -20,7 +20,6 @@ import {
     FilterX,
     AlertCircle,
     X,
-    Download,
     FileDown
 } from 'lucide-react';
 import { fetchAllSectors } from "@/lib/features/sector/sectorThunks";
@@ -28,13 +27,12 @@ import toast from "react-hot-toast";
 import { ApiResponse } from '@/utils/apiService';
 import { showAuthComponentsForNews } from '@/utils/authComponents';
 import { useNewsFilters } from '@/hooks/useNewsFilters';
-import { deleteNews } from '@/lib/features/news/newsthunks';
+import { deleteNews, fetchAllNews } from '@/lib/features/news/newsthunks';
 import NewsFilters from './NewsFilters';
 import ViewNews from './ViewNews';
 import { INews, NewsClassifyEnum } from '@/interfaces/news.types';
 import EditNews from './EditNews';
 import ExportNewsModal from './ExportNewsModal';
-import * as XLSX from 'xlsx';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useSocket } from '@/hooks/useSocket';
 
@@ -49,19 +47,20 @@ interface GroupingState {
 }
 
 interface AllNewsTableProps {
-    allNews: INews[];
-    setAllNews: (allNews: INews[]) => void
 }
 
-const AllNewsTable = ({ allNews, setAllNews }: AllNewsTableProps) => {
+const AllNewsTable = ({} : AllNewsTableProps) => {
     const t = useTranslations("NewsPage.AllNewsTable")
     const t2 = useTranslations("DeleteModal");
     const locale = useLocale();
     const router = useRouter();
+    const dispatch = useAppDispatch();
 
     const { loggedInUser: { token, role, permissions, userId } } = useAppSelector((state: RootState) => state.authUser);
+    const { allNews, allNewsstatus, addNewsStatus } = useAppSelector((state: RootState) => state.news);
     const { allSectors, allSectorsStatus } = useAppSelector((state: RootState) => state.sectors);
 
+    const [selectedAllNews, setSelectedAllNews] = useState<INews[]>([]);
     const [selectedNewsId, setSelectedNewsId] = useState<string>('');
     const [selectedShowedImage, setSelectedShowedImage] = useState<string>('');
     const [isShowedImageModalOpen, setIsShowedImageModalOpen] = useState<boolean>(false);
@@ -80,6 +79,18 @@ const AllNewsTable = ({ allNews, setAllNews }: AllNewsTableProps) => {
     const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
+    useEffect(() => {
+        if (allNewsstatus === 'idle') {
+            dispatch(fetchAllNews({}));
+        }
+    }, [dispatch, allNewsstatus]);
+
+    useEffect(() => {
+        if (allNewsstatus === 'succeeded' || addNewsStatus === 'succeeded') {
+            setSelectedAllNews(allNews);
+        }
+    }, [allNews, allNewsstatus, addNewsStatus]);
+
     const {
         filters,
         setFilters,
@@ -92,8 +103,6 @@ const AllNewsTable = ({ allNews, setAllNews }: AllNewsTableProps) => {
    
 
     const closeShowedImageModal = () => { setIsShowedImageModalOpen(false) };
-
-    const dispatch = useAppDispatch();
 
     const { isConnected, socket } = useSocket();
     const [error, setError] = useState<string | null>(null);
@@ -250,7 +259,7 @@ const AllNewsTable = ({ allNews, setAllNews }: AllNewsTableProps) => {
             const updatedNewsList = allNews.map(news => 
                 news._id === updatedNews._id ? updatedNews : news
             );
-            setAllNews(updatedNewsList);
+            setSelectedAllNews(updatedNewsList);
             setSelectedNewsDetails(updatedNews);
             setIsEditing(false);
         } catch (error) {
@@ -281,7 +290,7 @@ const AllNewsTable = ({ allNews, setAllNews }: AllNewsTableProps) => {
             const { success, message, data } = res;
             if(success) {
                 const updatedNewsList = allNews.filter(news => news._id.toString() !== newsToDelete._id.toString());
-                setAllNews(updatedNewsList);
+                setSelectedAllNews(updatedNewsList);
                 closeDeleteModal();
 
                 if(isConnected) socket?.emit('deleteNews', data?._id)
@@ -540,7 +549,7 @@ const AllNewsTable = ({ allNews, setAllNews }: AllNewsTableProps) => {
                                                 <td className="px-2 py-1">
                                                     <div className="flex items-center gap-2">
                                                         {showAuthComponentsForNews({ role, permissions }) 
-                                                            && (addedBy.toString() === userId.toString()) ?
+                                                            && (role === 'super_admin' || addedBy.toString() === userId.toString()) ?
                                                             <>
                                                             <Edit
                                                                 className="w-5 h-5 text-adminPrimary hover:bg-adminPrimary hover:text-white rounded-md cursor-pointer p-1"
@@ -613,6 +622,23 @@ const AllNewsTable = ({ allNews, setAllNews }: AllNewsTableProps) => {
                     {renderTable()}
                 </div>
             </div>
+
+            {selectedRows.size > 0 && (
+                <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg px-4 py-2 flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-700">
+                        {selectedRows.size} {t("itemsSelected")}
+                    </span>
+                    <button
+                        onClick={() => {
+                            setSelectedRows(new Set());
+                            // setSelectedGroups(new Set());
+                        }}
+                        className="text-sm text-red-500 hover:text-red-600"
+                    >
+                        {t("clearSelection")}
+                    </button>
+                </div>
+            )}
 
             <Modal isOpen={isDetailsModalOpen} closeModal={closeDetailsModal} title={t("newsDetails")}>
                 {selectedNewsDetails && (

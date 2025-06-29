@@ -1,15 +1,12 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import Pagination from '@/components/ui/Pagination';
 import { RootState } from '@/lib/store';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useTranslations } from 'next-intl';
 import { selectSideBarLink, setPageTitle } from '@/lib/features/layout/layoutSlice';
 import Modal from '@/components/ui/Modal';
 import { showAuthComponentsForAnalysis } from '@/utils/authComponents';
-import { INews } from '@/interfaces/news.types';
-import { fetchAllNews } from '@/lib/features/news/newsthunks';
 import AllNewsTable from './components/AllNewsTable';
 import AddNews from './components/AddNews';
 
@@ -24,46 +21,10 @@ const NewsPage = () => {
         dispatch(selectSideBarLink("news"));
     }, [dispatch]);
 
-    const { allNews, allNewsstatus, addNewsStatus } = useAppSelector((state: RootState) => state.news);
-    const { loggedInUser: { role, permissions } } = useAppSelector((state: RootState) => state.authUser);
+   const { loggedInUser: { role, permissions } } = useAppSelector((state: RootState) => state.authUser);
 
-    const [selectedAllNews, setSelectedAllNews] = useState<INews[]>([]);
     const [isAddNewsModalOpen, setIsAddNewsModalOpen] = useState<boolean>(false)
     const closeAddNewsModal = () => setIsAddNewsModalOpen(false);
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
-
-    const handleApply = () => {
-        setCurrentPage(1); // Reset to first page when filter changes
-    };
-
-    useEffect(() => {
-        if (allNewsstatus === 'idle') {
-            dispatch(fetchAllNews({}));
-        }
-    }, [dispatch, allNewsstatus]);
-
-    useEffect(() => {
-        if (allNewsstatus === 'succeeded' || addNewsStatus === 'succeeded') {
-            setSelectedAllNews(allNews);
-        }
-    }, [allNews, allNewsstatus, addNewsStatus]);
-
-    const totalPages = Math.ceil(selectedAllNews?.length / itemsPerPage);
-    const [currentAllNews, setCurrentAllNews] = useState<INews[]>([]);
-
-    useEffect(() => {
-        // Update the current products for the current page
-        setCurrentAllNews(selectedAllNews?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-    }, [selectedAllNews, currentPage]);
-
-    // Handle page change to ensure it stays within valid page range
-    const handlePageChange = (page: number) => {
-        if (page >= 1 && page <= totalPages) {
-            setCurrentPage(page);
-        }
-    };
 
     return (
         <div className="">
@@ -89,14 +50,9 @@ const NewsPage = () => {
                 </div>
                     
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                    <AllNewsTable allNews={currentAllNews} setAllNews={setCurrentAllNews} />
+                    <AllNewsTable />
                 </div>
 
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                />
             </div>
         </div>
     );

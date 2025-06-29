@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import { AnalysisClassifyEnum, IAnalysis, PlatformsEnum } from "@/interfaces/analysis.types";
+import { AnalysisClassifyEnum, ContentTypesEnum, IAnalysis, PlatformsEnum, TweetTypesEnum } from "@/interfaces/analysis.types";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
 import { formatDate } from "@/utils/formatDateAndTime";
@@ -29,7 +29,9 @@ import {
     ArrowUpDown,
     ArrowUp,
     ArrowDown,
-    RefreshCcw
+    RefreshCcw,
+    Layers,
+    CircleUserRound
 } from 'lucide-react';
 import { useAnalysisFilters } from "@/hooks/useAnalysisFilters";
 import AnalysisFilters from "./AnalysisFilters";
@@ -37,7 +39,7 @@ import { fetchAllSectors } from "@/lib/features/sector/sectorThunks";
 import { fetchAllSubAnalysis } from "@/lib/features/subAnalysis/subAnalysisThunks";
 import EditAnalysis from './EditAnalysis';
 import toast from "react-hot-toast";
-import { deleteAnalysis, updateGroupOfAnalysis } from '@/lib/features/socialMedia/analysisThunks';
+import { deleteAnalysis, fetchAllAnalysis, updateGroupOfAnalysis } from '@/lib/features/socialMedia/analysisThunks';
 import { ApiResponse } from '@/utils/apiService';
 import { showAuthComponentsForAnalysis } from '@/utils/authComponents';
 import ViewAnalysis from './ViewAnalysis';
@@ -45,6 +47,8 @@ import { Checkbox } from "../../../../../components/ui/checkbox";
 import ExportModal from './ExportModal';
 import { useSocket } from '@/hooks/useSocket';
 import Spinner from '@/components/ui/Spinner';
+import { getImageURL } from '@/utils/getImage';
+import FullProfileIcon from '@/components/icons/FullProfile';
 
 interface GroupingState {
     sector?: boolean;
@@ -53,20 +57,52 @@ interface GroupingState {
     subAnalysis?: boolean;
     classify?: boolean;
     contentType?: boolean;
+    tweetType?: boolean;
+    publisher?: boolean;
+}
+
+interface GroupedAnalysisData {
+    key: string;
+    label: string;
+    items: IAnalysis[];
+    children: GroupedAnalysisData[];
+    level: number;
+    isCollapsed: boolean;
 }
 
 interface AllAnalysisTableProps {
-    allAnalysis: IAnalysis[];
-    setAllAnalysis: (allAnalysis: IAnalysis[]) => void
+    // allAnalysis: IAnalysis[];
+    // setSelectedAllAnalysis: (allAnalysis: IAnalysis[]) => void;
+    // currentPage: number;
+    // totalPages: number;
+    // onPageChange: (page: number) => void;
 }
 
-const AllAnalysisTable = ({ allAnalysis, setAllAnalysis }: AllAnalysisTableProps) => {
+const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
     const t = useTranslations("SocialMediaPage.AllAnalysisTable")
     const t2 = useTranslations("DeleteModal");
     const locale = useLocale();
     const router = useRouter();
 
-    const { loggedInUser: { token, role, permissions, userId } } = useAppSelector((state: RootState) => state.authUser);
+    const { allAnalysis, allAnalysisStatus, addAnalysisStatus } = useAppSelector((state: RootState) => state.analysis);
+    const { loggedInUser: { role, permissions, token, userId } } = useAppSelector((state: RootState) => state.authUser);
+
+    const [selectedAllAnalysis, setSelectedAllAnalysis] = useState<IAnalysis[]>([]);
+
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        if (allAnalysisStatus === 'idle') {
+            dispatch(fetchAllAnalysis({}));
+        }
+    }, [dispatch, allAnalysisStatus]);
+
+    useEffect(() => {
+        if (allAnalysisStatus === 'succeeded' || addAnalysisStatus === 'succeeded') {
+            setSelectedAllAnalysis(allAnalysis);
+        }
+    }, [allAnalysisStatus, addAnalysisStatus, allAnalysis]);
+
     const { allSectors, allSectorsStatus } = useAppSelector((state: RootState) => state.sectors);
     const { allSubAnalysis, allSubAnalysisStatus } = useAppSelector((state: RootState) => state.subAnalysis);
     const { updateGroupOfAnalysisStatus } = useAppSelector((state: RootState) => state.analysis);
@@ -120,7 +156,7 @@ const AllAnalysisTable = ({ allAnalysis, setAllAnalysis }: AllAnalysisTableProps
         };
     }, [socket, isConnected])
 
-    const dispatch = useAppDispatch();
+    
 
     useEffect(() => {
         if (selectedAnalysisId) router.push(`/${locale}/social-media/${selectedAnalysisId}`);
@@ -140,12 +176,12 @@ const AllAnalysisTable = ({ allAnalysis, setAllAnalysis }: AllAnalysisTableProps
 
     const [groupings, setGroupings] = useState<GroupingState>({});
 
-    const getSortedAndGroupedAnalysis = () => {
+    const getSortedAndGroupedAnalysis = (): GroupedAnalysisData[] => {
         // Sort data based on total statistics
         const sorted = [...filteredAnalysis].sort((a, b) => {
-            const totalA = a.statistics.views + a.statistics.reactions + 
+            const totalA = a.statistics.reactions + 
                           a.statistics.comments + a.statistics.shares;
-            const totalB = b.statistics.views + b.statistics.reactions + 
+            const totalB = b.statistics.reactions + 
                           b.statistics.comments + b.statistics.shares;
             
             if (sortOrder === 'asc') {
@@ -156,105 +192,89 @@ const AllAnalysisTable = ({ allAnalysis, setAllAnalysis }: AllAnalysisTableProps
             return 0;
         });
 
-        // Group analysis data
-        let groupedData: Record<string, IAnalysis[]> = { '': [...sorted] };
+        // Define grouping order
+        const groupingOrder = [
+            { key: 'sector', getValue: (item: IAnalysis) => item.sector.name },
+            { key: 'addedBy', getValue: (item: IAnalysis) => item.addedByData?.name || 'Unknown' },
+            { key: 'platform', getValue: (item: IAnalysis) => item.platform },
+            { key: 'publisher', getValue: (item: IAnalysis) => item.publisher.name },
+            { key: 'subAnalysis', getValue: (item: IAnalysis) => item.subAnalysis.body },
+            { key: 'classify', getValue: (item: IAnalysis) => item.classify },
+            { key: 'contentType', getValue: (item: IAnalysis) => item.content?.type },
+            { key: 'tweetType', getValue: (item: IAnalysis) => item.tweetType }
+        ];
 
-        // Apply groupings in order
-        if (groupings.sector) {
-            const newGroupedData: Record<string, IAnalysis[]> = {};
-            Object.entries(groupedData).forEach(([key, items]) => {
-                items.forEach(item => {
-                    const groupKey = key ? `${key} - ${item.sector.name}` : item.sector.name;
-                    if (!newGroupedData[groupKey]) newGroupedData[groupKey] = [];
-                    newGroupedData[groupKey].push(item);
-                });
-            });
-            groupedData = newGroupedData;
+        // Filter active groupings
+        const activeGroupings = groupingOrder.filter(group => groupings[group.key as keyof GroupingState]);
+
+        // If no groupings are active, return data without grouping
+        if (activeGroupings.length === 0) {
+            return [{
+                key: 'all-data',
+                label: t("allAnalysis"),
+                items: sorted,
+                children: [],
+                level: 0,
+                isCollapsed: false
+            }];
         }
 
-        if (groupings.addedBy) {
-            const newGroupedData: Record<string, IAnalysis[]> = {};
-            Object.entries(groupedData).forEach(([key, items]) => {
-                items.forEach(item => {
-                    const groupKey = key ? `${key} - ${item.addedByData?.name || 'Unknown'}` : item.addedByData?.name || 'Unknown';
-                    if (!newGroupedData[groupKey]) newGroupedData[groupKey] = [];
-                    newGroupedData[groupKey].push(item);
-                });
-            });
-            groupedData = newGroupedData;
-        }
+        // Create nested structure recursively
+        const createNestedGroups = (items: IAnalysis[], level: number): GroupedAnalysisData[] => {
+            if (level >= activeGroupings.length) {
+                return [];
+            }
 
-        if (groupings.platform) {
-            const newGroupedData: Record<string, IAnalysis[]> = {};
-            Object.entries(groupedData).forEach(([key, items]) => {
-                items.forEach(item => {
-                    const groupKey = key ? `${key} - ${item.platform}` : item.platform;
-                    if (!newGroupedData[groupKey]) newGroupedData[groupKey] = [];
-                    newGroupedData[groupKey].push(item);
-                });
-            });
-            groupedData = newGroupedData;
-        }
+            const currentGrouping = activeGroupings[level];
+            const groups: Record<string, IAnalysis[]> = {};
 
-        if (groupings.subAnalysis) {
-            const newGroupedData: Record<string, IAnalysis[]> = {};
-            Object.entries(groupedData).forEach(([key, items]) => {
+            // Group items by current grouping
                 items.forEach(item => {
-                    const groupKey = key ? `${key} - ${item.subAnalysis.body}` : item.subAnalysis.body;
-                    if (!newGroupedData[groupKey]) newGroupedData[groupKey] = [];
-                    newGroupedData[groupKey].push(item);
-                });
+                const value = currentGrouping.getValue(item);
+                if (!groups[value]) {
+                    groups[value] = [];
+                }
+                groups[value].push(item);
             });
-            groupedData = newGroupedData;
-        }
 
-        if (groupings.classify) {
-            const newGroupedData: Record<string, IAnalysis[]> = {};
-            Object.entries(groupedData).forEach(([key, items]) => {
-                items.forEach(item => {
-                    const groupKey = key ? `${key} - ${item.classify}` : item.classify;
-                    if (!newGroupedData[groupKey]) newGroupedData[groupKey] = [];
-                    newGroupedData[groupKey].push(item);
-                });
+            // Convert to GroupedAnalysisData structure
+            return Object.entries(groups).map(([value, groupItems]) => {
+                const groupKey = `${currentGrouping.key}-${value}`;
+                const children = createNestedGroups(groupItems, level + 1);
+                
+                return {
+                    key: groupKey,
+                    label: Object.values(AnalysisClassifyEnum).includes(value as AnalysisClassifyEnum) 
+                        || Object.values(ContentTypesEnum).includes(value as ContentTypesEnum)
+                        || Object.values(TweetTypesEnum).includes(value as TweetTypesEnum) ? t(value) : value,
+                    items: children.length === 0 ? groupItems : [], // Only leaf nodes have items
+                    children: children,
+                    level: level,
+                    isCollapsed: false
+                };
             });
-            groupedData = newGroupedData;
-        }
+        };
 
-        if (groupings.contentType) {
-            const newGroupedData: Record<string, IAnalysis[]> = {};
-            Object.entries(groupedData).forEach(([key, items]) => {
-                items.forEach(item => {
-                    const groupKey = key ? `${key} - ${item.content?.type}` : item.content?.type;
-                    if (!newGroupedData[groupKey]) newGroupedData[groupKey] = [];
-                    newGroupedData[groupKey].push(item);
-                });
-            });
-            groupedData = newGroupedData;
-        }
-
-        return groupedData;
+        return createNestedGroups(sorted, 0);
     };
 
     const groupedAnalysis = React.useMemo(() => getSortedAndGroupedAnalysis(), [filteredAnalysis, sortOrder, groupings]);
 
-    const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>(() => {
-        // Initialize with all groups expanded (false)
-        const initialGroups: Record<string, boolean> = {};
-        Object.keys(groupedAnalysis).forEach(key => {
-            initialGroups[key] = true;
-        });
-        return initialGroups;
-    });
+    const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
 
-    // Update collapsedGroups when groupedAnalysis changes
+    // Update collapsedGroups when groupedAnalysis changes - start with all groups collapsed
     useEffect(() => {
         setCollapsedGroups(prev => {
             const newGroups = { ...prev };
-            Object.keys(groupedAnalysis).forEach(key => {
-                if (!(key in newGroups)) {
-                    newGroups[key] = true;
-                }
-            });
+            const updateCollapsedState = (groups: GroupedAnalysisData[]) => {
+                groups.forEach(group => {
+                    if (!(group.key in newGroups)) {
+                        newGroups[group.key] = true; // Start collapsed
+                    }
+                    updateCollapsedState(group.children);
+                });
+            };
+            updateCollapsedState(groupedAnalysis);
             return newGroups;
         });
     }, [groupedAnalysis]);
@@ -265,6 +285,25 @@ const AllAnalysisTable = ({ allAnalysis, setAllAnalysis }: AllAnalysisTableProps
             [groupKey]: !prev[groupKey]
         }));
     };
+
+    // Toggle all groups
+    const toggleAllGroups = (collapse: boolean) => {
+        const newCollapsedGroups: Record<string, boolean> = {};
+        const updateCollapsedState = (groups: GroupedAnalysisData[]) => {
+            groups.forEach(group => {
+                newCollapsedGroups[group.key] = collapse;
+                updateCollapsedState(group.children);
+            });
+        };
+        updateCollapsedState(groupedAnalysis);
+        setCollapsedGroups(newCollapsedGroups);
+    };
+
+    // Expand all groups
+    const expandAllGroups = () => toggleAllGroups(false);
+
+    // Collapse all groups
+    const collapseAllGroups = () => toggleAllGroups(true);
 
     const openDetailsModal = (analysis: IAnalysis) => {
         setSelectedAnalysisDetails(analysis);
@@ -281,7 +320,7 @@ const AllAnalysisTable = ({ allAnalysis, setAllAnalysis }: AllAnalysisTableProps
             const updatedAnalysisList = allAnalysis.map(analysis => 
                 analysis._id === updatedAnalysis._id ? updatedAnalysis : analysis
             );
-            setAllAnalysis(updatedAnalysisList);
+            setSelectedAllAnalysis(updatedAnalysisList);
             setSelectedAnalysisDetails(updatedAnalysis);
             setIsEditing(false);
         } catch (error) {
@@ -324,7 +363,7 @@ const AllAnalysisTable = ({ allAnalysis, setAllAnalysis }: AllAnalysisTableProps
                         }
                     );
                 }
-                setAllAnalysis(updatedAnalysisList);
+                setSelectedAllAnalysis(updatedAnalysisList);
                 closeUpdateGroupOfAnalysisModal();
                 toast.success(message || t("updateGroupOfAnalysisSuccessfully"));
             } else {
@@ -363,7 +402,7 @@ const AllAnalysisTable = ({ allAnalysis, setAllAnalysis }: AllAnalysisTableProps
             if(isConnected) socket?.emit('deleteAnalysis', data?._id)
             if(success) {
                 const updatedAnalysisList = allAnalysis.filter(analysis => analysis._id.toString() !== analysisToDelete._id.toString());
-                setAllAnalysis(updatedAnalysisList);
+                setSelectedAllAnalysis(updatedAnalysisList);
                 closeDeleteModal();
                 toast.success(message || t("analysisDeletedSuccessfully"));
             } else {
@@ -450,7 +489,300 @@ const AllAnalysisTable = ({ allAnalysis, setAllAnalysis }: AllAnalysisTableProps
         });
     };
 
+    // Helper function to calculate total items in a group (including children)
+    const getTotalItemsInGroup = (group: GroupedAnalysisData): number => {
+        if (group.children.length === 0) {
+            return group.items.length;
+        }
+        return group.children.reduce((total, child) => total + getTotalItemsInGroup(child), 0);
+    };
+
+    // Helper function to get all items in a group (including children)
+    const getAllItemsInGroup = (group: GroupedAnalysisData): IAnalysis[] => {
+        if (group.children.length === 0) {
+            return group.items;
+        }
+        return group.children.flatMap(child => getAllItemsInGroup(child));
+    };
+
+    // Helper function to get background color based on level
+    const getBackgroundColor = (level: number): string => {
+        switch (level) {
+            case 0: return 'bg-gray-50';
+            case 1: return 'bg-blue-50';
+            case 2: return 'bg-green-50';
+            case 3: return 'bg-yellow-50';
+            case 4: return 'bg-purple-50';
+            case 5: return 'bg-pink-50';
+            default: return 'bg-gray-50';
+        }
+    };
+
+    // Helper function to get border color based on level
+    const getBorderColor = (level: number): string => {
+        switch (level) {
+            case 0: return 'border-gray-200';
+            case 1: return 'border-blue-200';
+            case 2: return 'border-green-200';
+            case 3: return 'border-yellow-200';
+            case 4: return 'border-purple-200';
+            case 5: return 'border-pink-200';
+            default: return 'border-gray-200';
+        }
+    };
+
+    // Helper function to get text color based on level
+    const getTextColor = (level: number): string => {
+        switch (level) {
+            case 0: return 'text-gray-900';
+            case 1: return 'text-blue-900';
+            case 2: return 'text-green-900';
+            case 3: return 'text-yellow-900';
+            case 4: return 'text-purple-900';
+            case 5: return 'text-pink-900';
+            default: return 'text-gray-900';
+        }
+    };
+
+    // Helper function to get connector color based on level
+    const getConnectorColor = (level: number): string => {
+        switch (level) {
+            case 0: return 'bg-gray-300';
+            case 1: return 'bg-blue-300';
+            case 2: return 'bg-green-300';
+            case 3: return 'bg-yellow-300';
+            case 4: return 'bg-purple-300';
+            case 5: return 'bg-pink-300';
+            case 6: return 'bg-red-300';
+            case 7: return 'bg-orange-300';
+            default: return 'bg-gray-300';
+        }
+    };
+
+    // Helper function to get grouping type label
+    const getGroupingTypeLabel = (groupKey: string): string => {
+        if (groupKey.startsWith('sector-')) return t("sector");
+        if (groupKey.startsWith('addedBy-')) return t("addedBy");
+        if (groupKey.startsWith('platform-')) return t("platform");
+        if (groupKey.startsWith('publisher-')) return t("publisher");
+        if (groupKey.startsWith('subAnalysis-')) return t("subAnalysis");
+        if (groupKey.startsWith('classify-')) return t("classification");
+        if (groupKey.startsWith('contentType-')) return t("contentType");
+        if (groupKey.startsWith('tweetType-')) return t("tweetType");
+        return t("group");
+    };
+
+    // Helper function to render nested groups as a chain
+    const renderNestedGroups = (groups: GroupedAnalysisData[], level: number = 0): React.ReactNode[] => {
+        return groups.map(group => {
+            const isCollapsed = collapsedGroups[group.key];
+            const hasChildren = group.children.length > 0;
+            const hasItems = group.items.length > 0;
+            const totalItems = getTotalItemsInGroup(group);
+            const groupingType = getGroupingTypeLabel(group.key);
+            const connectorColor = getConnectorColor(level);
+            const isNoGrouping = group.key === 'all-data';
+            
+            // Calculate indentation: each level gets more indentation than the previous
+            // Level 0: 8px, Level 1: 13px, Level 2: 18px, Level 3: 23px, etc.
+            const baseIndentation = 8; // Base indentation in pixels
+            const indentationIncrement = 15; // Additional pixels per level
+            const currentIndentation = baseIndentation + (level * indentationIncrement);
+            
+            return (
+                <React.Fragment key={group.key}>
+                    {/* Group Header Row - Only show if not "all-data" or if it has children */}
+                    {(!isNoGrouping || hasChildren) && (
+                        <tr className={`${getBackgroundColor(level)} border-l-4 ${getBorderColor(level)}`}>
+                            <td colSpan={14} className="px-2 py-1 text-xs font-medium">
+                                <div className="flex items-center gap-2" style={{ paddingLeft: `${currentIndentation}px` }}>
+                                    {/* Visual connector for nested levels */}
+                                    {level > 0 && (
+                                        <div className="flex items-center">
+                                            <div 
+                                                className={`h-px ${connectorColor}`} 
+                                                style={{ width: `${currentIndentation}px` }}
+                                            ></div>
+                                            <div className={`w-2 h-2 ${connectorColor} rounded-full`}></div>
+                            </div>
+                                    )}
+                                    
+                                            <Checkbox
+                                        checked={isGroupFullySelected(group.key, getAllItemsInGroup(group))}
+                                        onCheckedChange={() => handleGroupSelect(group.key, getAllItemsInGroup(group))}
+                                        className={isGroupPartiallySelected(group.key, getAllItemsInGroup(group)) ? "opacity-50" : ""}
+                                    />
+                                    {(hasChildren || hasItems) && !isNoGrouping && (
+                                            <button
+                                            onClick={() => toggleGroup(group.key)}
+                                                className="p-1 hover:bg-gray-200 rounded-md transition-colors"
+                                            >
+                                            {isCollapsed ? (
+                                                    <ChevronRight className="w-4 h-4" />
+                                                ) : (
+                                                    <ChevronDown className="w-4 h-4" />
+                                                )}
+                                            </button>
+                                    )}
+                                    <div className="flex items-center gap-2">
+                                        <span className={`font-semibold ${getTextColor(level)}`}>{group.label}</span>
+                                        <span className="text-gray-500">({totalItems})</span>
+                                        {level > 0 && (
+                                            <span className="text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded-full">
+                                                {groupingType}
+                                            </span>
+                                        )}
+                                        {/* {level > 0 && (
+                                            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
+                                                Level {level} ({currentIndentation}px)
+                                            </span>
+                                        )} */}
+                                    </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                    
+                    {/* If group is expanded or it's "all-data", show children or items */}
+                    {(!isCollapsed || isNoGrouping) && (
+                        <>
+                            {/* Show direct items if this group has them */}
+                            {hasItems && group.items.map((analysis) => {
+                                const {
+                                    _id,
+                                    subAnalysis,
+                                    classify,
+                                    content,
+                                    createdAt,
+                                    platform,
+                                    publisher,
+                                    sector,
+                                    statistics: {
+                                        reactions,
+                                        appearance,
+                                        comments,
+                                        shares,
+                                        views
+                                    },
+                                    url,
+                                    addedBy,
+                                    addedByData,
+                                } = analysis;
+
+                                const formattedDate = formatDate({ 
+                                    locale, 
+                                    date: createdAt, 
+                                    withTime: true 
+                                });
+
+                                return (
+                                    <tr key={_id} className="hover:bg-primary/20">
+                                        <td className="px-2 py-1">
+                                            <Checkbox
+                                                checked={selectedItems.has(analysis._id)}
+                                                onCheckedChange={() => handleItemSelect(analysis._id)}
+                                            />
+                                        </td>
+                                        <td className="px-2 py-1">
+                                            <Link
+                                                className="text-secondary font-semibold underline"
+                                                href={url}
+                                            >
+                                                {t(platform)}
+                                            </Link>
+                                        </td>
+                                        <th scope="row" className="px-2 py-1 font-medium text-gray-900 whitespace-nowrap flex justify-start gap-2 items-center">
+                                            <div 
+                                                className="relative group"
+                                                onMouseEnter={(e) => handleImageHover(e, publisher?.avatar || '/logo.png', publisher.name)}
+                                                onMouseLeave={handleImageLeave}
+                                            >
+                                                <Image
+                                                    src={publisher?.avatar || '/logo.png'}
+                                                    alt="Publisher avatar"
+                                                    width={50}
+                                                    height={50}
+                                                    className="rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105"
+                                                    onError={(e) => {
+                                                        const target = e.target as HTMLImageElement;
+                                                        target.src = '/logo.png';
+                                                    }}
+                                                />
+                                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity duration-200 rounded-md" />
+                                            </div>
+                                            <div className='flex flex-col justify-start items-start gap-1'>
+                                                <p className="text-sm font-semibold">{publisher.name}</p>
+                                                <p className="text-xs text-gray-600">@{publisher?.handle}</p>
+                                            </div>
+                                        </th>
+                                        <td className="px-2 py-1">{sector.name}</td>
+                                        <td className={`px-2 py-1 ${classify === AnalysisClassifyEnum.POSITIVE ? 'text-green-600' : classify === AnalysisClassifyEnum.NEGATIVE ? 'text-red-600' : 'text-primary'}`}>{t(classify)}</td>
+                                        <td className={`px-2 py-1`}>{subAnalysis.body}</td>
+                                        <td className="px-2 py-1">{reactions.toLocaleString()}</td>
+                                        <td className="px-2 py-1">{comments.toLocaleString()}</td>
+                                        <td className="px-2 py-1">{shares.toLocaleString()}</td>
+                                        <td className="px-2 py-1">{views.toLocaleString()}</td>
+                                        <td className="px-2 py-1">{(reactions + comments + shares).toLocaleString()}</td>
+                                        <td className="px-2 py-1 w-fit">{formattedDate}</td>
+                                        <th scope="row" className="px-2 py-1 font-medium text-gray-900">
+                                            <div className="flex h-full justify-center items-center gap-1 whitespace-nowrap">
+                                                <CircleUserRound className='w-4 h-4 text-primary'/>
+                                                <p className="text-xs">{addedByData?.name}</p>
+                                            </div>
+                                        </th>
+                                        <td className="px-2 py-1">
+                                            <div className="flex items-center gap-2">
+                                                {showAuthComponentsForAnalysis({ role, permissions }) 
+                                                    && (role === 'super_admin' || addedBy.toString() === userId.toString()) ?
+                                                    <>
+                                                        <Edit
+                                                            className="w-5 h-5 text-adminPrimary hover:bg-adminPrimary hover:text-white rounded-md cursor-pointer p-1"
+                                                            onClick={() => openDetailsModal(analysis)}
+                                                        />
+                                                        <Trash2
+                                                            className="w-5 h-5 text-red-500 hover:bg-red-500 hover:text-white rounded-md cursor-pointer p-1"
+                                                            onClick={() => openDeleteModal(analysis)}
+                                                        />
+                                                    </>
+                                                    : 
+                                                        <>
+                                                            <EyeIcon
+                                                                className="w-5 h-5 text-adminPrimary hover:bg-adminPrimary hover:text-white rounded-md cursor-pointer p-1"
+                                                                onClick={() => openViewModal(analysis)}
+                                                            />
+                                                        </>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                            
+                            {/* Recursively render children groups */}
+                            {hasChildren && renderNestedGroups(group.children, level + 1)}
+                        </>
+                    )}
+                        </React.Fragment>
+            );
+        });
+    };
+
     const renderTable = () => {
+        // Show loading spinner when data is being fetched
+        if (allAnalysisStatus === 'loading') {
+            return (
+                <div className="flex flex-col items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-center w-16 h-16 mb-4 bg-gray-100 rounded-full">
+                        <Spinner size="100px"/>
+                    </div>
+                    <div className="text-xl font-semibold mb-2 text-primary">{t("loadingData")}</div>
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <span>{t("fetchingFromDatabase")}</span>
+                    </div>
+                </div>
+            );
+        }
+
         // Check if there are no results after filtering
         if (filteredAnalysis.length === 0) {
             return (
@@ -516,164 +848,14 @@ const AllAnalysisTable = ({ allAnalysis, setAllAnalysis }: AllAnalysisTableProps
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 text-xs">
-                    {Object.entries(groupedAnalysis).map(([groupKey, items]) => (
-                        <React.Fragment key={groupKey}>
-                            {groupKey && (
-                                <tr className="bg-gray-50">
-                                    <td colSpan={14} className="px-2 py-1 text-xs font-medium text-gray-900">
-                                        <div className="flex items-center gap-2">
-                                            <Checkbox
-                                                checked={isGroupFullySelected(groupKey, items)}
-                                                onCheckedChange={() => handleGroupSelect(groupKey, items)}
-                                                className={isGroupPartiallySelected(groupKey, items) ? "opacity-50" : ""}
-                                            />
-                                            <button
-                                                onClick={() => toggleGroup(groupKey)}
-                                                className="p-1 hover:bg-gray-200 rounded-md transition-colors"
-                                            >
-                                                {collapsedGroups[groupKey] ? (
-                                                    <ChevronRight className="w-4 h-4" />
-                                                ) : (
-                                                    <ChevronDown className="w-4 h-4" />
-                                                )}
-                                            </button>
-                                            <span>{groupKey}</span>
-                                            <span className="text-gray-500">({items.length})</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            )}
-                            {(groupKey === "" || !collapsedGroups[groupKey]) && items.map((analysis) => {
-                                const {
-                                    _id,
-                                    subAnalysis,
-                                    classify,
-                                    content,
-                                    createdAt,
-                                    platform,
-                                    publisher,
-                                    sector,
-                                    statistics: {
-                                        reactions,
-                                        appearance,
-                                        comments,
-                                        shares,
-                                        views
-                                    },
-                                    url,
-                                    addedBy,
-                                    addedByData,
-                                } = analysis;
-
-                                const formattedDate = formatDate({ 
-                                    locale, 
-                                    date: createdAt, 
-                                    withTime: true 
-                                });
-
-                                return (
-                                    <tr key={_id} className="hover:bg-primary/20">
-                                        <td className="px-2 py-1">
-                                            <Checkbox
-                                                checked={selectedItems.has(analysis._id)}
-                                                onCheckedChange={() => handleItemSelect(analysis._id)}
-                                            />
-                                        </td>
-                                        <td className="px-2 py-1">
-                                            <Link
-                                                className="text-secondary font-semibold underline"
-                                                href={url}
-                                            >
-                                                {t(platform)}
-                                            </Link>
-                                        </td>
-                                        <th scope="row" className="px-2 py-1 font-medium text-gray-900 whitespace-nowrap flex gap-2 justify-center items-center">
-                                            <div 
-                                                className="relative group"
-                                                onMouseEnter={(e) => handleImageHover(e, publisher?.avatar || '/logo.png', publisher.name)}
-                                                onMouseLeave={handleImageLeave}
-                                            >
-                                                <Image
-                                                    src={publisher?.avatar || '/logo.png'}
-                                                    alt="Publisher avatar"
-                                                    width={50}
-                                                    height={50}
-                                                    className="rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105"
-                                                    onError={(e) => {
-                                                        const target = e.target as HTMLImageElement;
-                                                        target.src = '/logo.png';
-                                                    }}
-                                                />
-                                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity duration-200 rounded-md" />
-                                            </div>
-                                            <p className="">{publisher.name}</p>
-                                        </th>
-                                        <td className="px-2 py-1">{sector.name}</td>
-                                        <td className={`px-2 py-1 ${classify === AnalysisClassifyEnum.POSITIVE ? 'text-green-600' : classify === AnalysisClassifyEnum.NEGATIVE ? 'text-red-600' : 'text-primary'}`}>{t(classify)}</td>
-                                        <td className={`px-2 py-1`}>{subAnalysis.body}</td>
-                                        <td className="px-2 py-1">{reactions}</td>
-                                        <td className="px-2 py-1">{comments}</td>
-                                        <td className="px-2 py-1">{shares}</td>
-                                        <td className="px-2 py-1">{views}</td>
-                                        <td className="px-2 py-1">{views + reactions + comments + shares}</td>
-                                        <td className="px-2 py-1 w-fit">{formattedDate}</td>
-                                        <th scope="row" className="px-2 py-1 font-medium text-gray-900 whitespace-nowrap flex gap-2 justify-center items-center">
-                                            <div 
-                                                className="relative group"
-                                                onMouseEnter={(e) => handleImageHover(e, addedByData?.avatar?.secure_url || '/logo.png', addedByData?.name || '')}
-                                                onMouseLeave={handleImageLeave}
-                                            >
-                                                <Image
-                                                    src={addedByData?.avatar?.secure_url || '/logo.png'}
-                                                    alt="Added by avatar"
-                                                    width={50}
-                                                    height={50}
-                                                    className="rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105"
-                                                    onError={(e) => {
-                                                        const target = e.target as HTMLImageElement;
-                                                        target.src = '/logo.png';
-                                                    }}
-                                                />
-                                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity duration-200 rounded-md" />
-                                            </div>
-                                            <p className="">{addedByData?.name}</p>
-                                        </th>
-                                        <td className="px-2 py-1">
-                                            <div className="flex items-center gap-2">
-                                                {showAuthComponentsForAnalysis({ role, permissions }) 
-                                                    && (addedBy.toString() === userId.toString()) ?
-                                                    <>
-                                                        <Edit
-                                                            className="w-5 h-5 text-adminPrimary hover:bg-adminPrimary hover:text-white rounded-md cursor-pointer p-1"
-                                                            onClick={() => openDetailsModal(analysis)}
-                                                        />
-                                                        <Trash2
-                                                            className="w-5 h-5 text-red-500 hover:bg-red-500 hover:text-white rounded-md cursor-pointer p-1"
-                                                            onClick={() => openDeleteModal(analysis)}
-                                                        />
-                                                    </>
-                                                    : 
-                                                        <>
-                                                            <EyeIcon
-                                                                className="w-5 h-5 text-adminPrimary hover:bg-adminPrimary hover:text-white rounded-md cursor-pointer p-1"
-                                                                onClick={() => openViewModal(analysis)}
-                                                            />
-                                                        </>
-                                                }
-                                            </div>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </React.Fragment>
-                    ))}
+                    {renderNestedGroups(groupedAnalysis)}
                 </tbody>
             </table>
         );
     };
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-2 min-h-svh">
             <div className="flex justify-between items-center">
                 <AnalysisFilters
                     filters={filters}
@@ -689,18 +871,25 @@ const AllAnalysisTable = ({ allAnalysis, setAllAnalysis }: AllAnalysisTableProps
             <div className="px-2 font-semibold flex items-center justify-between text-xs text-primary">
                 <div className="flex items-center justify-between gap-2 w-full">
                     <div>
-                        <span>{t("showAllAnalysis")}:</span>
-                        <span className="font-semibold text-secondary">{filteredAnalysis.length}</span>
-                        {filteredAnalysis.length !== allAnalysis.length && (
+                        {allAnalysisStatus === 'loading' ? (
+                            <div className="flex items-center gap-2">
+                                <Spinner className="w-4 h-4" />
+                                <span>{t("loadingData")}</span>
+                            </div>
+                        ) : (
                             <>
-                                <span className="text-primary">/</span>
-                                <span className="text-primary">{allAnalysis.length}</span>
+                                <span>{t("showAllAnalysis")}: </span>
+                                <span className="font-semibold text-secondary">{filteredAnalysis.length}</span>
+                                {/* {filteredAnalysis.length !== allAnalysis.length && (
+                                    <>
+                                        <span className="text-primary">/</span>
+                                        <span className="text-primary">{allAnalysis.length}</span>
+                                    </>
+                                )} */}
                             </>
                         )}
-
                     </div>
                     <div className='flex items-center gap-2'>
-
                         {selectedItems.size > 0 && <button
                             onClick={() => setIsUpdateGroupOfAnalysisModalOpen(true)}
                             className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
@@ -719,13 +908,20 @@ const AllAnalysisTable = ({ allAnalysis, setAllAnalysis }: AllAnalysisTableProps
                 </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-lg shadow overflow-hidden relative">
+                {allAnalysisStatus === 'loading' && (
+                    <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10">
+                        <div className="flex flex-col items-center gap-2">
+                            <Spinner className="w-8 h-8" />
+                            <span className="text-sm text-gray-600">{t("loadingData")}</span>
+                        </div>
+                    </div>
+                )}
                 <div className="overflow-x-auto">
                     {renderTable()}
                 </div>
             </div>
 
-            {/* Selected items count */}
             {selectedItems.size > 0 && (
                 <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg px-4 py-2 flex items-center gap-2">
                     <span className="text-sm font-medium text-gray-700">

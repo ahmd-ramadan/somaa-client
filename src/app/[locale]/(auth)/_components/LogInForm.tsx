@@ -42,17 +42,15 @@ const LogInForm = () => {
     const onSubmit = async (data: IFormInputs) => {
         try {
             const action = await dispatch(login(data));
-            const { success, message , data: { role }} = action.payload as ApiResponse<ILoggedInUser>;
+            const { success, message }  = action.payload as any;
             console.log(action.payload)
             if (success) {
-                let path = 'dashboard';
-                if(role === 'user') path = 'profile'
-                router.push(`/${locale}/${path}`);
                 toast.success(message || "!مرحبا بعودتك");
+                let path = 'dashboard';
+                router.push(`/${locale}/${path}`);
             } else {
                 toast.error(message || "فشل في تسجيل الدخول");
             }
-
         } catch (error) {
             // console.error("Login failed:", error);
         }
@@ -99,7 +97,7 @@ const LogInForm = () => {
                             {...register('password')}
                             placeholder="********"
                             autoComplete='current-password'
-                            className={`focus:outline-none flex-1 width-full text-primary`}
+                            className={`focus:outline-none flex-1 w-full text-primary`}
                         />
                         <button
                             type="button"

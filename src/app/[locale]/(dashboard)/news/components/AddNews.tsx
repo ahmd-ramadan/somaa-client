@@ -119,7 +119,8 @@ const AddNews = () => {
                 },
                 note: data.note,
                 isFlagged: isFlagged,
-                isHighlighted: isHighlighted
+                isHighlighted: isHighlighted,
+                newspaper: data.newspaper
             };
             const action = await dispatch(addNews({ 
                 token: token as string, 

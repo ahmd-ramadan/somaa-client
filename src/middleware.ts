@@ -23,7 +23,7 @@ export default async function middleware(req: NextRequest) {
     const cookieStore = cookies();
     // let accessToken = cookieStore.get('accessToken')?.value;
     const refreshToken = cookieStore.get('auth-token')?.value;
-    console.log(refreshToken);
+    // console.log(refreshToken);
 
     if (pathname.includes('/login')) {
         if (refreshToken) return NextResponse.redirect(new URL(`/${locale}`, req.url));
@@ -49,7 +49,7 @@ export default async function middleware(req: NextRequest) {
             let permissions = [] as IAdminPermissions[];
             if (refreshToken) {
                 const decoded: IDecodedToken | null = await verifyRefreshToken(refreshToken);
-                console.log(decoded)
+                // console.log(decoded)
                 if (decoded) {
                     role = decoded.role || "";
                     permissions = decoded.permissions || [];
