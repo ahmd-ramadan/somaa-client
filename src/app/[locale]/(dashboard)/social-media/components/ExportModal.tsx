@@ -181,13 +181,13 @@ const ExportModal = ({ isOpen, onClose, data }: ExportModalProps) => {
                             row[t(col.id)] = item.publisher.name;
                             break;
                         case 'sector':
-                            row[t(col.id)] = item.sector.name;
+                            row[t(col.id)] = item.sectorData.name;
                             break;
                         case 'classify':
                             row[t(col.id)] = item.classify;
                             break;
                         case 'analysis':
-                            row[t(col.id)] = item.subAnalysis.body;
+                            row[t(col.id)] = item.subAnalysisData.body;
                             break;
                         case 'reactions':
                             row[t(col.id)] = item.statistics.reactions.toLocaleString();
@@ -278,13 +278,13 @@ const ExportModal = ({ isOpen, onClose, data }: ExportModalProps) => {
                         cellValue = item.publisher.name;
                         break;
                     case 'sector':
-                        cellValue = item.sector.name;
+                        cellValue = item.sectorData.name;
                         break;
                     case 'classify':
                         cellValue = item.classify;
                         break;
                     case 'analysis':
-                        cellValue = item.subAnalysis.body;
+                        cellValue = item.subAnalysisData.body;
                         break;
                     case 'reactions':
                         cellValue = item.statistics.reactions.toLocaleString();

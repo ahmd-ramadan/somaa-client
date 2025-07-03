@@ -2,7 +2,7 @@
 
 import { AnalysisClassifyEnum, IAnalysis } from "@/interfaces/analysis.types";
 import { motion } from "framer-motion";
-import { BarChart as BarChartIcon, LineChart, TrendingUp, Smile, Meh, Frown } from "lucide-react";
+import { BarChart as BarChartIcon, TrendingUp, Smile } from "lucide-react";
 import { IDashboardSubAnalysis } from "./types";
 import { useEffect, useState } from "react";
 import {
@@ -43,7 +43,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
         const analysisMap = new Map<string, { count: number, classifications: Map<AnalysisClassifyEnum, number> }>();
         
         analysisData.forEach(analysis => {
-            const name = analysis.subAnalysis.body;
+            const name = analysis.subAnalysisData.body;
             if (!name) return;
             
             if (!analysisMap.has(name)) {

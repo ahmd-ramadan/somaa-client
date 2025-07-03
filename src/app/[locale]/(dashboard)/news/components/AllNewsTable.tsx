@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
 import { formatDate } from "@/utils/formatDateAndTime";
 import { useLocale, useTranslations } from "next-intl";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Modal from "../../../../../components/ui/Modal";
@@ -19,8 +18,8 @@ import {
     SearchX,
     FilterX,
     AlertCircle,
-    X,
-    FileDown
+    FileDown,
+    CircleUserRound
 } from 'lucide-react';
 import { fetchAllSectors } from "@/lib/features/sector/sectorThunks";
 import toast from "react-hot-toast";
@@ -62,8 +61,6 @@ const AllNewsTable = ({} : AllNewsTableProps) => {
 
     const [selectedAllNews, setSelectedAllNews] = useState<INews[]>([]);
     const [selectedNewsId, setSelectedNewsId] = useState<string>('');
-    const [selectedShowedImage, setSelectedShowedImage] = useState<string>('');
-    const [isShowedImageModalOpen, setIsShowedImageModalOpen] = useState<boolean>(false);
     const [selectedNewsDetails, setSelectedNewsDetails] = useState<INews | null>(null);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -71,11 +68,6 @@ const AllNewsTable = ({} : AllNewsTableProps) => {
     const [newsToDelete, setNewsToDelete] = useState<INews | null>(null);
     const [selectedNews, setSelectedNews] = useState<INews | null>(null);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-    const [hoveredImage, setHoveredImage] = useState<{
-        src: string;
-        name: string;
-        position: { x: number; y: number };
-    } | null>(null);
     const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
@@ -100,9 +92,6 @@ const AllNewsTable = ({} : AllNewsTableProps) => {
     } = useNewsFilters(allNews);
 
     const [groupings, setGroupings] = useState<GroupingState>({});
-   
-
-    const closeShowedImageModal = () => { setIsShowedImageModalOpen(false) };
 
     const { isConnected, socket } = useSocket();
     const [error, setError] = useState<string | null>(null);
@@ -141,7 +130,7 @@ const AllNewsTable = ({} : AllNewsTableProps) => {
             const newGroupedData: Record<string, INews[]> = {};
             Object.entries(groupedData).forEach(([key, items]) => {
                 items.forEach(item => {
-                    const groupKey = key ? `${key} - ${item.sector.name}` : item.sector.name;
+                    const groupKey = key ? `${key} - ${item.sectorData.name}` : item.sectorData.name;
                     if (!newGroupedData[groupKey]) newGroupedData[groupKey] = [];
                     newGroupedData[groupKey].push(item);
                 });
@@ -315,22 +304,6 @@ const AllNewsTable = ({} : AllNewsTableProps) => {
         setSelectedNews(null);
     };
 
-    const handleImageHover = (e: React.MouseEvent<HTMLDivElement>, imageSrc: string, name: string) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        setHoveredImage({
-            src: imageSrc,
-            name,
-            position: {
-                x: rect.left + window.scrollX,
-                y: rect.top + window.scrollY
-            }
-        });
-    };
-
-    const handleImageLeave = () => {
-        setHoveredImage(null);
-    };
-
     // Add selection handlers
     const toggleRowSelection = (newsId: string) => {
         setSelectedRows(prev => {
@@ -362,7 +335,7 @@ const AllNewsTable = ({} : AllNewsTableProps) => {
                         row[field] = news.title;
                         break;
                     case 'sector':
-                        row[field] = news.sector.name;
+                        row[field] = news.sectorData.name;
                         break;
                     case 'classify':
                         row[field] = news.classify;
@@ -489,7 +462,7 @@ const AllNewsTable = ({} : AllNewsTableProps) => {
                                             pressType,
                                             geoClassify,
                                             createdAt,
-                                            sector,
+                                            sectorData,
                                             url,
                                             title,
                                             addedBy,
@@ -519,7 +492,7 @@ const AllNewsTable = ({} : AllNewsTableProps) => {
                                                         {title}
                                                     </Link>
                                                 </td>
-                                                <td className="px-2 py-1">{sector.name}</td>
+                                                <td className="px-2 py-1">{sectorData.name}</td>
                                                 <td className={`px-2 py-1 ${classify === NewsClassifyEnum.POSITIVE ? 'text-green-600' : classify === NewsClassifyEnum.NEGATIVE ? 'text-red-600' : 'text-primary'}`}>{t(classify)}</td>
                                                 <td className={`px-2 py-1`}>{t(geoClassify)}</td>
                                                 <td className={`px-2 py-1`}>{t(adType)}</td>
@@ -527,7 +500,7 @@ const AllNewsTable = ({} : AllNewsTableProps) => {
                                                 <td className={`px-2 py-1`}>{t(pressType)}</td>
                                                 <td className="px-2 py-1 w-fit">{formattedDate}</td>
                                                     <th scope="row" className="px-2 py-1 font-medium text-gray-900 whitespace-nowrap flex gap-2 justify-center items-center">
-                                                        <div 
+                                                        {/* <div 
                                                             className="relative group"
                                                             onMouseEnter={(e) => handleImageHover(e, addedByData?.avatar?.secure_url || '/logo.png', addedByData?.name || '')}
                                                             onMouseLeave={handleImageLeave}
@@ -543,7 +516,8 @@ const AllNewsTable = ({} : AllNewsTableProps) => {
                                                                     target.src = '/logo.png';
                                                                 }}
                                                             />
-                                                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity duration-200 rounded-md" /></div>
+                                                            </div> */}
+                                                            <CircleUserRound className='w-4 h-4 text-primary'/>
                                                             <p className="">{addedByData?.name}</p>
                                                         </th>
                                                 <td className="px-2 py-1">
@@ -683,41 +657,6 @@ const AllNewsTable = ({} : AllNewsTableProps) => {
                 onClose={() => setIsExportModalOpen(false)}
                 data={filteredNews.filter(news => selectedRows.has(news._id))}
             />
-
-            {/* Image Preview Hover */}
-            {hoveredImage && (
-                <div 
-                    className="fixed z-50 bg-white rounded-lg shadow-xl p-4 transform transition-all duration-200"
-                    style={{
-                        left: hoveredImage.position.x + 60,
-                        top: hoveredImage.position.y,
-                        maxWidth: '300px'
-                    }}
-                >
-                    <div className="relative">
-                        <button
-                            onClick={handleImageLeave}
-                            className="absolute -top-2 -right-2 bg-gray-800 text-white rounded-full p-1 hover:bg-gray-700 transition-colors"
-                        >
-                            <X className="w-4 h-4" />
-                        </button>
-                        <Image
-                            src={hoveredImage.src}
-                            alt={hoveredImage.name}
-                            width={300}
-                            height={300}
-                            className="rounded-lg object-cover"
-                            onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = '/logo.png';
-                            }}
-                        />
-                        <div className="mt-2 text-sm font-medium text-gray-700 text-center">
-                            {hoveredImage.name}
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

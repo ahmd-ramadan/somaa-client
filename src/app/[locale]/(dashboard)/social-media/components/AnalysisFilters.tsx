@@ -1,24 +1,16 @@
-import { AnalysisClassifyEnum, IAnalysis, PlatformsEnum, ContentTypesEnum, TweetTypesEnum } from "@/interfaces/analysis.types";
+import { AnalysisClassifyEnum, IAnalysis, ContentTypesEnum, TweetTypesEnum } from "@/interfaces/analysis.types";
 import { useTranslations } from "next-intl";
 import { X, Filter, ChevronDown, Layers } from 'lucide-react';
 import { useState, useEffect, useRef } from "react";
 import { useAppDispatch } from "@/lib/hooks";
 import { fetchAllAnalysis } from "@/lib/features/socialMedia/analysisThunks";
-import { FixedSizeList as List } from 'react-window';
 import { FilterState } from "@/hooks/useAnalysisFilters";
 
 type StatisticType = 'reactions' | 'comments' | 'shares' | 'views' | 'appearance';
 
-interface GroupingState {
-    sector?: boolean;
-    addedBy?: boolean;
-    platform?: boolean;
-    subAnalysis?: boolean;
-    classify?: boolean;
-    contentType?: boolean;
-    tweetType?: boolean;
-    publisher?: boolean;
-}
+type GroupingState = {
+    [key: string]: { active: boolean; order?: number }
+};
 
 interface AnalysisFiltersProps {
     filters: FilterState;
@@ -26,7 +18,7 @@ interface AnalysisFiltersProps {
     showFilters: boolean;
     setShowFilters: (show: boolean) => void;
     groupings: GroupingState;
-    setGroupings: (groupings: GroupingState) => void;
+    setGroupings: React.Dispatch<React.SetStateAction<GroupingState>>;
     allAnalysis: IAnalysis[];
     onAnalysisSelect?: (analysis: IAnalysis) => void;
     onAnalysisDelete?: (analysis: IAnalysis) => void;
@@ -42,7 +34,7 @@ const AnalysisFilters = ({
     setFilters, 
     showFilters, 
     setShowFilters, 
-    groupings,
+    groupings = {},
     setGroupings,
     allAnalysis,
     onAnalysisSelect,
@@ -135,9 +127,9 @@ const AnalysisFilters = ({
     const getFilterOptions = (type: keyof FilterState): string[] => {
         switch (type) {
             case 'sector':
-                return Array.from(new Set(allAnalysis.map(a => a.sector.name)));
+                return Array.from(new Set(allAnalysis.map(a => a.sectorData.name)));
             case 'subAnalysis':
-                return Array.from(new Set(allAnalysis.map(a => a.subAnalysis.body)));
+                return Array.from(new Set(allAnalysis.map(a => a.subAnalysisData.body)));
             case 'classify':
                 return Object.values(AnalysisClassifyEnum);
             case 'contentType':
@@ -269,9 +261,20 @@ const AnalysisFilters = ({
     };
 
     const toggleGrouping = (key: keyof GroupingState) => {
-        setGroupings({
-            ...groupings,
-            [key]: !groupings[key]
+        setGroupings(prev => {
+            const isActive = prev[key]?.active;
+            if (isActive) {
+                return {
+                    ...prev,
+                    [key]: { active: false }
+                };
+            } else {
+                const maxOrder = Math.max(0, ...Object.values(prev).map(g => g.order || 0));
+                return {
+                    ...prev,
+                    [key]: { active: true, order: maxOrder + 1 }
+                };
+            }
         });
     };
 
@@ -650,7 +653,7 @@ const AnalysisFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('sector')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.sector ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.sector?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("sector")}
@@ -658,7 +661,7 @@ const AnalysisFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('subAnalysis')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.subAnalysis ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.subAnalysis?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("subAnalysis")}
@@ -666,7 +669,7 @@ const AnalysisFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('classify')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.classify ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.classify?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("classification")}
@@ -674,7 +677,7 @@ const AnalysisFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('contentType')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.contentType ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.contentType?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("contentType")}
@@ -682,7 +685,7 @@ const AnalysisFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('publisher')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.publisher ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.publisher?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("publisher")}
@@ -690,7 +693,7 @@ const AnalysisFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('addedBy')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.addedBy ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.addedBy?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("addedBy")}
@@ -698,7 +701,7 @@ const AnalysisFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('platform')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.platform ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.platform?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("platform")}
@@ -706,7 +709,7 @@ const AnalysisFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('tweetType')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.tweetType ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.tweetType?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("tweetType")}
@@ -812,19 +815,15 @@ const AnalysisFilters = ({
                         })}
 
                         {/* Display Active Groupings */}
-                        {Object.entries(groupings).map(([type, isActive]) => {
-                            if (isActive) {
+                        {Object.entries(groupings || {}).map(([type, value]) => {
+                            if (value?.active) {
                                 return (
                                     <div key={type} className="flex items-center gap-1 bg-adminPrimary/10 px-2 py-.5 rounded-full text-xs shadow-sm border border-adminPrimary/20">
                                         <span className="font-medium text-adminPrimary">{t("groupBy")}:</span>
                                         <span className="text-adminPrimary">{t(type)}</span>
-                                        
                                         <button 
                                             onClick={() => {
-                                                setGroupings({
-                                                    ...groupings,
-                                                    [type]: false
-                                                });
+                                                toggleGrouping(type as keyof GroupingState);
                                             }} 
                                             className="text-adminPrimary/60 hover:text-adminPrimary transition-colors"
                                         >

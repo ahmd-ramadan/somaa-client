@@ -66,7 +66,6 @@ export interface IFormInputs  {
 
 const AddAnalysis = () => {
     const locale = useLocale();
-    const router = useRouter();
     const t = useTranslations("SocialMediaPage.AddAnalysis");
 
     const { loggedInUser: { token } } = useAppSelector((state: RootState) => state.authUser);
@@ -264,14 +263,8 @@ const AddAnalysis = () => {
                 classify: data.classify,
                 location: data.location,
                 contentType: data.contentType,
-                sector: {
-                    sectorId: selectedSector || data.sectorId,
-                    name: allSectors.find(s => s._id === (selectedSector || data.sectorId))?.name || ''
-                },
-                subAnalysis: {
-                    subAnalysisId: selectedSubAnalysis || data.subAnalysisId,
-                    body: subAnalysisInput
-                },
+                sectorId: selectedSector || data.sectorId,
+                subAnalysisId: selectedSubAnalysis || data.subAnalysisId,
                 note: data.note,
                 isFlagged: isFlagged,
                 isHighlighted: isHighlighted

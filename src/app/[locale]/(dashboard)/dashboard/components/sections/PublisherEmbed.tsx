@@ -1,5 +1,5 @@
 import { IAnalysis } from "@/interfaces/analysis.types";
-import React, { useRef } from "react";
+import React from "react";
 import {
   FacebookEmbed,
   YouTubeEmbed,
@@ -16,7 +16,6 @@ interface PublisherEmbedProps {
 
 const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
   const { platform, url } = analysis;
-  const containerRef = useRef<HTMLDivElement>(null);
 
 
   if (platform === 'x') {

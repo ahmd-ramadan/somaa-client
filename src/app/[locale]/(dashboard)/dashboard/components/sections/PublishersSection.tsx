@@ -151,7 +151,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
             <div key={index} dir="rtl" className="w-full px-2 flex flex-col gap-1 max-h-[350px] overflow-auto custom-scrollbar">
                 <div className="flex items-center gap-1 justify-end">
                     <span className="px-1 rounded-md text-xs bg-blue-500/20 text-blue-400 border border-blue-500/20">{getTypeMessage(analysis.type)}</span>
-                    <span className="px-1 rounded-md text-xs bg-blue-500/20 text-blue-400 border border-blue-500/20">{analysis.sector.name}</span>
+                    <span className="px-1 rounded-md text-xs bg-blue-500/20 text-blue-400 border border-blue-500/20">{analysis.sectorData.name}</span>
                     <span className={`px-1 rounded-md text-xs ${analysis.classify === AnalysisClassifyEnum.POSITIVE 
                                                     ? 'bg-green-500/20 text-green-400' 
                                                     : analysis.classify === AnalysisClassifyEnum.NEUTRAL 

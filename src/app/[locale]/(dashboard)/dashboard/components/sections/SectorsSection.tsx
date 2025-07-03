@@ -15,12 +15,12 @@ import {
     NewspaperIcon,
     Rss
 } from "lucide-react";
-import XIcon from "@/components/icons/X";
-import TikTokIcon from "@/components/icons/TikTok";
-import InstagramIcon from "@/components/icons/Instagram";
-import LinkedInIcon from "@/components/icons/LinkedIn";
-import FacebookIcon from "@/components/icons/Facebook";
-import YoutubeIcon from "@/components/icons/Youtube";
+import XIcon from "@/components/icons/SocialMedia/X";
+import TikTokIcon from "@/components/icons/SocialMedia/TikTok";
+import InstagramIcon from "@/components/icons/SocialMedia/Instagram";
+import LinkedInIcon from "@/components/icons/SocialMedia/LinkedIn";
+import FacebookIcon from "@/components/icons/SocialMedia/Facebook";
+import YoutubeIcon from "@/components/icons/SocialMedia/Youtube";
 import { INews, NewsClassifyEnum } from "@/interfaces/news.types";
 
 interface ISectorsSectionProps {
@@ -89,7 +89,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
         const sectorsMap = new Map<string, { total: number; classifications: IDashboardClassify[] }>();
 
         for (const analysis of analysisData) {
-            const sectorName = analysis.sector.name;
+            const sectorName = analysis.sectorData.name;
             const classification = analysis.classify;
 
             if (!sectorsMap.has(sectorName)) {
@@ -127,7 +127,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
 
         // Process analysis data
         for (const analysis of analysisData) {
-            const sectorName = analysis.sector.name;
+            const sectorName = analysis.sectorData.name;
             const classification = analysis.classify;
             const statistics = analysis.statistics;
             const platform = analysis.platform.toLowerCase();
@@ -186,7 +186,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
 
         // Process news data
         for (const news of newsData) {
-            const sectorName = news.sector.name;
+            const sectorName = news.sectorData.name;
 
             if (!sectorsMap.has(sectorName)) {
                 sectorsMap.set(sectorName, {
@@ -352,27 +352,27 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                         {/* <h4 className="text-xs font-semibold text-gray-300">المنصات</h4> */}
                                         <div className="w-full text-white grid grid-cols-6 gap-2">
                                             <div className="flex items-center gap-1">
-                                                <XIcon width="16px" height="16px" />
+                                                <XIcon className="w-4 h-4" />
                                                 <span className="text-xs">{getPlatformCount(PlatformsEnum.X)}</span>
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <TikTokIcon width="16px" height="16px" />
+                                                <TikTokIcon className="w-4 h-4" />
                                                 <span className="text-xs">{getPlatformCount(PlatformsEnum.TIKTOK)}</span>
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <InstagramIcon width="16px" height="16px" />
+                                                <InstagramIcon className="w-4 h-4" />
                                                 <span className="text-xs">{getPlatformCount(PlatformsEnum.INSTAGRAM)}</span>
                                             </div>
                                             <div className="flex  items-center gap-1">
-                                                <YoutubeIcon width="16px" height="16px" />
+                                                <YoutubeIcon className="w-4 h-4" />
                                                 <span className="text-xs">{getPlatformCount(PlatformsEnum.YOUTUBE)}</span>
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <LinkedInIcon width="16px" height="16px" />
+                                                <LinkedInIcon className="w-4 h-4" />
                                                 <span className="text-xs">{getPlatformCount(PlatformsEnum.LINKEDIN)}</span>
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <FacebookIcon width="16px" height="16px" />
+                                                <FacebookIcon className="w-4 h-4" />
                                                 <span className="text-xs">{getPlatformCount(PlatformsEnum.FACEBOOK)}</span>
                                             </div>
                                         </div>
@@ -463,27 +463,27 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                         {/* <h4 className="text-xs font-semibold text-gray-300">المنصات</h4> */}
                                         <div className="w-full text-white grid grid-cols-6 gap-2">
                                             <div className="flex items-center gap-1">
-                                                <XIcon width="16px" height="16px" />
+                                                <XIcon className="w-4 h-4"/>
                                                 <span className="text-xs">{selectedSector.platforms.x}</span>
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <TikTokIcon width="16px" height="16px" />
+                                                <TikTokIcon className="w-4 h-4"/>
                                                 <span className="text-xs">{selectedSector.platforms.tiktok}</span>
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <InstagramIcon width="16px" height="16px" />
+                                                <InstagramIcon className="w-4 h-4"/>
                                                 <span className="text-xs">{selectedSector.platforms.instagram}</span>
                                             </div>
                                             <div className="flex  items-center gap-1">
-                                                <YoutubeIcon width="16px" height="16px" />
+                                                <YoutubeIcon className="w-4 h-4"/>
                                                 <span className="text-xs">{selectedSector.platforms.youtube}</span>
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <LinkedInIcon width="16px" height="16px" />
+                                                <LinkedInIcon className="w-4 h-4"/>
                                                 <span className="text-xs">{selectedSector.platforms.linkedin}</span>
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <FacebookIcon width="16px" height="16px" />
+                                                <FacebookIcon className="w-4 h-4"/>
                                                 <span className="text-xs">{selectedSector.platforms.facebook}</span>
                                             </div>
                                         </div>

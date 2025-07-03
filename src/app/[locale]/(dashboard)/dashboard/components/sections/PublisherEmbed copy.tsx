@@ -10,7 +10,6 @@ interface PublisherEmbedProps {
 
 const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
   const { platform, url } = analysis;
-  const containerRef = useRef<HTMLDivElement>(null);
 
 
   if (platform === 'x') {

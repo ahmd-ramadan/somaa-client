@@ -18,7 +18,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
     }, [allAnalysis])
 
     const derivePublishers = (analysisData: IAnalysis[]): IDashboardPublisher[] => {
-        const analysisMap = new Map<string, { total: number, avatar: string, handle: number, shares: number, views: number, appearance: number, reactions: number, comments: number  }>();
+        const analysisMap = new Map<string, { total: number, avatar: string, handle: string, shares: number, views: number, appearance: number, reactions: number, comments: number  }>();
         for(const { publisher: { name, avatar, handle }, statistics: { shares, views, appearance, reactions, comments }} of analysisData) {
             const totalStatistics = shares + reactions + appearance + views + comments;
             
@@ -27,7 +27,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                 analysisMap.set(name, { 
                     total: publisherObject?.total + totalStatistics, 
                     avatar, 
-                    handle,
+                    handle: handle as string,
                     comments: publisherObject?.comments + comments,
                     appearance: publisherObject?.appearance + appearance,
                     reactions: publisherObject?.reactions + reactions,
@@ -35,7 +35,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                     views: publisherObject?.views + views
                 })
             } else {
-                analysisMap.set(name, { total: totalStatistics, avatar, shares, views, appearance, reactions, comments, handle })
+                analysisMap.set(name, { total: totalStatistics, avatar, shares, views, appearance, reactions, comments, handle: handle as string})
             }
         } 
         
@@ -112,12 +112,12 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                                         >
                                             <div className="flex items-center gap-2">
                                                 {publisher.avatar ? 
-                                                    <Image 
-                                                        src={publisher.avatar}
+                                                    <img
+                                                        src={publisher?.avatar}
                                                         alt={publisher.name?.charAt(0)}
-                                                        width={40}
-                                                        height={40}
-                                                        className="rounded-full w-8 h-8 bg-gray-600"
+                                                        // width={40}
+                                                        // height={40}
+                                                        className="rounded-full w-10 h-10 bg-gray-600"
                                                     /> :
                                                     <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-gray-300">
                                                         {publisher.name?.charAt(0) || '?'}
@@ -151,12 +151,12 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                                         >
                                             <div className="flex items-center gap-2">
                                                 {publisher.avatar ? 
-                                                    <Image 
-                                                        src={publisher.avatar}
+                                                    <img
+                                                        src={publisher?.avatar}
                                                         alt={publisher.name?.charAt(0)}
-                                                        width={40}
-                                                        height={40}
-                                                        className="rounded-full w-8 h-8 bg-gray-600"
+                                                        // width={40}
+                                                        // height={40}
+                                                        className="rounded-full w-10 h-10 bg-gray-600"
                                                     /> :
                                                     <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-gray-300">
                                                         {publisher.name?.charAt(0) || '?'}
@@ -190,12 +190,12 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                                         >
                                             <div className="flex items-center gap-2">
                                                 {publisher.avatar ? 
-                                                    <Image 
-                                                        src={publisher.avatar}
+                                                    <img
+                                                        src={publisher?.avatar}
                                                         alt={publisher.name?.charAt(0)}
-                                                        width={40}
-                                                        height={40}
-                                                        className="rounded-full w-8 h-8 bg-gray-600"
+                                                        // width={40}
+                                                        // height={40}
+                                                        className="rounded-full w-10 h-10 bg-gray-600"
                                                     /> :
                                                     <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-gray-300">
                                                         {publisher.name?.charAt(0) || '?'}
@@ -229,12 +229,12 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                                         >
                                             <div className="flex items-center gap-2">
                                                 {publisher.avatar ? 
-                                                    <Image 
-                                                        src={publisher.avatar}
+                                                    <img
+                                                        src={publisher?.avatar}
                                                         alt={publisher.name?.charAt(0)}
-                                                        width={40}
-                                                        height={40}
-                                                        className="rounded-full w-8 h-8 bg-gray-600"
+                                                        // width={40}
+                                                        // height={40}
+                                                        className="rounded-full w-10 h-10 bg-gray-600"
                                                     /> :
                                                     <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-gray-300">
                                                         {publisher.name?.charAt(0) || '?'}
@@ -268,12 +268,12 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                                         >
                                             <div className="flex items-center gap-2">
                                                 {publisher.avatar ? 
-                                                    <Image 
-                                                        src={publisher.avatar}
+                                                    <img
+                                                        src={publisher?.avatar}
                                                         alt={publisher.name?.charAt(0)}
-                                                        width={40}
-                                                        height={40}
-                                                        className="rounded-full w-8 h-8 bg-gray-600"
+                                                        // width={40}
+                                                        // height={40}
+                                                        className="rounded-full w-10 h-10 bg-gray-600"
                                                     /> :
                                                     <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-gray-300">
                                                         {publisher.name?.charAt(0) || '?'}
@@ -337,12 +337,12 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                                         >
                                             <div className="flex items-center gap-2">
                                                 {publisher.avatar ? 
-                                                    <Image 
-                                                        src={publisher.avatar}
+                                                    <img
+                                                        src={publisher?.avatar}
                                                         alt={publisher.name?.charAt(0)}
-                                                        width={40}
-                                                        height={40}
-                                                        className="rounded-full w-8 h-8 bg-gray-600"
+                                                        // width={40}
+                                                        // height={40}
+                                                        className="rounded-full w-10 h-10 bg-gray-600"
                                                     /> :
                                                     <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-gray-300">
                                                         {publisher.name?.charAt(0) || '?'}

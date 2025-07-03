@@ -41,7 +41,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
         const analysisMap = new Map<string, { count: number, classifications: Map<AnalysisClassifyEnum, number> }>();
         
         analysisData.forEach(analysis => {
-            const name = analysis.subAnalysis.body;
+            const name = analysis.subAnalysisData.body;
             if (!name) return;
             
             if (!analysisMap.has(name)) {

@@ -79,11 +79,11 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
                                         {/* UserInfo */}
                                         <div className="flex gap-1">
                                             { analysis.publisher.avatar ? 
-                                                <Image 
+                                                <img 
                                                     src={analysis.publisher.avatar}
                                                     alt={analysis.publisher?.name?.charAt(0)}
-                                                    width={50}
-                                                    height={50}
+                                                    // width={50}
+                                                    // height={50}
                                                     className="rounded-full w-10 h-10 bg-gray-600 flex items-center justify-center text-gray-300"
                                                 /> :
                                                 <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-gray-300">
@@ -125,7 +125,7 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
                                     {/* Content */}
                                     <div className="">
                                         <p className="text-xs text-gray-400 my-2 px-2 line-clamp-2">
-                                            {analysis.content?.body || analysis.subAnalysis?.body || 'No content available'}
+                                            {analysis.content?.body || analysis.subAnalysisData?.body || 'No content available'}
                                         </p>
 
                                         {/* Statistics */}

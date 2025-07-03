@@ -120,7 +120,7 @@ const NewsFilters = ({
     const getFilterOptions = (type: keyof FilterState): string[] => {
         switch (type) {
             case 'sector':
-                return Array.from(new Set(allNews.map(a => a.sector.name)));
+                return Array.from(new Set(allNews.map(a => a.sectorData.name)));
             case 'classify':
                 return Object.values(NewsClassifyEnum);
             case 'adType':

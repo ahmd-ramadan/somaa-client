@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
 import { fetchAllSectors, addSector } from "@/lib/features/sector/sectorThunks";
@@ -13,14 +13,14 @@ import {
     Info,
     Save,
     XCircle,
-    Plus
+    Plus,
+    CircleUserRound
 } from 'lucide-react';
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { handleError } from "@/utils/errorUtils";
 import Spinner from "../../../../../components/ui/Spinner";
 import Link from 'next/link';
-import { formatDate } from '@/utils/formatDateAndTime';
 import { ApiResponse } from '@/utils/apiService';
 import { INews, NewsAdTypesEnum, NewsClassifyEnum, NewsGeographicalClassifyEnum, NewsPressTypesEnum } from '@/interfaces/news.types';
 import { updateNews } from '@/lib/features/news/newsthunks';
@@ -34,7 +34,6 @@ interface EditNewsProps {
 
 const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
     const t = useTranslations("NewsPage.AllNewsTable");
-    const locale = useLocale();
     const dispatch = useAppDispatch();
 
     const { loggedInUser: { token } } = useAppSelector((state: RootState) => state.authUser);
@@ -56,9 +55,9 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
     const [changedFields, setChangedFields] = useState<Record<string, any>>({});
 
     // Sector states with null checks
-    const [sectorInput, setSectorInput] = useState<string>(news?.sector?.name || '');
+    const [sectorInput, setSectorInput] = useState<string>(news?.sectorData?.name || '');
     const [showSectorDropdown, setShowSectorDropdown] = useState<boolean>(false);
-    const [selectedSector, setSelectedSector] = useState<string>(news?.sector?.sectorId || '');
+    const [selectedSector, setSelectedSector] = useState<string>(news?.sectorId || '');
 
     const { isConnected, socket } = useSocket();
     const [error, setError] = useState<string | null>(null);
@@ -508,13 +507,14 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
                             {t("addedBy")}
                         </h4>
                         <div className="flex items-center gap-2">
-                            <Image
+                            {/* <img
                                 src={editedNews.addedByData?.avatar?.secure_url || '/logo.png'}
                                 alt="Added By"
-                                width={30}
-                                height={30}
-                                className="rounded-full"
-                            />
+                                // width={30}
+                                // height={30}
+                                className="w-10 h-10 rounded-full"
+                            /> */}
+                            <CircleUserRound className='w-4 h-4 text-primary'/>
                             <p className="text-primary">{editedNews.addedByData?.name}</p>
                         </div>
                     </div>

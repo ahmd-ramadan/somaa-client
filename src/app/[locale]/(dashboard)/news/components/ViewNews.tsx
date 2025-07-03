@@ -8,8 +8,8 @@ import {
     Calendar,  
     ExternalLink, 
     Info,
+    CircleUserRound,
 } from 'lucide-react';
-import Image from "next/image";
 import Link from 'next/link';
 import { formatDate } from '@/utils/formatDateAndTime';
 import { INews } from '@/interfaces/news.types';
@@ -33,29 +33,12 @@ const ViewNews = ({ news }: ViewNewsProps) => {
                     <p className="text-primary">{news.title}</p>
                 </div>
 
-                {/* <div className="space-y-2">
-                    <h3 className="font-semibold text-primary flex items-center gap-2">
-                        <User className="w-5 h-5 text-primary" />
-                        {t("publisher")}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                        <Image
-                            src={analysis.publisher?.avatar || '/logo.png'}
-                            alt="Publisher"
-                            width={40}
-                            height={40}
-                            className="rounded-full"
-                        />
-                        <p className="text-primary">{analysis.publisher?.name}</p>
-                    </div>
-                </div> */}
-
                 <div className="space-y-2">
                     <h3 className="font-semibold text-primary flex items-center gap-2">
                         <Building2 className="w-5 h-5 text-primary" />
                         {t("sector")}
                     </h3>
-                    <p className="text-primary">{news.sector.name}</p>
+                    <p className="text-primary">{news.sectorData.name}</p>
                 </div>
 
 
@@ -111,13 +94,14 @@ const ViewNews = ({ news }: ViewNewsProps) => {
                             {t("addedBy")}
                         </h4>
                         <div className="flex items-center gap-2">
-                            <Image
+                            {/* <img
                                 src={news.addedByData?.avatar?.secure_url || '/logo.png'}
                                 alt="Added By"
-                                width={30}
-                                height={30}
-                                className="rounded-full"
-                            />
+                                // width={30}
+                                // height={30}
+                                className="w-10 h-10 rounded-full"
+                            /> */}
+                            <CircleUserRound className='w-4 h-4 text-primary'/>
                             <p className="text-primary">{news.addedByData?.name}</p>
                         </div>
                     </div>

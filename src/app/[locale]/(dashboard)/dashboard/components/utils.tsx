@@ -1,9 +1,9 @@
-import FacebookIcon from '@/components/icons/Facebook';
-import InstagramIcon from '@/components/icons/Instagram';
-import LinkedInIcon from '@/components/icons/LinkedIn';
-import TikTokIcon from '@/components/icons/TikTok';
-import XIcon from '@/components/icons/X';
-import YoutubeIcon from '@/components/icons/Youtube';
+import FacebookIcon from '@/components/icons/SocialMedia/Facebook';
+import InstagramIcon from '@/components/icons/SocialMedia/Instagram';
+import LinkedInIcon from '@/components/icons/SocialMedia/LinkedIn';
+import TikTokIcon from '@/components/icons/SocialMedia/TikTok';
+import XIcon from '@/components/icons/SocialMedia/X';
+import YoutubeIcon from '@/components/icons/SocialMedia/Youtube';
 import { PlatformsEnum } from '@/interfaces/analysis.types';
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
 import React, { ReactNode } from 'react';

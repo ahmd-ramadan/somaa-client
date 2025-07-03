@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
 import { formatDate } from "@/utils/formatDateAndTime";
 import { useLocale, useTranslations } from "next-intl";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Modal from "../../../../../components/ui/Modal";
@@ -23,14 +22,12 @@ import {
     Trash2,
     SearchX,
     FilterX,
-    AlertCircle,
     X,
     FileDown,
     ArrowUpDown,
     ArrowUp,
     ArrowDown,
     RefreshCcw,
-    Layers,
     CircleUserRound
 } from 'lucide-react';
 import { useAnalysisFilters } from "@/hooks/useAnalysisFilters";
@@ -47,19 +44,10 @@ import { Checkbox } from "../../../../../components/ui/checkbox";
 import ExportModal from './ExportModal';
 import { useSocket } from '@/hooks/useSocket';
 import Spinner from '@/components/ui/Spinner';
-import { getImageURL } from '@/utils/getImage';
-import FullProfileIcon from '@/components/icons/FullProfile';
 
-interface GroupingState {
-    sector?: boolean;
-    addedBy?: boolean;
-    platform?: boolean;
-    subAnalysis?: boolean;
-    classify?: boolean;
-    contentType?: boolean;
-    tweetType?: boolean;
-    publisher?: boolean;
-}
+type GroupingState = {
+    [key: string]: { active: boolean; order?: number }
+};
 
 interface GroupedAnalysisData {
     key: string;
@@ -70,13 +58,18 @@ interface GroupedAnalysisData {
     isCollapsed: boolean;
 }
 
-interface AllAnalysisTableProps {
-    // allAnalysis: IAnalysis[];
-    // setSelectedAllAnalysis: (allAnalysis: IAnalysis[]) => void;
-    // currentPage: number;
-    // totalPages: number;
-    // onPageChange: (page: number) => void;
-}
+interface AllAnalysisTableProps {}
+
+const groupingOrderMap = {
+    sector: { key: 'sector', getValue: (item: IAnalysis) => item.sectorData.name },
+    addedBy: { key: 'addedBy', getValue: (item: IAnalysis) => item.addedByData?.name || 'Unknown' },
+    platform: { key: 'platform', getValue: (item: IAnalysis) => item.platform },
+    publisher: { key: 'publisher', getValue: (item: IAnalysis) => item.publisher.name },
+    subAnalysis: { key: 'subAnalysis', getValue: (item: IAnalysis) => item.subAnalysisData.body },
+    classify: { key: 'classify', getValue: (item: IAnalysis) => item.classify },
+    contentType: { key: 'contentType', getValue: (item: IAnalysis) => item.content?.type },
+    tweetType: { key: 'tweetType', getValue: (item: IAnalysis) => item.tweetType }
+};
 
 const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
     const t = useTranslations("SocialMediaPage.AllAnalysisTable")
@@ -139,6 +132,12 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
     const { isConnected, socket } = useSocket();
     const [error, setError] = useState<string | null>(null);
 
+    const [unoptimizedAvatars, setUnoptimizedAvatars] = useState<Record<string, { publisher: boolean, addedBy: boolean, avatar: string }>>({});
+
+    // Add pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(20);
+
     useEffect(() => {
         if(!socket || !isConnected) {
             return;
@@ -155,8 +154,6 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
             socket.off('error');
         };
     }, [socket, isConnected])
-
-    
 
     useEffect(() => {
         if (selectedAnalysisId) router.push(`/${locale}/social-media/${selectedAnalysisId}`);
@@ -176,6 +173,35 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
 
     const [groupings, setGroupings] = useState<GroupingState>({});
 
+    const toggleGrouping = (key: string) => {
+        setGroupings(prev => {
+            const isActive = prev[key]?.active;
+            if (isActive) {
+                // Deactivate and remove order
+                return {
+                    ...prev,
+                    [key]: { active: false }
+                };
+            } else {
+                // Activate and assign next order
+                const maxOrder = Math.max(0, ...Object.values(prev).map(g => g.order || 0));
+                return {
+                    ...prev,
+                    [key]: { active: true, order: maxOrder + 1 }
+                };
+            }
+        });
+    };
+
+    const activeGroupingKeys = Object.entries(groupings)
+        .filter(([_, value]) => value.active)
+        .sort((a, b) => (a[1].order || 0) - (b[1].order || 0))
+        .map(([key]) => key);
+    const activeGroupings = activeGroupingKeys;
+
+    // After defining activeGroupings, also define activeGroupingsMap for groupingOrderMap objects
+    const activeGroupingsMap = activeGroupingKeys.map(key => groupingOrderMap[key as keyof typeof groupingOrderMap]);
+
     const getSortedAndGroupedAnalysis = (): GroupedAnalysisData[] => {
         // Sort data based on total statistics
         const sorted = [...filteredAnalysis].sort((a, b) => {
@@ -192,44 +218,60 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
             return 0;
         });
 
-        // Define grouping order
-        const groupingOrder = [
-            { key: 'sector', getValue: (item: IAnalysis) => item.sector.name },
-            { key: 'addedBy', getValue: (item: IAnalysis) => item.addedByData?.name || 'Unknown' },
-            { key: 'platform', getValue: (item: IAnalysis) => item.platform },
-            { key: 'publisher', getValue: (item: IAnalysis) => item.publisher.name },
-            { key: 'subAnalysis', getValue: (item: IAnalysis) => item.subAnalysis.body },
-            { key: 'classify', getValue: (item: IAnalysis) => item.classify },
-            { key: 'contentType', getValue: (item: IAnalysis) => item.content?.type },
-            { key: 'tweetType', getValue: (item: IAnalysis) => item.tweetType }
-        ];
+        // Helper: get all possible values for a grouping type
+        const getAllPossibleValues = (key: string): string[] => {
+            switch (key) {
+                case 'sector':
+                    return Array.from(new Set(allAnalysis.map(a => a.sectorData.name)));
+                case 'subAnalysis':
+                    return Array.from(new Set(allAnalysis.map(a => a.subAnalysisData.body)));
+                case 'classify':
+                    return Object.values(AnalysisClassifyEnum);
+                case 'contentType':
+                    return Object.values(ContentTypesEnum);
+                case 'tweetType':
+                    return Object.values(TweetTypesEnum);
+                case 'addedBy':
+                    return Array.from(new Set(allAnalysis.map(a => a.addedByData?.name).filter(Boolean)));
+                case 'publisher':
+                    return Array.from(new Set(allAnalysis.map(a => a.publisher.name).filter(Boolean)));
+                case 'platform':
+                    return Array.from(new Set(allAnalysis.map(a => a.platform)));
+                default:
+                    return [];
+            }
+        };
 
-        // Filter active groupings
-        const activeGroupings = groupingOrder.filter(group => groupings[group.key as keyof GroupingState]);
-
-        // If no groupings are active, return data without grouping
+        // If no groupings are active, return paginated data
         if (activeGroupings.length === 0) {
+            const totalItems = filteredAnalysis.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginated = filteredAnalysis.slice(startIndex, endIndex);
             return [{
                 key: 'all-data',
                 label: t("allAnalysis"),
-                items: sorted,
+                items: paginated,
                 children: [],
                 level: 0,
                 isCollapsed: false
             }];
         }
 
-        // Create nested structure recursively
-        const createNestedGroups = (items: IAnalysis[], level: number): GroupedAnalysisData[] => {
-            if (level >= activeGroupings.length) {
+        // Create nested structure recursively, showing all possible values
+        const createNestedGroups = (items: IAnalysis[], level: number, parentPath = ''): GroupedAnalysisData[] => {
+            if (level >= activeGroupingsMap.length) {
                 return [];
             }
 
-            const currentGrouping = activeGroupings[level];
+            const currentGrouping = activeGroupingsMap[level];
+            const groupKeyName = activeGroupingKeys[level];
+            const possibleValues = getAllPossibleValues(groupKeyName);
             const groups: Record<string, IAnalysis[]> = {};
 
             // Group items by current grouping
-                items.forEach(item => {
+            items.forEach(item => {
                 const value = currentGrouping.getValue(item);
                 if (!groups[value]) {
                     groups[value] = [];
@@ -237,11 +279,17 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
                 groups[value].push(item);
             });
 
+            // Ensure all possible values are present (even if empty)
+            possibleValues.forEach(value => {
+                if (!groups[value]) {
+                    groups[value] = [];
+                }
+            });
+
             // Convert to GroupedAnalysisData structure
             return Object.entries(groups).map(([value, groupItems]) => {
-                const groupKey = `${currentGrouping.key}-${value}`;
-                const children = createNestedGroups(groupItems, level + 1);
-                
+                const groupKey = `${parentPath ? parentPath + '/' : ''}${currentGrouping.key}-${value}`;
+                const children = createNestedGroups(groupItems, level + 1, groupKey);
                 return {
                     key: groupKey,
                     label: Object.values(AnalysisClassifyEnum).includes(value as AnalysisClassifyEnum) 
@@ -255,7 +303,7 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
             });
         };
 
-        return createNestedGroups(sorted, 0);
+        return createNestedGroups(sorted, 0, '');
     };
 
     const groupedAnalysis = React.useMemo(() => getSortedAndGroupedAnalysis(), [filteredAnalysis, sortOrder, groupings]);
@@ -560,15 +608,20 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
     };
 
     // Helper function to get grouping type label
-    const getGroupingTypeLabel = (groupKey: string): string => {
-        if (groupKey.startsWith('sector-')) return t("sector");
-        if (groupKey.startsWith('addedBy-')) return t("addedBy");
-        if (groupKey.startsWith('platform-')) return t("platform");
-        if (groupKey.startsWith('publisher-')) return t("publisher");
-        if (groupKey.startsWith('subAnalysis-')) return t("subAnalysis");
-        if (groupKey.startsWith('classify-')) return t("classification");
-        if (groupKey.startsWith('contentType-')) return t("contentType");
-        if (groupKey.startsWith('tweetType-')) return t("tweetType");
+    const getGroupingTypeLabel = (groupKey: string, level: number): string => {
+        const currentLevel = groupKey.split('/').at(level) || groupKey;
+        console.log("groupKey", groupKey);
+        console.log("levl", level);
+        console.log("currentLevel", currentLevel);
+
+        if (currentLevel.startsWith('sector-')) return t("sector");
+        if (currentLevel.startsWith('addedBy-')) return t("addedBy");
+        if (currentLevel.startsWith('platform-')) return t("platform");
+        if (currentLevel.startsWith('publisher-')) return t("publisher");
+        if (currentLevel.startsWith('subAnalysis-')) return t("subAnalysis");
+        if (currentLevel.startsWith('classify-')) return t("classification");
+        if (currentLevel.startsWith('contentType-')) return t("contentType");
+        if (currentLevel.startsWith('tweetType-')) return t("tweetType");
         return t("group");
     };
 
@@ -579,7 +632,7 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
             const hasChildren = group.children.length > 0;
             const hasItems = group.items.length > 0;
             const totalItems = getTotalItemsInGroup(group);
-            const groupingType = getGroupingTypeLabel(group.key);
+            const groupingType = getGroupingTypeLabel(group.key, level);
             const connectorColor = getConnectorColor(level);
             const isNoGrouping = group.key === 'all-data';
             
@@ -650,13 +703,13 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
                             {hasItems && group.items.map((analysis) => {
                                 const {
                                     _id,
-                                    subAnalysis,
+                                    subAnalysisData,
                                     classify,
                                     content,
                                     createdAt,
                                     platform,
                                     publisher,
-                                    sector,
+                                    sectorData,
                                     statistics: {
                                         reactions,
                                         appearance,
@@ -674,6 +727,10 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
                                     date: createdAt, 
                                     withTime: true 
                                 });
+
+                                const unOptimizedPublisherAvatar = unoptimizedAvatars[analysis._id]?.publisher ?? false;
+                                const unOptimizedAddedByAvatar = unoptimizedAvatars[analysis._id]?.addedBy ?? false;
+                                const publisherAvatar = unoptimizedAvatars[analysis._id]?.avatar;
 
                                 return (
                                     <tr key={_id} className="hover:bg-primary/20">
@@ -697,16 +754,13 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
                                                 onMouseEnter={(e) => handleImageHover(e, publisher?.avatar || '/logo.png', publisher.name)}
                                                 onMouseLeave={handleImageLeave}
                                             >
-                                                <Image
-                                                    src={publisher?.avatar || '/logo.png'}
+                                                <img
+                                                    src={analysis?.publisher?.avatar || '/logo.png'}
                                                     alt="Publisher avatar"
-                                                    width={50}
-                                                    height={50}
-                                                    className="rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105"
-                                                    onError={(e) => {
-                                                        const target = e.target as HTMLImageElement;
-                                                        target.src = '/logo.png';
-                                                    }}
+                                                    // width={50}
+                                                    // height={50}
+                                                    // unoptimized={unOptimizedPublisherAvatar}
+                                                    className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
                                                 />
                                                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity duration-200 rounded-md" />
                                             </div>
@@ -715,9 +769,9 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
                                                 <p className="text-xs text-gray-600">@{publisher?.handle}</p>
                                             </div>
                                         </th>
-                                        <td className="px-2 py-1">{sector.name}</td>
+                                        <td className="px-2 py-1">{sectorData?.name}</td>
                                         <td className={`px-2 py-1 ${classify === AnalysisClassifyEnum.POSITIVE ? 'text-green-600' : classify === AnalysisClassifyEnum.NEGATIVE ? 'text-red-600' : 'text-primary'}`}>{t(classify)}</td>
-                                        <td className={`px-2 py-1`}>{subAnalysis.body}</td>
+                                        <td className={`px-2 py-1`}>{subAnalysisData?.body}</td>
                                         <td className="px-2 py-1">{reactions.toLocaleString()}</td>
                                         <td className="px-2 py-1">{comments.toLocaleString()}</td>
                                         <td className="px-2 py-1">{shares.toLocaleString()}</td>
@@ -1015,8 +1069,8 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
                         >
                             <X className="w-4 h-4" />
                         </button>
-                        <Image
-                            src={hoveredImage.src}
+                        <img
+                            src={hoveredImage.src || '/logo.png'}
                             alt={hoveredImage.name}
                             width={200}
                             height={300}
@@ -1038,6 +1092,36 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
                 onClose={() => setIsExportModalOpen(false)}
                 data={filteredAnalysis}
             />
+
+            {/* After the table rendering, add pagination controls if not grouped */}
+            {activeGroupings.length === 0 && (
+                <div className="flex justify-center items-center gap-2 mt-4">
+                    <button
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+                    >
+                        {t('prev')}
+                    </button>
+                    <span>{t('page')} {currentPage}</span>
+                    <button
+                        onClick={() => setCurrentPage(p => p + 1)}
+                        disabled={currentPage >= Math.ceil(filteredAnalysis.length / itemsPerPage)}
+                        className="px-3 py-1 rounded bg-gray-200 text-gray-700 disabled:opacity-50"
+                    >
+                        {t('next')}
+                    </button>
+                    <select
+                        value={itemsPerPage}
+                        onChange={e => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                        className="ml-2 px-2 py-1 border rounded"
+                    >
+                        {[10, 20, 50, 100].map(n => (
+                            <option key={n} value={n}>{n} / {t('page')}</option>
+                        ))}
+                    </select>
+                </div>
+            )}
         </div>
     );
 };

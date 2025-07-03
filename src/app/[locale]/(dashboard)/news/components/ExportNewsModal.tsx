@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslations } from "next-intl";
-import { X, ArrowLeft, ArrowRight, Save, Plus, Trash2, GripVertical, XCircle, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { X, ArrowRight, Save, Trash2, GripVertical, XCircle } from 'lucide-react';
 import { INews } from "@/interfaces/news.types";
 import * as XLSX from 'xlsx';
 import { formatDate } from "@/utils/formatDateAndTime";
@@ -155,7 +155,7 @@ const ExportNewsModal = ({ isOpen, onClose, data }: ExportNewsModalProps) => {
                             row[t(col.id)] = item.title;
                             break;
                         case 'sector':
-                            row[t(col.id)] = item.sector.name;
+                            row[t(col.id)] = item.sectorData.name;
                             break;
                         case 'classify':
                             row[t(col.id)] = item.classify;
@@ -261,7 +261,7 @@ const ExportNewsModal = ({ isOpen, onClose, data }: ExportNewsModalProps) => {
                         cellValue = item.title;
                         break;
                     case 'sector':
-                        cellValue = item.sector.name;
+                        cellValue = item.sectorData.name;
                         break;
                     case 'classify':
                         cellValue = item.classify;

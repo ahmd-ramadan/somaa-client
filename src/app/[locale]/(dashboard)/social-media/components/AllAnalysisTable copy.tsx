@@ -23,7 +23,6 @@ import {
     Trash2,
     SearchX,
     FilterX,
-    AlertCircle,
     X,
     FileDown,
     ArrowUpDown,
@@ -45,7 +44,6 @@ import { Checkbox } from "../../../../../components/ui/checkbox";
 import ExportModal from './ExportModal';
 import { useSocket } from '@/hooks/useSocket';
 import Spinner from '@/components/ui/Spinner';
-import { getImageURL } from '@/utils/getImage';
 import Pagination from '@/components/ui/Pagination';
 
 interface GroupingState {
@@ -209,7 +207,7 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
             const newGroupedData: Record<string, IAnalysis[]> = {};
             Object.entries(groupedData).forEach(([key, items]) => {
                 items.forEach(item => {
-                    const groupKey = key ? `${key} - ${item.sector.name}` : item.sector.name;
+                    const groupKey = key ? `${key} - ${item.sectorData.name}` : item.sectorData.name;
                     if (!newGroupedData[groupKey]) newGroupedData[groupKey] = [];
                     newGroupedData[groupKey].push(item);
                 });
@@ -245,7 +243,7 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
             const newGroupedData: Record<string, IAnalysis[]> = {};
             Object.entries(groupedData).forEach(([key, items]) => {
                 items.forEach(item => {
-                    const groupKey = key ? `${key} - ${item.subAnalysis.body}` : item.subAnalysis.body;
+                    const groupKey = key ? `${key} - ${item.subAnalysisData.body}` : item.subAnalysisData.body;
                     if (!newGroupedData[groupKey]) newGroupedData[groupKey] = [];
                     newGroupedData[groupKey].push(item);
                 });
@@ -495,6 +493,8 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
         });
     };
 
+    const [unoptimizedAvatars, setUnoptimizedAvatars] = useState<Record<string, { publisher: boolean, addedBy: boolean }>>({});
+
     const renderTable = () => {
         // Check if there are no results after filtering
         if (filteredAnalysis.length === 0) {
@@ -591,13 +591,13 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
                             {(groupKey === "" || !collapsedGroups[groupKey]) && items.map((analysis) => {
                                 const {
                                     _id,
-                                    subAnalysis,
+                                    subAnalysisData,
                                     classify,
                                     content,
                                     createdAt,
                                     platform,
                                     publisher,
-                                    sector,
+                                    sectorData,
                                     statistics: {
                                         reactions,
                                         appearance,
@@ -615,6 +615,9 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
                                     date: createdAt, 
                                     withTime: true 
                                 });
+
+                                const unOptimizedPublisherAvatar = unoptimizedAvatars[analysis._id]?.publisher ?? false;
+                                const unOptimizedAddedByAvatar = unoptimizedAvatars[analysis._id]?.addedBy ?? false;
 
                                 return (
                                     <tr key={_id} className="hover:bg-primary/20">
@@ -639,11 +642,11 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
                                                 onMouseLeave={handleImageLeave}
                                             >
                                                 <Image
-                                                    // src={publisher?.avatar || '/logo.png'}
-                                                    src={getImageURL({ imageURL: publisher.avatar, platform })}
+                                                    src={publisher?.avatar || '/logo.png'}
                                                     alt="Publisher avatar"
                                                     width={50}
                                                     height={50}
+                                                    unoptimized={unOptimizedPublisherAvatar}
                                                     className="rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105"
                                                     onError={(e) => {
                                                         const target = e.target as HTMLImageElement;
@@ -654,9 +657,9 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
                                             </div>
                                             <p className="">{publisher.name}</p>
                                         </th>
-                                        <td className="px-2 py-1">{sector.name}</td>
+                                        <td className="px-2 py-1">{sectorData.name}</td>
                                         <td className={`px-2 py-1 ${classify === AnalysisClassifyEnum.POSITIVE ? 'text-green-600' : classify === AnalysisClassifyEnum.NEGATIVE ? 'text-red-600' : 'text-primary'}`}>{t(classify)}</td>
-                                        <td className={`px-2 py-1`}>{subAnalysis.body}</td>
+                                        <td className={`px-2 py-1`}>{subAnalysisData.body}</td>
                                         <td className="px-2 py-1">{reactions}</td>
                                         <td className="px-2 py-1">{comments}</td>
                                         <td className="px-2 py-1">{shares}</td>
@@ -674,6 +677,7 @@ const AllAnalysisTable = ({ }: AllAnalysisTableProps) => {
                                                     alt="Added by avatar"
                                                     width={50}
                                                     height={50}
+                                                    unoptimized={unOptimizedAddedByAvatar}
                                                     className="rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105"
                                                     onError={(e) => {
                                                         const target = e.target as HTMLImageElement;

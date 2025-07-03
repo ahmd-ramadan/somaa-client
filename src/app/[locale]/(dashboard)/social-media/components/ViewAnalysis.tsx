@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocale, useTranslations } from "next-intl";
-import { IAnalysis, AnalysisClassifyEnum, ContentTypesEnum, PlatformsEnum } from "@/interfaces/analysis.types";
+import { IAnalysis } from "@/interfaces/analysis.types";
 import { 
     Globe, 
     User, 
@@ -13,11 +13,11 @@ import {
     ExternalLink, 
     BarChart2, 
     Info,
-    XCircle,
     MessageCircle,
     Share2,
     Heart,
-    Eye
+    Eye,
+    CircleUserRound
 } from 'lucide-react';
 import Image from "next/image";
 import Link from 'next/link';
@@ -48,12 +48,12 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                         {t("publisher")}
                     </h3>
                     <div className="flex items-center gap-2">
-                        <Image
+                        <img
                             src={analysis.publisher?.avatar || '/logo.png'}
                             alt="Publisher"
-                            width={40}
-                            height={40}
-                            className="rounded-full"
+                            // width={40}
+                            // height={40}
+                            className="w-10 h-10 rounded-full"
                         />
                         <p className="text-primary">{analysis.publisher?.name}</p>
                     </div>
@@ -64,7 +64,7 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                         <Building2 className="w-5 h-5 text-primary" />
                         {t("sector")}
                     </h3>
-                    <p className="text-primary">{analysis.sector.name}</p>
+                    <p className="text-primary">{analysis.sectorData.name}</p>
                 </div>
 
                 <div className="space-y-2">
@@ -80,7 +80,7 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                         <FileText className="w-5 h-5 text-primary" />
                         {t("subAnalysis")}
                     </h3>
-                    <p className="text-primary">{analysis.subAnalysis.body}</p>
+                    <p className="text-primary">{analysis.subAnalysisData.body}</p>
                 </div>
 
                 <div className="space-y-2">
@@ -177,13 +177,14 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                             {t("addedBy")}
                         </h4>
                         <div className="flex items-center gap-2">
-                            <Image
+                            {/* <img
                                 src={analysis.addedByData?.avatar?.secure_url || '/logo.png'}
                                 alt="Added By"
-                                width={30}
-                                height={30}
-                                className="rounded-full"
-                            />
+                                // width={30}
+                                // height={30}
+                                className="w-10 h-10 rounded-full"
+                            /> */}
+                            <CircleUserRound className='w-4 h-4 text-primary'/>
                             <p className="text-primary">{analysis.addedByData?.name}</p>
                         </div>
                     </div>

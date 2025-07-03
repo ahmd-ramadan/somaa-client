@@ -24,14 +24,14 @@ import {
     MessageCircle,
     Share2,
     Heart,
-    Eye
+    Eye,
+    CircleUserRound
 } from 'lucide-react';
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { handleError } from "@/utils/errorUtils";
 import Spinner from "../../../../../components/ui/Spinner";
 import Link from 'next/link';
-import { formatDate } from '@/utils/formatDateAndTime';
 import { updateAnalysis } from '@/lib/features/socialMedia/analysisThunks';
 import { ApiResponse } from '@/utils/apiService';
 import { useSocket } from '@/hooks/useSocket';
@@ -56,14 +56,14 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
     const [changedFields, setChangedFields] = useState<Record<string, any>>({});
 
     // Sector states
-    const [sectorInput, setSectorInput] = useState<string>(analysis.sector.name);
+    const [sectorInput, setSectorInput] = useState<string>(analysis.sectorData.name);
     const [showSectorDropdown, setShowSectorDropdown] = useState<boolean>(false);
-    const [selectedSector, setSelectedSector] = useState<string>(analysis.sector.sectorId);
+    const [selectedSector, setSelectedSector] = useState<string>(analysis.sectorId);
 
     // SubAnalysis states
-    const [subAnalysisInput, setSubAnalysisInput] = useState<string>(analysis.subAnalysis.body);
+    const [subAnalysisInput, setSubAnalysisInput] = useState<string>(analysis.subAnalysisData.body);
     const [showSubAnalysisDropdown, setShowSubAnalysisDropdown] = useState<boolean>(false);
-    const [selectedSubAnalysis, setSelectedSubAnalysis] = useState<string>(analysis.subAnalysis.subAnalysisId);
+    const [selectedSubAnalysis, setSelectedSubAnalysis] = useState<string>(analysis.subAnalysisId);
 
     // Location states
     const [regionInput, setRegionInput] = useState<string>(analysis.location?.region || "");
@@ -497,12 +497,12 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                         {t("publisher")}
                     </h3>
                     <div className="flex items-center gap-2">
-                        <Image
+                        <img
                             src={editedAnalysis.publisher?.avatar || '/logo.png'}
                             alt="Publisher"
-                            width={40}
-                            height={40}
-                            className="rounded-full"
+                            // width={40}
+                            // height={40}
+                            className="w-10 h-10 rounded-full"
                         />
                         <p className="text-primary">{editedAnalysis.publisher?.name}</p>
                     </div>
@@ -835,13 +835,14 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                             {t("addedBy")}
                         </h4>
                         <div className="flex items-center gap-2">
-                            <Image
+                            {/* <img
                                 src={editedAnalysis.addedByData?.avatar?.secure_url || '/logo.png'}
                                 alt="Added By"
-                                width={30}
-                                height={30}
-                                className="rounded-full"
-                            />
+                                // width={30}
+                                // height={30}
+                                className="w-10 h-10 rounded-full"
+                            /> */}
+                            <CircleUserRound className='w-4 h-4 text-primary'/>
                             <p className="text-primary">{editedAnalysis.addedByData?.name}</p>
                         </div>
                     </div>

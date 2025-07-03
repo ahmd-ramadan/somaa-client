@@ -37,7 +37,7 @@ const SectorsSection = ({ allAnalysis }: ISectorsSectionProps) => {
         const sectorsMap = new Map<string, { total: number; classifications: IDashboardClassify[] }>();
 
         for (const analysis of analysisData) {
-            const sectorName = analysis.sector.name;
+            const sectorName = analysis.sectorData.name;
             const classification = analysis.classify;
 
             if (!sectorsMap.has(sectorName)) {
