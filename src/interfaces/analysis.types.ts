@@ -18,11 +18,11 @@ export enum AnalysisClassifyEnum {
 export interface IAnalysisModel extends IDBModel {
     url: string;
     tweetType: TweetTypesEnum,
-    subAnalysis: ISubAnalysisData;
+    subAnalysisId: string;
     platform: PlatformsEnum;
     content: IContentData;
     classify: AnalysisClassifyEnum;
-    sector: IAnalysisSector;
+    sectorId: string;
     publisher: IPublisherData;
     location?: ILocationData;
     statistics: IStatistics;
@@ -74,12 +74,12 @@ export interface IStatistics {
 }
 
 export interface IAnalysisSector {
-    sectorId: string,
+    _id: string,
     name: string
 }
 
 export interface ISubAnalysisData {
-    subAnalysisId: string,
+    _id: string,
     body: string
 }
 
@@ -88,6 +88,8 @@ export interface IAnalysis extends IAnalysisModel {
         name: string;
         avatar: ICloudinaryIMage
     }
+    sectorData: IAnalysisSector
+    subAnalysisData:ISubAnalysisData
 }
 
 export interface ICreateAnalysisQuery {
@@ -96,8 +98,8 @@ export interface ICreateAnalysisQuery {
     classify: AnalysisClassifyEnum;
     location?: ILocationData;
     contentType: ContentTypesEnum;
-    sector: IAnalysisSector;
-    subAnalysis: ISubAnalysisData;
+    sectorId: string;
+    subAnalysisId: string;
     note?: string;
     isFlagged?: boolean;
     isHighlighted?: boolean;

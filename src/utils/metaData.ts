@@ -42,6 +42,7 @@ export interface Translations {
     users: string;
     admins: string;
     dashboard: string;
+    settings: string;
 }
 
 export interface TranslationsMap {
@@ -92,7 +93,8 @@ const translations: TranslationsMap = {
         users: "Users Management",
         socialMedia: "Social Media",
         news: "News",
-        dashboard: "Dashboard"
+        dashboard: "Dashboard",
+        settings: "Settings"
     },
     ar: {
         default: 'OSUS Solutions',
@@ -136,7 +138,8 @@ const translations: TranslationsMap = {
         users: " إدارة المستخدمين",
         socialMedia: "التواصل الإجتماعي",
         news: "الأخبار",
-        dashboard: "لوحة التحكم"
+        dashboard: "لوحة التحكم",
+        settings: "الإعدادات"
     }
 };
 

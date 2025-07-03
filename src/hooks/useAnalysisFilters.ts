@@ -34,6 +34,7 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
     const [showFilters, setShowFilters] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(50);
+    const [groupingOrder, setGroupingOrder] = useState<string[]>([]);
 
     // Filter the analysis data
     const filteredAnalysis = allAnalysis.filter(analysis => {
@@ -58,14 +59,14 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
 
         if (filters.sector?.length) {
             const sectorMatches = filters.sector.some(filterSector => 
-                analysis.sector.name.toLowerCase().includes(filterSector.toLowerCase())
+                analysis.sectorData.name.toLowerCase().includes(filterSector.toLowerCase())
             );
             if (!sectorMatches) matches = false;
         }
 
         if (filters.subAnalysis?.length) {
             const subAnalysisMatches = filters.subAnalysis.some(filterSubAnalysis => 
-                analysis.subAnalysis.body.toLowerCase().includes(filterSubAnalysis.toLowerCase())
+                analysis.subAnalysisData.body.toLowerCase().includes(filterSubAnalysis.toLowerCase())
             );
             if (!subAnalysisMatches) matches = false;
         }
@@ -164,6 +165,13 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
         return acc;
     }, {} as Record<string, IAnalysis[]>) : { 'All': paginatedAnalysis };
 
+    const toggleGrouping = (key: keyof GroupByState) => {
+        setGroupBy(prev => ({
+            ...prev,
+            [key]: !prev[key]
+        }));
+    };
+
     return {
         filters,
         setFilters,
@@ -182,6 +190,7 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
             totalPages,
             hasNextPage: currentPage < totalPages,
             hasPrevPage: currentPage > 1
-        }
+        },
+        toggleGrouping
     };
 }; 

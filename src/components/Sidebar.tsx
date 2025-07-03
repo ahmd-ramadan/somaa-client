@@ -24,6 +24,7 @@ import {
     LogOut,
     Languages,
     User,
+    Settings,
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -42,7 +43,8 @@ const Sidebar = () => {
         dashboard: <LayoutDashboard size={24} />,
         admins: <UserCog size={24} />,
         users: <Users size={24} />,
-        socialmedia: <Share2 size={24} />
+        socialmedia: <Share2 size={24} />,
+        settings: <Settings size={24} />
     };
 
     const changeLanguage = () => {

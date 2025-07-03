@@ -1,5 +1,5 @@
 import { ICreateSector, ISector } from "@/interfaces/sector.types";
-import { getData, postData } from "@/utils/apiService";
+import { getData, patchData, postData } from "@/utils/apiService";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 // Fetch all Sectors
@@ -19,6 +19,19 @@ export const addSector = createAsyncThunk(
     async ({ token, data }: { token: string; data: ICreateSector }) => {
         const response = await postData<ISector>({
             endpoint: `/sector`,
+            token,
+            data
+        });
+        return response;
+    }
+);
+
+// Update Sector 
+export const updateSector = createAsyncThunk(
+    'sectorSlice/updateSector',
+    async ({ token, sectorId, data }: { token: string; sectorId: string, data: { name: string } }) => {
+        const response = await patchData<ISector>({
+            endpoint: `/sector/${sectorId}`,
             token,
             data
         });

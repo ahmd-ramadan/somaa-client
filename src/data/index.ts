@@ -249,6 +249,11 @@ export const SideBarLinks: ISideBarLinks[] = [
         name: "users",
         link: "users",
         permission: "isOnlySuperAdmin"
+    },
+    {
+        name: "settings",
+        link: "settings",
+        permission: "isOnlySuperAdmin"
     }
 ] 
 

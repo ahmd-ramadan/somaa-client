@@ -7,7 +7,7 @@ export interface INewsModel extends IDBModel {
     newspaper: string,
     classify:  NewsClassifyEnum;
     geoClassify: NewsGeographicalClassifyEnum;
-    sector: INewsSector;
+    sectorId: string;
     adType: NewsAdTypesEnum,
     pressType: NewsPressTypesEnum,
     isFlagged: boolean,
@@ -18,10 +18,11 @@ export interface INewsModel extends IDBModel {
 
 export interface INews extends INewsModel {
     addedByData: ILoggedInUser,
+    sectorData: INewsSector
 }
 
 export interface INewsSector {
-    sectorId: string,
+    _id: string,
     name: string
 }
 
@@ -63,7 +64,7 @@ export interface ICreateNewsQuery {
     title: string;
     classify:  NewsClassifyEnum;
     geoClassify: NewsGeographicalClassifyEnum;
-    sector: INewsSector;
+    sectorId: string;
     adType: NewsAdTypesEnum,
     pressType: NewsPressTypesEnum,
     isFlagged?: boolean,

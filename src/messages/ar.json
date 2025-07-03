@@ -156,36 +156,16 @@
     },
     "Sidebar": {
         "general": "الرئيسية",
-        "orders": "الطلبات",
-        "allOrders": "عرض الطلبات",
-        "products": "المنتجات",
-        "allProducts": "عرض المنجات",
-        "addProduct": "إضافة منتج",
-        "categories": "الاصناف",
-        "allCategories": "عرض الاصناف",
-        "addCategory": "إضافة صنف",
-        "subcategories": "الاصناف الفرعية",
-        "allSubCategories": "عرض الاصناف افرعية",
-        "addSubCategory": "إضافة صنف فرعي",
-        "coupons": "الكوبونات",
-        "allCoupons": "عرض الكوبونات",
-        "addCoupon": "إضافة كوبون",
         "users": "المستخدمين",
         "admins": "الأدمنز",
         "allAdmins": "عرض الأدمنز",
         "addAdmin": "إضافة أدمن",
-        "vendors": "التجار",
-        "allVendors": "عرض التجار",
-        "allVendorsRequests": "عرض طلبات التجار",
-        "influencers": "الأنفلونسرز",
-        "allInfluencers": "عرض الانفلونسرز",
-        "shipping": "الشحن",
-        "market": "السوق",
         "logoutBtn": "تسجيل الخروج",
         "dashboard": "لوحة التحكم",
         "news": "الأخبار",
         "socialmedia": "التواصل الإجتماعي",
-        "profile": "الملف الشخصي"
+        "profile": "الملف الشخصي",
+        "settings": "الإعدادات"
     },
     "UploadImage": {
         "uploadImage": "تحميل الصورة",
@@ -369,7 +349,10 @@
             "cancelBtn": "إلغاء",
             "updategroupOfAnalysis": "تحديث الرصد",
             "sort": "",
-            "groupOfAnalysis": ""
+            "groupOfAnalysis": "",
+            "prev": "السابق",
+            "next": "التالي",
+            "page": "الصفحة"
         },
         "AddAnalysis": {
             "url": "المصدر",
@@ -730,5 +713,10 @@
         "totalMonitoringSocialMediaCount": "عدد الرصد من السوشيال ميديا",
         "totalMonitoringNewsCount": "عدد الرصد من الأخبار",
         "showAllAdmins": "عدد الادمنز"
+    },
+    "SettingsPage": {
+        "settingsPageTitle": "صفحة الإعدادات",
+        "subAnalysisTab": "عرض التحليلات",
+        "sectorsTab": "عرض القطاعات"      
     }
 }

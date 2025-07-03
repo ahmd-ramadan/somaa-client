@@ -36,4 +36,4 @@ export type CouponInputsTypes = 'couponCode' | 'discountValue' | 'discountType' 
 
 export type NotificationForTypes = "become_vendor" | "admin_order" | "vendor_order" | "assigned_product";
 
-export type SideBarLinksTypes = 'admins' | 'users' | 'socialmedia' | 'news' | 'dashboard'
+export type SideBarLinksTypes = 'admins' | 'users' | 'socialmedia' | 'news' | 'dashboard' | 'settings'

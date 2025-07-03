@@ -48,7 +48,7 @@ export const useNewsFilters = (allNews: INews[]) => {
             matches = false;
         }
 
-        if (filters.sector?.length && !filters.sector.includes(news.sector.name)) {
+        if (filters.sector?.length && !filters.sector.includes(news.sectorData.name)) {
             matches = false;
         }
 
