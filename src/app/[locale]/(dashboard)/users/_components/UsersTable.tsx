@@ -195,4 +195,3 @@ const UsersTable = ({ users , isRequestsUsers }: UsersTableProps) => {
 };
 
 export default UsersTable;
-

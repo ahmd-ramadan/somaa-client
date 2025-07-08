@@ -22,8 +22,6 @@ const DashboardPage = () => {
         dispatch(selectSideBarLink("settings"));
     }, [dispatch]);
 
-    
-
     return (
         <div className='bg-white'>
             <div className="flex border-b mb-4">

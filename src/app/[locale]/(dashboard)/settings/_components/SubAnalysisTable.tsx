@@ -2,14 +2,18 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { fetchAllSubAnalysis, updateSubAnalysis, addSubAnalysis } from '@/lib/features/subAnalysis/subAnalysisThunks';
 import { RootState } from '@/lib/store';
-import { Edit, Plus } from 'lucide-react';
+import { Edit, Plus, SearchX } from 'lucide-react';
 import EditModal from './EditModal';
 import AddSubAnalysisModal from './AddSubAnalysisModal';
 import { ISubAnalysis } from '@/interfaces/subAnalysis.types';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
+import { formatDate } from '@/utils/formatDateAndTime';
+import Spinner from '@/components/ui/Spinner';
 
 const SubAnalysisTable = () => {
+  const t = useTranslations("SettingsPage.SubAnalysisPage");
+
   const dispatch = useAppDispatch();
   const locale = useLocale();
   const { allSubAnalysis, allSubAnalysisStatus, updateSubAnalysisStatus, addSubAnalysisStatus } = useAppSelector((state: RootState) => state.subAnalysis);
@@ -73,48 +77,74 @@ const SubAnalysisTable = () => {
     <>
       <div className="flex justify-between items-center mb-4 px-2">
         <h2 className="text-xl font-semibold text-gray-900">
-          إجمالي التحليلات المعروضة: <strong className='text-secondary'>{allSubAnalysis.length}</strong>
+         {t("totalShowedSubAnalysis")}: <strong className='text-secondary'>{allSubAnalysis.length}</strong>
         </h2>
         <button
           onClick={() => setIsAddModalOpen(true)}
           className="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-white rounded-md hover:bg-primary/90 transition-colors"
         >
           <Plus size={16} />
-          إضافة تحليل جديد
+          { t("addSubAnalysis") }
         </button>
       </div>
+
+      { allSubAnalysisStatus === 'loading' && 
+        <div 
+            className="flex flex-col items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg"
+            style={{ minHeight: `calc(100vh - 120px)` }}    
+        >
+            <div className="flex items-center justify-center w-16 h-16 mb-4 bg-gray-100 rounded-full">
+                <Spinner size="100px"/>
+            </div>
+            <div className="text-xl font-semibold mb-2 text-primary">{t("loadingData")}</div>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+                <span>{t("fetchingFromDatabase")}</span>
+            </div>
+        </div>
+      }
+
+      { currentSubAnalysis.length === 0 &&
+        <div 
+            className="flex flex-col items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg" 
+            style={{ minHeight: `calc(100vh - 200px)` }}
+        >
+            <div className="flex items-center justify-center w-16 h-16 mb-4 bg-gray-100 rounded-full">
+                <SearchX className="w-8 h-8 text-gray-400" />
+            </div>
+            <div className="text-xl font-semibold mb-2 text-primary">{t("noDataFound")}</div>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+                {/* <FilterX className="w-4 h-4" /> */}
+                <span>{t("tryAdjustingFilters")}</span>
+            </div>
+        </div>
+      }
 
       <table className={`${locale === 'en' ? 'text-left' : 'text-right'} w-full text-xs`}>
         <thead className="text-xs text-primary uppercase bg-primary/20">
           <tr>
-            <th scope="col" className="px-3 py-2">اسم التحليل</th>
-            <th scope="col" className="px-3 py-2">إجمالي الرصد من الاخبار</th>
-            <th scope="col" className="px-3 py-2">إجماللي الرصد من السوشيال ميديا</th>
-            <th scope="col" className="px-3 py-2">تعديل</th>
+            <th scope="col" className="px-3 py-2">{t("subAnalysisBody")}</th>
+            <th scope="col" className="px-3 py-2">{t("totalSocialMediaMonitoringCount")}</th>
+            <th scope="col" className="px-3 py-2">{t("subAnalysisCreatedAt")}</th>
+            <th scope="col" className="px-3 py-2">{t("edit")}</th>
           </tr>
         </thead>
         <tbody>
-          {allSubAnalysisStatus === 'loading' ? (
-            <tr><td colSpan={4} className="text-center py-4">جاري التحميل...</td></tr>
-          ) : currentSubAnalysis.length === 0 ? (
-            <tr><td colSpan={4} className="text-center py-4">لا توجد تحليلات فرعية</td></tr>
-          ) : (
-            currentSubAnalysis.map((item, idx) => (
-              <tr key={item._id} className="border-b hover:bg-gray-200">
-                <th scope="row" className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{item.body}</th>
+          { currentSubAnalysis.map((subAnalysis, idx) => (
+              <tr key={subAnalysis._id} className="border-b hover:bg-gray-200">
+                <th scope="row" className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{subAnalysis.body}</th>
                 <td className="px-3 py-2">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    {item?.newsMonitoringCount?.toLocaleString() || 0}
+                  <span className="inline-flex items-center rounded-full text-xs font-medium">
+                    {subAnalysis?.socialMediaMonitoringCount.toLocaleString() || 0 }
                   </span>
                 </td>
                 <td className="px-3 py-2">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {item?.analysisMonitoringCount?.toLocaleString() || 0}
+                  <span className="inline-flex items-center rounded-full text-xs font-medium">
+                    {formatDate({ locale: 'ar', date: subAnalysis.createdAt, withTime:  true })}
                   </span>
                 </td>
                 <td className="px-3 py-2">
                   <button 
-                    onClick={() => handleEdit(item)}
+                    onClick={() => handleEdit(subAnalysis)}
                     className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
                   >
                     <Edit size={16} />
@@ -123,7 +153,7 @@ const SubAnalysisTable = () => {
                 </td>
               </tr>
             ))
-          )}
+          }
         </tbody>
       </table>
 
@@ -135,7 +165,7 @@ const SubAnalysisTable = () => {
             disabled={currentPage === 1}
             className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            السابق
+            {t("prev")}
           </button>
           
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -157,7 +187,7 @@ const SubAnalysisTable = () => {
             disabled={currentPage === totalPages}
             className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            التالي
+            {t("next")}
           </button>
         </div>
       )}
@@ -166,9 +196,9 @@ const SubAnalysisTable = () => {
         isOpen={!!editingAnalysis}
         onClose={() => setEditingAnalysis(null)}
         onSave={handleSave}
-        title="تعديل التحليل"
+        title={t("editModalTitle")}
         value={editingAnalysis?.body || ''}
-        label="نص التحليل"
+        label={t("subAnalysisBody")}
       />
 
       <AddSubAnalysisModal
@@ -178,7 +208,7 @@ const SubAnalysisTable = () => {
         isLoading={addSubAnalysisStatus === 'loading'}
       />
     </>
-  );
+  )
 };
 
 export default SubAnalysisTable; 

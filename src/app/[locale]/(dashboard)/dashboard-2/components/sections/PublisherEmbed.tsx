@@ -54,9 +54,24 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
   }
 
   if (platform === 'tiktok') {
+    // Try to extract the video ID from the URL
+    const match = url.match(/video\/(\d+)/);
+    const videoId = match ? match[1] : null;
+    // Use a placeholder or TikTok's thumbnail API if available
+    const thumbnail = videoId
+      ? `https://www.tiktok.com/api/img/?itemId=${videoId}`
+      : '/tiktok-placeholder.png';
+
     return (
       <div className="w-full flex justify-center items-center">
-          <TikTokEmbed url={url} className="w-full" />
+        <iframe
+          src={`https://www.tiktok.com/embed/v2/${videoId}`}
+          // width="325"
+          height="400"
+          allow="autoplay; encrypted-media"
+          allowFullScreen
+          className="w-full rounded-lg border"
+        />
       </div>
     );
   }

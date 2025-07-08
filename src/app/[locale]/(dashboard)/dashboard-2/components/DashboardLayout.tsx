@@ -18,6 +18,7 @@ import TwoBadgesSection from "./sections/TowBadgesSection";
 import { Maximize2, Minimize2 } from "lucide-react";
 import SubAnalysisAndSectorsSection from "./sections/SubAnalysisAndSectorsSection";
 import { toZonedTime } from 'date-fns-tz';
+import { useTranslations } from "next-intl";
 
 // Register Chart.js components
 ChartJS.register(
@@ -36,6 +37,7 @@ const timeZone = 'Asia/Riyadh';
 
 const DashboardLayout = () => {
 
+    const t = useTranslations("DashboardPage")
     const { socket, isConnected } = useSocket();
     const [allAnalysis, setAllAnalysis] = useState<IAnalysis[]>([]); 
     const [allNews, setAllNews] = useState<INews[]>([]); 
@@ -170,13 +172,10 @@ const DashboardLayout = () => {
                             variants={itemVariants}
                             className="flex flex-col gap-1 h-full"
                         >
-                            {/* Section 1.1 Classifications Section */}
-                            {/* <ClassificationSection allAnalysis={allAnalysis} allNews={allNews} key={1}/> */}
-
                             {/* Date Input */}
                             <div className="flex items-center gap-1 mb-1">
                                 <label className="text-[10px] text-gray-400 flex items-center gap-0.5 whitespace-nowrap">
-                                    من
+                                    {t("from")}
                                 </label>
                                 <input
                                     type="datetime-local"
@@ -185,7 +184,7 @@ const DashboardLayout = () => {
                                     className="bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition outline-none w-32 text-xs"
                                 />
                                 <label className="text-[10px] text-gray-400 flex items-center gap-0.5 whitespace-nowrap">
-                                    إلى
+                                    {t("to")}
                                 </label>
                                 <input
                                     type="datetime-local"
@@ -203,7 +202,7 @@ const DashboardLayout = () => {
                                     className="flex-1 bg-gradient-to-r from-blue-600 to-green-500 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
                                     // className="flex-1 bg-gray-700 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
                                 >
-                                    تحديث
+                                    {t("updateTime")}
                                 </button>
                             </div>
 
@@ -224,12 +223,7 @@ const DashboardLayout = () => {
                                 {/* Map Track */}
                                 <MapSection allAnalysis={allAnalysis} />
 
-                                
                                 <PublishersSection allAnalysis={allAnalysis} />
-
-                                {/* <ClassificationSection allAnalysis={allAnalysis} allNews={allNews}/> */}
-                                {/* News/Social Section */}
-                                {/* <TwoBadgesSection allAnalysisCount={allAnalysis.length} allNewsCount={allNews.length}/> */}
                             </div>
 
                             {/* Section 2.2 SubAnalysis & Sectors Data */}
@@ -251,13 +245,11 @@ const DashboardLayout = () => {
                             {/* Section 3.1 Sectors Data */}
                             <SectorsSection allAnalysis={allAnalysis} allNews={allNews}/>
 
-                            {/* Section 3.2 Publishers Data */}
-                            {/* <PublishersSection allAnalysis={allAnalysis} /> */}
                         </motion.div>
                     </div>
                     <button
                         onClick={handleToggleFullscreen}
-                        className="absolute top-2 left-2 z-50 bg-gray-800/30 hover:bg-gray-800/80 p-1 rounded transition"
+                        className="absolute top-2 end-2 z-50 bg-gray-800/30 hover:bg-gray-800/80 p-1 rounded transition"
                         title={isFullscreen ? "خروج من ملء الشاشة" : "ملء الشاشة"}
                     >
                         {isFullscreen ? <Minimize2 className="w-5 h-5 text-white" /> : <Maximize2 className="w-5 h-5 text-white" />}

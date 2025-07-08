@@ -7,13 +7,13 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { selectSideBarLink, setPageTitle } from '@/lib/features/layout/layoutSlice';
 import { ILoggedInUser } from '@/interfaces';
 import { useTranslations } from 'next-intl';
-import UsersTable from './_components/UsersTable';
 import { fetchUsers } from '@/lib/features/user/userThunks';
 import { Users } from 'lucide-react';
+import UsersTable from './_components/UsersTable';
 
 export type KeyName = keyof ILoggedInUser;
 
-const DashboardPage = () => {
+const UsersPage = () => {
     const dispatch = useAppDispatch();
     const t = useTranslations("UsersPage");
 
@@ -88,4 +88,4 @@ const DashboardPage = () => {
     );
 };
 
-export default DashboardPage;
+export default UsersPage;

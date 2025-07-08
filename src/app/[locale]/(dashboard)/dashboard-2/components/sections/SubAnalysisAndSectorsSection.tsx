@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { IDashboardSubAnalysis } from "./types"
 import { INews, NewsClassifyEnum } from "@/interfaces/news.types"
 import { ISectorEngagement } from "./SectorsSection"
+import { useTranslations } from "next-intl"
 
 interface ISubAnalysisSectionProps {
     allAnalysis: IAnalysis[],
@@ -13,6 +14,7 @@ interface ISubAnalysisSectionProps {
 }
 
 const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSectionProps) => {
+    const t = useTranslations("DashboardPage")
 
     const [allSubAnalysis, setAllSubAnalysis] = useState<IDashboardSubAnalysis[]>([])
     const [allSectors, setAllSectors] = useState<ISectorEngagement[]>([])
@@ -227,9 +229,9 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
                 <table className="w-full text-sm" dir="rtl">
                     <thead className="">
                         <tr className="border-b border-gray-700/50">
-                            <th className="py-1 px-2 text-gray-300 text-[10px] text-start">الرصد</th>
-                            <th className="py-1 px-2 text-gray-300 text-[10px] text-center">أبرز التحليلات</th>
-                            <th className="py-1 px-2 text-gray-300 text-[10px] text-end">التفاعل</th>
+                            <th className="py-1 px-2 text-gray-300 text-[10px] text-start">{t("monitoring")}</th>
+                            <th className="py-1 px-2 text-gray-300 text-[10px] text-center">{t("topSubAnalysis")}</th>
+                            <th className="py-1 px-2 text-gray-300 text-[10px] text-end">{t("statistics")}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -252,9 +254,9 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
                 <table className="w-full text-sm" dir="rtl">
                     <thead>
                         <tr className="border-b border-gray-700/50">
-                            <th className="py-1 px-2 text-gray-300 text-[10px] text-start">الرصد</th>
-                            <th className="py-1 px-2 text-gray-300 text-[10px] text-center">أبرز القطاعات</th>
-                            <th className="py-1 px-2 text-gray-300 text-[10px] text-end">التفاعل</th>
+                            <th className="py-1 px-2 text-gray-300 text-[10px] text-start">{t("monitoring")}</th>
+                            <th className="py-1 px-2 text-gray-300 text-[10px] text-center">{t("topSectors")}</th>
+                            <th className="py-1 px-2 text-gray-300 text-[10px] text-end">{t("statistics")}</th>
                         </tr>
                     </thead>
                     <tbody>

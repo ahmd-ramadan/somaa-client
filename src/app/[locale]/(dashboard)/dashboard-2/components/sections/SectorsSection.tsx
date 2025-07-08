@@ -21,6 +21,7 @@ import LinkedInIcon from "@/components/icons/SocialMedia/LinkedIn";
 import FacebookIcon from "@/components/icons/SocialMedia/Facebook";
 import YoutubeIcon from "@/components/icons/SocialMedia/Youtube";
 import { INews, NewsClassifyEnum } from "@/interfaces/news.types";
+import { useTranslations } from "next-intl";
 
 interface ISectorsSectionProps {
     allAnalysis: IAnalysis[]
@@ -49,6 +50,7 @@ export interface ISectorEngagement {
 }
 
 const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
+    const t = useTranslations("DashboardPage")
     const [allSectors, setAllSectors] = useState<IDashboardSector[]>([]);
     const [topSectors, setTopSectors] = useState<ISectorEngagement[]>([]);
     const [top3Sectors, setTop3Sectors] = useState<ISectorEngagement[]>([]);
@@ -301,7 +303,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                     <div className="flex flex-col gap-1 justify-start items-start">
                                         <h3 className="text-sm font-semibold text-gray-100 flex items-center gap-2">
                                             <Activity className="w-4 h-4 text-blue-300" />
-                                            كل القطاعات
+                                            {t("allSectors")}
                                         </h3>
                                     </div>
 
@@ -311,11 +313,11 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                             className="flex items-center gap-1 bg-gray-800/50 px-2 py-1 rounded text-xs hover:border border-gray-700/70 transition-colors border"
                                         >
                                             {/* <span className="text-xs text-white">{selectedSector?.name || 'اختر القطاع'}</span> */}
-                                            <span className="text-xs text-white">حدد القطاع</span>
+                                            <span className="text-xs text-white">{t("selectSector")}</span>
                                             <ChevronDown className={`w-3 h-3 transition-transform ${showSectorMenu ? 'rotate-180' : ''}`} />
                                         </button>
                                         {showSectorMenu && (
-                                            <div className="custom-scrollbar absolute top-full left-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 min-w-[150px] max-h-32 overflow-y-auto">
+                                            <div className="custom-scrollbar absolute top-full end-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 min-w-[150px] max-h-32 overflow-y-auto">
                                                 {topSectors.map((sector, index) => (
                                                     <button
                                                         key={index}
@@ -341,15 +343,15 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                   
                                         {/* General Stats */}
                                         <div className="w-full text-end">
-                                            <span className="text-[10px] pr-5 text-blue-300">{(allAnalysis.length + allNews.length).toLocaleString()} إجمالي الرصد</span>
+                                            <span className="text-[10px] pr-5 text-blue-300">{(allAnalysis.length + allNews.length).toLocaleString()} {t("totalMonitoring")}</span>
                                         </div>
                                         <div className="flex gap-1 flex-col">
                                             <div className="flex-1 flex justify-between gap-1 border border-gray-700 p-1 rounded-lg">
                                                 <div className="flex items-center gap-1">
                                                     <NewspaperIcon className="w-4 h-4 text-blue-300" />
-                                                    <span className="text-white">الأخبار</span>
+                                                    <span className="text-white">{t("news")}</span>
                                                 </div>
-                                                <span className=" text-blue-300">{allNews.length.toLocaleString()} إجمالي الرصد</span>
+                                                <span className=" text-blue-300">{allNews.length.toLocaleString()} {t("totalMonitoring")}</span>
                                             </div>
                                         </div>
 
@@ -359,10 +361,10 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                             <div className="flex items-center justify-between gap-1">
                                                 <div className="flex items-center gap-1">
                                                     <Rss className="w-4 h-4 text-blue-300" />
-                                                    <span className="text-white">السوشيال ميديا</span>
+                                                    <span className="text-white">{t("socialMedia")}</span>
                                                 </div>
                                                 <div className="flex items-center gap-1">
-                                                    <span className="text-blue-300">{allAnalysis.length.toLocaleString()} إجمالي الرصد</span>
+                                                    <span className="text-blue-300">{allAnalysis.length.toLocaleString()} {t("totalMonitoring")}</span>
                                                     <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 px-1 rounded border border-blue-500/30">
                                                         <span className="text-white">{topSectors.reduce((acc, curr) => ( acc + curr.reactions + curr.shares + curr.comments), 0).toLocaleString()}</span>
                                                     </div>
@@ -500,13 +502,13 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                                             cls.type === AnalysisClassifyEnum.POSITIVE ? 'text-green-400' : 
                                                             cls.type === AnalysisClassifyEnum.NEUTRAL ? 'text-gray-400' : 
                                                             'text-red-400'
-                                                        }`}>{cls.type === AnalysisClassifyEnum.POSITIVE ? 'إيجابي' : cls.type === AnalysisClassifyEnum.NEUTRAL ? 'محايد' : 'سلبي'}</span>
+                                                        }`}>{t(cls.type)}</span>
                                                     </div>
                                                 ))}
                                             </div>
 
                                             <span className={`text-blue-300`}>
-                                               {(selectedSector.totalMonitoringFromAnalysis + selectedSector.totalMonitoringFromNews).toLocaleString()}  إجمالي الرصد
+                                               {(selectedSector.totalMonitoringFromAnalysis + selectedSector.totalMonitoringFromNews).toLocaleString()}  {t("totalMonitoring")}
                                             </span>
                                         </div>
 
@@ -521,9 +523,9 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                         <div className="flex-1 flex justify-between gap-1 border border-gray-700 p-1 rounded-lg">
                                             <div className="flex items-center gap-1">
                                                 <NewspaperIcon className="w-4 h-4 text-blue-300" />
-                                                <span className="text-white">الأخبار</span>
+                                                <span className="text-white">{t("news")}</span>
                                             </div>
-                                            <span className=" text-blue-300">{selectedSector.totalMonitoringFromNews.toLocaleString()} إجمالي الرصد</span>
+                                            <span className=" text-blue-300">{selectedSector.totalMonitoringFromNews.toLocaleString()} {t("totalMonitoring")}</span>
                                         </div>
                                     </div>
 
@@ -533,10 +535,10 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                         <div className="flex items-center justify-between gap-1">
                                             <div className="flex items-center gap-1">
                                                 <Rss className="w-4 h-4 text-blue-300" />
-                                                <span className="text-white">السوشيال ميديا</span>
+                                                <span className="text-white">{t("socialMedia")}</span>
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <span className="text-blue-300">{selectedSector.totalMonitoringFromAnalysis.toLocaleString()} إجمالي الرصد</span>
+                                                <span className="text-blue-300">{selectedSector.totalMonitoringFromAnalysis.toLocaleString()} {t("totalMonitoring")}</span>
                                                 <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 px-1 rounded border border-blue-500/30">
                                                     <span className="text-white">{selectedSector.total.toLocaleString()}</span>
                                                 </div>

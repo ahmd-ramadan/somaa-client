@@ -8,6 +8,7 @@ import 'react-alice-carousel/lib/alice-carousel.css';
 import { useRef, useState } from 'react';
 import { CarouselApi } from "@/components/ui/carousel.old"
 import PublisherEmbed from "./PublisherEmbed"
+import { useTranslations } from "next-intl"
 
 declare global {
   interface Window {
@@ -20,6 +21,8 @@ interface IPublishersSectionProps {
 }
 
 type ITopFivePublishersTypes = 'reactions' | 'comments' | 'appearance' | 'views' | 'shares' | 'followers';
+
+const TOP_FIVE_PUBLISHERS_TYPES: ITopFivePublishersTypes[] = ['reactions', 'comments', 'appearance', 'views', 'shares', 'followers'];
 
 interface ITopFivePublishers extends IAnalysis {
     type: ITopFivePublishersTypes
@@ -37,6 +40,7 @@ function getPlatform(url: string) {
 }
 
 const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
+    const t = useTranslations("DashboardPage")
 
     const [topFivePublishers, setTopFivePublishers] = useState<ITopFivePublishers[]>([])
     const [isPublishersAnimating, setIsPublishersAnimating] = useState(true);
@@ -128,30 +132,15 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
     };
 
     const getTypeMessage = (type: ITopFivePublishersTypes): string => {
-        switch (type) {
-            case 'reactions': 
-                return 'الأعلي إعجاب'
-            case 'comments': 
-                return 'الأعلي تعليق'
-            case 'shares': 
-                return 'الأعلي مشاركة'
-            case 'views': 
-                return 'الأعلي مشاهدة'
-            case 'appearance': 
-                return 'الأعلي ظهور'
-            case 'followers': 
-                return 'الأعلي متابعين'
-            default: 
-                return 'الأعلي تفاعل'
-        } 
+        return TOP_FIVE_PUBLISHERS_TYPES.includes(type) ? t(`${type}Top`) : t("topReactions");
     }
 
     const TopFivePublishers = topFivePublishers.map((analysis, index) => {
         return (
-            <div key={index} dir="rtl" className="w-[98%] px-2 flex flex-col mx-auto gap-1 max-h-[350px] overflow-auto custom-scrollbar">
+            <div key={index} className="w-[98%] px-2 flex justify-end flex-col mx-auto gap-1 max-h-[350px] overflow-auto custom-scrollbar">
                 <div className="flex items-center gap-1 justify-end">
-                    <span className="px-1 rounded-md text-xs bg-blue-500/20 text-blue-400 border border-blue-500/20">{getTypeMessage(analysis.type)}</span>
-                    <span className="px-1 rounded-md text-xs bg-blue-500/20 text-blue-400 border border-blue-500/20">{analysis.sectorData.name}</span>
+                    <span className="px-1 rounded-md text-xs bg-blue-500/20 text-blue-300 border border-blue-500/20">{getTypeMessage(analysis.type)}</span>
+                    <span className="px-1 rounded-md text-xs bg-blue-500/20 text-blue-300 border border-blue-500/20">{analysis.sectorData.name}</span>
                     <span className={`px-1 rounded-md text-xs ${analysis.classify === AnalysisClassifyEnum.POSITIVE 
                                                     ? 'bg-green-500/20 text-green-400' 
                                                     : analysis.classify === AnalysisClassifyEnum.NEUTRAL 
@@ -182,8 +171,8 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                 <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-1 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col overflow-hidden">
                     <div className="w-full flex justify-between gap-1 items-center">
                         <h3 className="text-sm font-semibold text-gray-300 flex items-center gap-1">
-                            <TrendingUp className="w-5 h-5 text-blue-400" />
-                            أعلى التفاعلات
+                            <TrendingUp className="w-5 h-5 text-blue-300" />
+                            {t("topReactions")}
                         </h3>
                         <div className="relative text-white">
                             <button
@@ -194,7 +183,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                                 <ChevronDown className={`w-3 h-3 transition-transform ${showPublishersMenu ? 'rotate-180' : ''}`} />
                             </button>
                             {showPublishersMenu && (
-                                <div className="custom-scrollbar absolute top-full left-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 min-w-[150px] max-h-32 overflow-y-auto">
+                                <div className="custom-scrollbar absolute top-full end-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 min-w-[150px] max-h-32 overflow-y-auto">
                                     {topFivePublishers.map((publisher, index) => (
                                         <button
                                             key={index}
