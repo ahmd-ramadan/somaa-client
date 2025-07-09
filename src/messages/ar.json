@@ -426,7 +426,21 @@
             "tweetType": "نوع المنشور",
             "tweet": "منشور",
             "reply": "رد",
-            "quote": "مقتبس"
+            "quote": "مقتبس",
+            "contentType": "نوع المحتوى",
+            "text": "نص",
+            "image": "صورة",
+            "video": "فيديو",
+            "other": "أخري",
+            "positive": "إيجابي",
+            "negative": "سلبي",
+            "neutral": "محايد",
+            "x": "إكس",
+            "facebook": "فيسيوك",
+            "linkedin": "لينكدان",
+            "tiktok": "تيك توك",
+            "youtube": "يوتيوب",
+            "instagram": "إنستجرام"
         }
     },
     "NewsPage": {

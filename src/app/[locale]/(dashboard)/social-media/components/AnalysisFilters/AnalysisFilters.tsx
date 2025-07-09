@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTranslations } from "next-intl";
 import { useAppDispatch } from "@/lib/hooks";
-import { AnalysisFiltersProps } from './types';
 import FilterMenu from './components/FilterMenu';
 import GroupingMenu from './components/GroupingMenu';
 import FilterTypeMenu from './components/FilterTypeMenu';
 import ActiveFiltersDisplay from './components/ActiveFiltersDisplay';
+import { AnalysisFiltersProps } from './types';
 
 const AnalysisFilters: React.FC<AnalysisFiltersProps> = ({ 
     filters, 

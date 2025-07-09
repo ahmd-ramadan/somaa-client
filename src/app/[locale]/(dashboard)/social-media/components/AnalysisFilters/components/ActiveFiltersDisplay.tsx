@@ -1,8 +1,8 @@
 import React from 'react';
 import { X, AlertCircle } from 'lucide-react';
 import { AnalysisClassifyEnum, ContentTypesEnum, TweetTypesEnum, PlatformsEnum } from "@/interfaces/analysis.types";
-import { ActiveFiltersDisplayProps } from '../types';
 import { fetchAllAnalysis } from "@/lib/features/socialMedia/analysisThunks";
+import { ActiveFiltersDisplayProps } from '../types';
 
 const ActiveFiltersDisplay: React.FC<ActiveFiltersDisplayProps> = ({
     filters,

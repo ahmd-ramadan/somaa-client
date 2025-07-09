@@ -30,7 +30,23 @@ const initialState: IAnalysisState = {
 const analysisSlice = createSlice({
     name: 'AnalisisSlice',
     initialState,
-    reducers: {},
+    reducers: {
+        resetAllAnalysisStatus: (state) => {
+            state.allAnalysisStatus = 'idle';
+        },
+        resetAddAnalysisStatus: (state) => {
+            state.addAnalysisStatus = 'idle';
+        },
+        resetUpdateAnalysisStatus: (state) => {
+            state.updateAnalysisStatus = 'idle';
+        },
+        resetDeleteAnalysisStatus: (state) => {
+            state.deleteAnalysisStatus = 'idle';
+        },
+        resetUpdateGroupOfAnalysisStatus: (state) => {
+            state.updateGroupOfAnalysisStatus = 'idle';
+        },
+    },
     extraReducers: (builder) => {
         //  Get All Analysis
         builder
@@ -119,7 +135,7 @@ const analysisSlice = createSlice({
                 const { success, data: analysis } = action.payload as ApiResponse<IAnalysis | null>;
                 if (success && analysis) {
                     state.deleteAnalysisStatus = 'succeeded';
-                    state.allAnalysis.filter(
+                    state.allAnalysis = state.allAnalysis.filter(
                         a => a._id.toString() !== analysis._id.toString()
                     );
                     state.analysis = {} as IAnalysis;
@@ -128,9 +144,17 @@ const analysisSlice = createSlice({
                 }
             })
             .addCase(deleteAnalysis.rejected, (state) => {
-                state.addAnalysisStatus = 'failed';
+                state.deleteAnalysisStatus = 'failed';
             });
     },
 });
+
+export const {
+    resetAllAnalysisStatus,
+    resetAddAnalysisStatus,
+    resetUpdateAnalysisStatus,
+    resetDeleteAnalysisStatus,
+    resetUpdateGroupOfAnalysisStatus,
+} = analysisSlice.actions;
 
 export default analysisSlice.reducer;

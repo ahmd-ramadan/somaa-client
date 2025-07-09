@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Layers, ChevronDown } from 'lucide-react';
-import { GroupingMenuProps } from '../types';
 import { useLocale } from 'next-intl';
+import { GroupingMenuProps } from '../types';
 
 const GroupingMenu: React.FC<GroupingMenuProps> = ({
     groupings,
@@ -41,7 +41,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
             </button>
 
             {showGroupingMenu && (
-                <div className={`absolute top-full ${locale === 'ar' ? 'right-0' : 'left-0'} mt-2 bg-white rounded-xl shadow-lg border border-gray-200 z-10 w-44`}>
+                <div className={`absolute top-full start-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 z-10 w-44`}>
                     <div className="p-2">
                         <div className="space-y-1">
                             <button
@@ -66,7 +66,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                                     groupings.classify?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                 }`}
                             >
-                                {t("classification")}
+                                {t("classify")}
                             </button>
                             <button
                                 onClick={() => toggleGrouping('contentType')}

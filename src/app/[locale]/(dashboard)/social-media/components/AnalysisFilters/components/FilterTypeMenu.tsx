@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { AnalysisClassifyEnum, ContentTypesEnum, TweetTypesEnum } from "@/interfaces/analysis.types";
-import { FilterTypeMenuProps } from '../types';
 import { useLocale } from 'next-intl';
+import { FilterTypeMenuProps } from '../types';
 
 const FilterTypeMenu: React.FC<FilterTypeMenuProps> = ({
     filters,
@@ -145,13 +145,13 @@ const FilterTypeMenu: React.FC<FilterTypeMenuProps> = ({
             </div>
 
             {showFilterTypeMenu && filterTypeSearch && (
-                <div className={`absolute top-full ${locale === 'ar' ? 'right-0' : 'left-0'} mt-2 bg-white rounded-xl shadow-lg border border-gray-200 z-10 w-72`}>
+                <div className={`absolute top-full start-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 z-10 w-72`}>
                     <div className="p-2 space-y-1">
                         {hasMatches ? (
                             Object.entries({
                                 sector: t("sector"),
                                 subAnalysis: t("subAnalysis"),
-                                classify: t("classification"),
+                                classify: t("classify"),
                                 contentType: t("contentType"),
                                 tweetType: t("tweetType"),
                                 publisher: t("publisher"),

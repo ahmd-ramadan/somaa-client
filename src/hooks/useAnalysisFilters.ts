@@ -18,6 +18,7 @@ export interface FilterState {
     statistics?: {
         [key in StatisticType]?: { min?: number; max?: number };
     };
+    noDate?: boolean; 
     selectedStatistic?: StatisticType;
     addedBy?: string[];
     url?: string[];
