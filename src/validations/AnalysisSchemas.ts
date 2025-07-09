@@ -29,20 +29,20 @@ export const addAnalysisSchema = yup.object().shape({
     location: yup.object().shape({
         region: yup
             .string()
-            .required('Region is required'),
+            .optional(),
         city: yup
             .string()
-            .required('City is required'),
+           .optional(),
         district: yup
             .string()
-            .required('District is required'),
+            .optional(),
         lat: yup
             .number()
-            .required('lat is required'),
+            .optional(),
         lng: yup
             .number()
-            .required('lng is required')
-    }),
+            .optional()
+    }).optional(),
     note: yup
         .string()
         .max(1000, 'Note must not exceed 1000 characters')

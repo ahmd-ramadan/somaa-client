@@ -50,11 +50,11 @@ const TableHeader: React.FC<TableHeaderProps> = ({
                         }}
                     />
                 </th>
-                <th scope="col" className="px-2 py-1">{t("url")}</th>
-                <th scope="col" className="px-2 py-1">{t("publisher")}</th>
-                <th scope="col" className="px-2 py-1">{t("sector")}</th>
-                <th scope="col" className="px-2 py-1">{t("classify")}</th>
-                <th scope="col" className="px-2 py-1">{t("analysis")}</th>
+                <th scope="col" className="px-2 py-1 text-start">{t("url")}</th>
+                <th scope="col" className="px-2 py-1 text-start">{t("publisher")}</th>
+                <th scope="col" className="px-2 py-1 text-start">{t("sector")}</th>
+                <th scope="col" className="px-2 py-1 text-start">{t("classify")}</th>
+                <th scope="col" className="px-2 py-1 text-start">{t("analysis")}</th>
                 <th scope="col" className="px-2 py-1">
                     <Heart className="w-4 h-4 text-red-500 fill-red-600" />
                 </th>
@@ -81,9 +81,9 @@ const TableHeader: React.FC<TableHeaderProps> = ({
                         </button>
                     </div>
                 </th>
-                <th scope="col" className="px-2 py-1">{t("createdAt")}</th>
-                <th scope="col" className="px-2 py-1">{t("addedBy")}</th>
-                <th scope="col" className="px-2 py-1">{t("actions")}</th>
+                <th scope="col" className="px-2 py-1 text-start">{t("createdAt")}</th>
+                <th scope="col" className="px-2 py-1 text-start">{t("addedBy")}</th>
+                <th scope="col" className="px-2 py-1 text-start">{t("actions")}</th>
             </tr>
         </thead>
     );

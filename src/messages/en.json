@@ -447,6 +447,7 @@
     "NewsPage": {
         "NewsPageTitle": "News",
         "AllNewsTable": {
+            "noResultsFoundFilters": "Doesn't match any results",
             "itemsSelected": "Selected Items",
             "clearSelection": "Clear Selection",
             "allSectors": "All Sectors",

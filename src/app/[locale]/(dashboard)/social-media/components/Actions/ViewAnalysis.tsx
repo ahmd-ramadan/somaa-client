@@ -19,9 +19,8 @@ import {
     Eye,
     CircleUserRound
 } from 'lucide-react';
-import Image from "next/image";
-import Link from 'next/link';
 import { formatDate } from '@/utils/formatDateAndTime';
+import Link from 'next/link';
 
 interface ViewAnalysisProps {
     analysis: IAnalysis;

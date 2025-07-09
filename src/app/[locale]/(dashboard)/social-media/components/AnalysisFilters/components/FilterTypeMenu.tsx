@@ -93,14 +93,22 @@ const FilterTypeMenu: React.FC<FilterTypeMenuProps> = ({
             if (uniqueMatchingPublishers.length > 0) {
                 newFilters[type] = uniqueMatchingPublishers as any;
             }
-        } else if (type === 'tweetType') {
+        } else if (type === 'tweetType' || type === 'classify' || type === 'contentType' || type === 'platform') {
             // For tweetType, add the exact value if it exists in options
-            const matchingValues = getFilterOptions(type).filter(option => 
-                option.toLowerCase().includes(filterTypeSearch.toLowerCase())
-            );
+            const matchingValues = getFilterOptions(type).filter(option => {
+                return !!(t(option)?.toLowerCase()?.includes(filterTypeSearch?.toLowerCase())) ||
+                !!(option.toLowerCase().includes(filterTypeSearch.toLowerCase()))
+            });
             
             if (matchingValues.length > 0) {
-                newFilters[type] = matchingValues as any;
+                for(const m of matchingValues) {    
+                    const currentValues = (newFilters[type] as string[]) || [];
+                    if(m && !currentValues.includes(m)) {
+                        (newFilters[type] as string[]) = [...currentValues, m];
+                    }
+                }
+
+                console.log(newFilters[type]);
             }
         } else {
             // For other filter types, add the exact value
@@ -123,9 +131,20 @@ const FilterTypeMenu: React.FC<FilterTypeMenuProps> = ({
         
         return filterTypes.some(type => {
             const options = getFilterOptions(type as keyof typeof filters);
-            return options.some(option => 
-                option.toLowerCase().includes(filterTypeSearch.toLowerCase())
-            );
+            return options.some(option => {
+                let isOk: boolean = false;
+                if (type === 'classify' 
+                    || type === 'tweetType' 
+                    || type === 'platform' 
+                    || type === 'contentType'
+                ) {
+                    isOk = !!(t(option)?.toLowerCase()?.includes(filterTypeSearch?.toLowerCase())); 
+                }
+                isOk = isOk || !!(option.toLowerCase().includes(filterTypeSearch.toLowerCase()))
+
+                // if(isOk) console.log("isOk in", option)
+                return isOk;
+            });
         });
     }, [filterTypeSearch, allAnalysis]);
 
@@ -156,13 +175,24 @@ const FilterTypeMenu: React.FC<FilterTypeMenuProps> = ({
                                 tweetType: t("tweetType"),
                                 publisher: t("publisher"),
                                 addedBy: t("addedBy"),
-                                platform: t("platform")
+                                platform: t("platform"),
+                                url: t("url"),
                             }).map(([key, label]) => {
                                 const filterKey = key as keyof typeof filters;
                                 const options = getFilterOptions(filterKey);
-                                const hasMatch = options.some(option => 
-                                    option.toLowerCase().includes(filterTypeSearch.toLowerCase())
-                                );
+                                const hasMatch = options.some(option => {
+                                    let isOk: boolean = false;
+                                    if (filterKey === 'classify' 
+                                        || filterKey === 'tweetType' 
+                                        || filterKey === 'platform' 
+                                        || filterKey === 'contentType'
+                                    ) {
+                                        isOk = !!(t(option)?.toLowerCase()?.includes(filterTypeSearch?.toLowerCase())); 
+                                    }
+                                    isOk = isOk || !!(option.toLowerCase().includes(filterTypeSearch.toLowerCase()))
+
+                                    return isOk;
+                                })
                                 
                                 if (!hasMatch) return null;
                                 
@@ -178,7 +208,7 @@ const FilterTypeMenu: React.FC<FilterTypeMenuProps> = ({
                             })
                         ) : (
                             <div className="text-sm text-gray-500 text-center py-3">
-                                {t("noResultsFound")}
+                                {t("noResultsFoundFilters")}
                             </div>
                         )}
                     </div>

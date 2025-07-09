@@ -75,7 +75,7 @@ const TableRow: React.FC<TableRowProps> = ({
                     onCheckedChange={() => handleItemSelect(analysis._id)}
                 />
             </td>
-            <td className="px-2 py-1">
+            <td className="px-2 py-1 text-start">
                 <Link
                     className="text-secondary font-semibold underline"
                     href={url}
@@ -107,7 +107,7 @@ const TableRow: React.FC<TableRowProps> = ({
             <td className="px-2 py-1">{(reactions + comments + shares).toLocaleString()}</td>
             <td className="px-2 py-1 w-fit">{formattedDate}</td>
             <th scope="row" className="px-2 py-1 font-medium text-gray-900">
-                <div className="flex h-full justify-center items-center gap-1 whitespace-nowrap">
+                <div className="flex h-full justify-start gap-1 whitespace-nowrap">
                     <CircleUserRound className='w-4 h-4 text-primary'/>
                     <p className="text-xs">{addedByData?.name}</p>
                 </div>

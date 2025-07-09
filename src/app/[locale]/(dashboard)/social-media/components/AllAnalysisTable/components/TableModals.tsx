@@ -2,8 +2,8 @@ import React from 'react';
 import { IAnalysis } from "@/interfaces/analysis.types";
 import Spinner from '@/components/ui/Spinner';
 import Modal from '@/components/ui/Modal';
-import EditAnalysis from '../../EditAnalysis';
-import ViewAnalysis from '../../ViewAnalysis';
+import ViewAnalysis from '../../Actions/ViewAnalysis';
+import EditAnalysis from '../../Actions/EditAnalysis';
 
 interface TableModalsProps {
     isDetailsModalOpen: boolean;

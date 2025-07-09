@@ -261,14 +261,6 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
             {/* Table Container */}
             {filteredAnalysis.length > 0 && (
                 <div className="bg-white shadow-sm relative">
-                    {/* {allAnalysisStatus === 'idle' && (
-                        <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10">
-                            <div className="flex flex-col items-center gap-2">
-                                <Spinner className="w-8 h-8" />
-                                <span className="text-sm text-gray-600">{t("loadingData")}</span>
-                            </div>
-                        </div>
-                    )} */}
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200 text-xs">
                             <TableHeader

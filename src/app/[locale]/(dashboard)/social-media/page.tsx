@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useTranslations } from 'next-intl';
 import { selectSideBarLink, setPageTitle } from '@/lib/features/layout/layoutSlice';
 import Modal from '@/components/ui/Modal';
-import AddAnalysis from '@/app/[locale]/(dashboard)/social-media/components/AddAnalysis';
+import AddAnalysis from '@/app/[locale]/(dashboard)/social-media/components/Actions/AddAnalysis';
 import AllAnalysisTable from '@/app/[locale]/(dashboard)/social-media/components/AllAnalysisTable';
 import { showAuthComponentsForAnalysis } from '@/utils/authComponents';
 

@@ -68,7 +68,7 @@ const AddAnalysis = () => {
     const locale = useLocale();
     const t = useTranslations("SocialMediaPage.AddAnalysis");
 
-    const { loggedInUser: { token } } = useAppSelector((state: RootState) => state.authUser);
+    const { loggedInUser: { token, role } } = useAppSelector((state: RootState) => state.authUser);
     const { addAnalysisStatus } = useAppSelector((state: RootState) => state.analysis);
     const { allSectors, allSectorsStatus, addSectorStatus } = useAppSelector((state: RootState) => state.sectors);
     const { allSubAnalysis, allSubAnalysisStatus, addSubAnalysisStatus } = useAppSelector((state: RootState) => state.subAnalysis);
@@ -261,7 +261,6 @@ const AddAnalysis = () => {
                 url: data.url,
                 platform: data.platform,
                 classify: data.classify,
-                location: data.location,
                 contentType: data.contentType,
                 sectorId: selectedSector || data.sectorId,
                 subAnalysisId: selectedSubAnalysis || data.subAnalysisId,
@@ -269,6 +268,9 @@ const AddAnalysis = () => {
                 isFlagged: isFlagged,
                 isHighlighted: isHighlighted
             };
+
+            if(data.location) formData.location = data.location;
+            
             const action = await dispatch(addAnalysis({ 
                 token: token as string, 
                 data: formData
@@ -394,50 +396,9 @@ const AddAnalysis = () => {
                                     setShowSectorDropdown(true);
                                 }}
                                 onFocus={() => setShowSectorDropdown(true)}
-                                className="col-span-5 rounded-lg border border-gray-300 p-3 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
+                                className="col-span-6 rounded-lg border border-gray-300 p-3 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
                                 placeholder={t("selectOrAddSector")}
                             />
-                            <button
-                                type="button"
-                                onClick={async () => {
-                                    if (!sectorInput.trim()) {
-                                        toast.error(t("sectorNameRequired"));
-                                        return;
-                                    }
-
-                                    try {
-                                        const action = await dispatch(addSector({ 
-                                            token: token as string, 
-                                            data: { name: sectorInput }
-                                        }));
-                                        
-                                        const res = action.payload as any;
-                                        const { success, data, message } = res;
-                                        
-                                        if (success) {
-                                            setSelectedSector(data._id);
-                                            setValue('sectorId', data._id);
-                                            setSectorInput(data.name);
-                                            setShowSectorDropdown(false);
-                                            toast.success(message || t("sectorAddedSuccessfully"));
-                                        } else {
-                                            toast.error(message || t("failedToAddSector"));
-                                        }
-                                    } catch (error) {
-                                        handleError(error);
-                                    }
-                                }}
-                                disabled={addSectorStatus === 'loading'}
-                                className="col-span-1 p-3 bg-adminPrimary text-white text-center rounded-lg hover:bg-adminPrimary/90 focus:outline-none focus:ring-2 focus:ring-adminPrimary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {addSectorStatus === 'loading' ? (
-                                    <div className="flex items-center gap-2 justify-center">
-                                        <Spinner />
-                                    </div>
-                                ) : (
-                                    t("add")
-                                )}
-                            </button>
                         </div>
                         
                         {showSectorDropdown && (
@@ -461,7 +422,7 @@ const AddAnalysis = () => {
                                         </div>
                                     ))
                                 }
-                                {sectorInput && !selectedSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
+                                {sectorInput && role ===  'super_admin' && !selectedSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
                                     <div
                                         onClick={() => {
                                             if (!sectorInput.trim()) {

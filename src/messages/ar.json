@@ -199,6 +199,7 @@
     "SocialMediaPage": {
         "socialMediaPageTitle": "التواصل الإجتماعي",
         "AllAnalysisTable": {
+            "noResultsFoundFilters": "لا يتوافق مع أي نتائج",
             "noResultsFound": "",
             "loadingData": "",
             "fetchingFromDatabase": "",
