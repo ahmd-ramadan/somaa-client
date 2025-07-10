@@ -116,14 +116,14 @@ const Sidebar = () => {
             <div className="flex h-full flex-col">
                 <div className={`
                     flex h-20 items-center
-                    ${isCompact ? 'justify-center' : 'pl-6 pr-4 justify-between'}
+                    ${isCompact ? 'justify-center' : 'px-3 justify-between'}
                 `}>
                     <div className={`transition-opacity duration-200 ${isCompact ? 'opacity-0 w-0' : 'opacity-100'}`}>
                        <Image
-                            src="/logo.svg"
+                            src="/logo.png"
                             alt="logo"
-                            width={128}
-                            height={60}
+                            width={160}
+                            height={80}
                             className="object-contain"
                        />
                     </div>

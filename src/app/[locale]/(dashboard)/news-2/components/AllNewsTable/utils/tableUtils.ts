@@ -80,7 +80,7 @@ export const getGroupingTypeLabel = (groupKey: string, level: number, t: (key: s
     if (currentLevel.startsWith('pressType-')) return t("pressType");
     if (currentLevel.startsWith('geoClassify-')) return t("geoClassify");
     if (currentLevel.startsWith('classify-')) return t("classify");
-    if (currentLevel.startsWith('adType-')) return t("addType");
+    if (currentLevel.startsWith('adType-')) return t("adType");
     if (currentLevel.startsWith('newspaper-')) return t("newspaper");
     if (currentLevel.startsWith('title-')) return t("title");
     if (currentLevel.startsWith('url-')) return t("url");
@@ -96,7 +96,7 @@ export const getGroupingKey = (groupKey: string, level: number): string => {
     if (currentLevel.startsWith('pressType-')) return "pressType";
     if (currentLevel.startsWith('geoClassify-')) return "geoClassify";
     if (currentLevel.startsWith('classify-')) return "classify";
-    if (currentLevel.startsWith('adType-')) return "addType";
+    if (currentLevel.startsWith('adType-')) return "adType";
     if (currentLevel.startsWith('newspaper-')) return "newspaper";
     if (currentLevel.startsWith('url-')) return "url";
     if (currentLevel.startsWith('title-')) return "title";

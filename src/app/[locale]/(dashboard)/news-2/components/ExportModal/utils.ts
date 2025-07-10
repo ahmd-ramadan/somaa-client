@@ -56,7 +56,7 @@ export const calculateColumnWidths = (data: INews[], selectedColumns: Column[], 
             maxLength = Math.max(maxLength, cellValue.length);
         });
 
-        return { wch: Math.max(maxLength + COLUMN_WIDTHS.padding, COLUMN_WIDTHS.default) };
+        return { wch: Math.max(Math.min(maxLength + COLUMN_WIDTHS.padding, 20), COLUMN_WIDTHS.default) };
     });
 };
 

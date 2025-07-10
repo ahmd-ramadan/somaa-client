@@ -579,7 +579,8 @@
             "loadingData": "",
             "fetchingFromDatabase": "",
             "noResultsFound": "",
-            "editModalTitle": "تعديل الرصد"
+            "editModalTitle": "تعديل الرصد",
+            "noActiveFilters":"لا توجد فلاتر نشطة"
         },
         "AddNews": {
             "url": "المصدر",

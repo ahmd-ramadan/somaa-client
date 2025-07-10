@@ -89,61 +89,6 @@ export const useNewsTable = () => {
     .sort((a, b) => (a[1].order || 0) - (b[1].order || 0))
     .map(([key]) => key);
 
-    const activeGroupingsMap = activeGroupingKeys.map(key => groupingOrderMap[key as keyof typeof groupingOrderMap]);
-
-    // Use useMemo to prevent infinite re-renders and optimize performance
-    const getSortedAndGroupedNews = React.useMemo((): GroupedNewsData[] => {
-        const sorted = [...filteredNews];
-
-        if (activeGroupingKeys.length === 0) {
-            const totalItems = filteredNews.length;
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const paginated = filteredNews.slice(startIndex, endIndex);
-            return [{
-                key: 'all-data',
-                label: 'All News',
-                items: paginated,
-                children: [],
-                level: 0,
-                isCollapsed: false
-            }];
-        }
-
-        const createNestedGroups = (items: INews[], level: number, parentPath = ''): GroupedNewsData[] => {
-            if (level >= activeGroupingsMap.length) {
-                return [];
-            }
-
-            const currentGrouping = activeGroupingsMap[level];
-            const groupKeyName = activeGroupingKeys[level];
-            const groups: Record<string, INews[]> = {};
-
-            items.forEach(item => {
-                const value = currentGrouping.getValue(item);
-                if (!groups[value]) {
-                    groups[value] = [];
-                }
-                groups[value].push(item);
-            });
-
-            return Object.entries(groups).map(([value, groupItems]) => {
-                const groupKey = `${parentPath ? parentPath + '/' : ''}${currentGrouping.key}-${value}`;
-                const children = createNestedGroups(groupItems, level + 1, groupKey);
-                return {
-                    key: groupKey,
-                    label: value,
-                    items: children.length === 0 ? groupItems : [],
-                    children: children,
-                    level: level,
-                    isCollapsed: false
-                };
-            });
-        };
-
-        return createNestedGroups(sorted, 0, '');
-    }, [filteredNews, sortOrder, activeGroupingKeys, activeGroupingsMap, currentPage, itemsPerPage]);
-
     // Reset add news status
     useEffect(() => {
         if (addNewsStatus === 'succeeded') {
@@ -190,6 +135,60 @@ export const useNewsTable = () => {
         });
     };
 
+    const activeGroupingsMap = activeGroupingKeys.map(key => groupingOrderMap[key as keyof typeof groupingOrderMap]);
+
+    const getSortedAndGroupedNews = React.useMemo((): GroupedNewsData[] => {
+        const sorted = [...filteredNews]
+
+        if (activeGroupingKeys.length === 0) {
+            const totalItems = filteredNews.length;
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginated = filteredNews.slice(startIndex, endIndex);
+            return [{
+                key: 'all-data',
+                label: 'All Analysis',
+                items: paginated,
+                children: [],
+                level: 0,
+                isCollapsed: false
+            }];
+        }
+
+        const createNestedGroups = (items: INews[], level: number, parentPath = ''): GroupedNewsData[] => {
+            if (level >= activeGroupingsMap.length) {
+                return [];
+            }
+
+            const currentGrouping = activeGroupingsMap[level];
+            const groupKeyName = activeGroupingKeys[level];
+            const groups: Record<string, INews[]> = {};
+
+            items.forEach(item => {
+                const value = currentGrouping.getValue(item);
+                if (!groups[value]) {
+                    groups[value] = [];
+                }
+                groups[value].push(item);
+            });
+
+            return Object.entries(groups).map(([value, groupItems]) => {
+                const groupKey = `${parentPath ? parentPath + '/' : ''}${currentGrouping.key}-${value}`;
+                const children = createNestedGroups(groupItems, level + 1, groupKey);
+                return {
+                    key: groupKey,
+                    label: value,
+                    items: children.length === 0 ? groupItems : [],
+                    children: children,
+                    level: level,
+                    isCollapsed: false
+                };
+            });
+        };
+
+        return createNestedGroups(sorted, 0, '');
+    }, [filteredNews, sortOrder, activeGroupingKeys, activeGroupingsMap, currentPage, itemsPerPage]);
+
     // Update collapsedGroups when News changes
     useEffect(() => {
         const newGroups = { ... collapsedGroups };
@@ -201,7 +200,7 @@ export const useNewsTable = () => {
                 updateCollapsedState(group.children);
             });
         };
-        // updateCollapsedState(getSortedAndGroupedNews);
+        updateCollapsedState(getSortedAndGroupedNews);
         setCollapsedGroups(newGroups);
     }, [groupings]);
 
@@ -220,7 +219,7 @@ export const useNewsTable = () => {
                 updateCollapsedState(group.children);
             });
         };
-        // updateCollapsedState(getSortedAndGroupedNews);
+        updateCollapsedState(getSortedAndGroupedNews);
         setCollapsedGroups(newCollapsedGroups);
     };
 

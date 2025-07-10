@@ -194,6 +194,7 @@ const AddNews = () => {
                                 value={sectorInput}
                                 onChange={(e) => {
                                     setSectorInput(e.target.value);
+                                    setSectorInput(e.target.value)
                                     setShowSectorDropdown(true);
                                 }}
                                 onFocus={() => setShowSectorDropdown(true)}

@@ -579,7 +579,8 @@
             "loadingData": "",
             "fetchingFromDatabase": "",
             "noResultsFound": "",
-            "editModalTitle": "Edit Montoring Data"
+            "editModalTitle": "Edit Montoring Data",
+            "noActiveFilters": "No active filters"
         },
         "AddNews": {
             "url": "Source",

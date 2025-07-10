@@ -16,8 +16,8 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
     const [searchQuery, setSearchQuery] = React.useState('');
     const [showFilterMenu, setShowFilterMenu] = React.useState(false);
     const [dateRange, setDateRange] = React.useState({
-        from: new Date().toISOString().slice(0, 16),
-        to: new Date().toISOString().slice(0, 16)
+        from: (filters?.dateRange?.start || new Date()).toISOString().slice(0, 16),
+        to: (filters?.dateRange?.end || new Date()).toISOString().slice(0, 16)
     });
 
     const menueRef = useRef<HTMLDivElement>(null)
@@ -47,8 +47,8 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
         endOfDay.setHours(23, 59, 59, 999);
 
         setDateRange({
-            from: startOfDay.toISOString().slice(0, 16),
-            to: endOfDay.toISOString().slice(0, 16)
+            from: (filters?.dateRange?.start || new Date()).toISOString().slice(0, 16),
+            to: (filters?.dateRange?.end || new Date()).toISOString().slice(0, 16)
         });
 
         // Only set initial filters if they don't exist
