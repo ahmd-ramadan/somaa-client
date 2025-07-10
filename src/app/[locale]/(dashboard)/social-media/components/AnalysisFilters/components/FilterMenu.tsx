@@ -140,11 +140,22 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                 }
             });
             newFilters[selectedFilterType] = currentValues as any;
-        } else if (selectedFilterType === 'tweetType') {
-            // For tweetType, add the exact value if it doesn't exist
-            const currentValues = newFilters[selectedFilterType] as string[];
-            if (!currentValues.includes(value)) {
-                newFilters[selectedFilterType] = [...currentValues, value] as any;
+        } else if (selectedFilterType === 'tweetType' || selectedFilterType === 'classify' || selectedFilterType === 'contentType' || selectedFilterType === 'platform') {
+            // For tweetType, add the exact value if it exists in options
+            const matchingValues = getFilterOptions(selectedFilterType).filter(option => {
+                return !!(t(option)?.toLowerCase()?.includes(value?.toLowerCase())) ||
+                !!(option.toLowerCase().includes(value.toLowerCase()))
+            });
+            
+            if (matchingValues.length > 0) {
+                for(const m of matchingValues) {    
+                    const currentValues = (newFilters[selectedFilterType] as string[]) || [];
+                    if(m && !currentValues.includes(m)) {
+                        (newFilters[selectedFilterType] as string[]) = [...currentValues, m];
+                    }
+                }
+
+                console.log(newFilters[selectedFilterType]);
             }
         } else {
             // For other filter types, add the value if it doesn't exist

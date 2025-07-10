@@ -12,7 +12,7 @@ interface ModalProps {
     children: React.ReactNode;
 }
 
-const Modal = ({ isOpen, closeModal, title, children, bgColor="#fff", titleColor="var(--color-primary)", closeColor="#030712"}: ModalProps) => {
+const Modal = ({ isOpen, closeModal, title, children, bgColor="#fff", titleColor="var(--color-secondary)", closeColor="#030712"}: ModalProps) => {
     const modalRef = useRef<HTMLDivElement>(null);
 
     if (!isOpen) return null;

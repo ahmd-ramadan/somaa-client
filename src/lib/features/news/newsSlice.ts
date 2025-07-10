@@ -27,7 +27,20 @@ const initialState: INewsState = {
 const newsSlice = createSlice({
     name: 'NewsSlice',
     initialState,
-    reducers: {},
+    reducers: {
+        resetAllNewsStatus: (state) => {
+            state.allNewsstatus = 'idle';
+        },
+        resetAddNewsStatus: (state) => {
+            state.addNewsStatus = 'idle';
+        },
+        resetUpdateNewsStatus: (state) => {
+            state.updateNewsStatus = 'idle';
+        },
+        resetDeleteNewsStatus: (state) => {
+            state.deleteNewsStatus = 'idle';
+        }
+    },
     extraReducers: (builder) => {
         //  Get All News
         builder
@@ -107,5 +120,12 @@ const newsSlice = createSlice({
             });
     },
 });
+
+export const {
+    resetAllNewsStatus,
+    resetAddNewsStatus,
+    resetUpdateNewsStatus,
+    resetDeleteNewsStatus,
+} = newsSlice.actions;
 
 export default newsSlice.reducer;

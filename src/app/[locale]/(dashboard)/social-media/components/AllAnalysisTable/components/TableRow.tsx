@@ -113,7 +113,7 @@ const TableRow: React.FC<TableRowProps> = ({
                 </div>
             </th>
             <td className="px-2 py-1">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-2">
                     {showAuthComponentsForAnalysis({ role, permissions }) 
                         && (role === 'super_admin' || addedBy.toString() === userId.toString()) ?
                         <>

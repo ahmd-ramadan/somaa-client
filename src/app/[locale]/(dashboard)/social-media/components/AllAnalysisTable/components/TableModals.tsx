@@ -44,7 +44,7 @@ const TableModals: React.FC<TableModalsProps> = ({
 }) => {
     return (
         <>
-            <Modal isOpen={isDetailsModalOpen} closeModal={closeDetailsModal} title="Analysis Details">
+            <Modal isOpen={isDetailsModalOpen} closeModal={closeDetailsModal} title={t("editModalTitle")}>
                 {selectedAnalysisDetails && (
                     <EditAnalysis
                         analysis={selectedAnalysisDetails}

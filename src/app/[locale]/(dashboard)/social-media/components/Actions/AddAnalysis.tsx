@@ -298,34 +298,34 @@ const AddAnalysis = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {/* URL Input */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1">
                     <label htmlFor="url" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Link className="w-5 h-5 text-adminPrimary" />
+                        <Link className="w-4 h-4 text-adminPrimary" />
                         {t("url")}
                     </label>
                     <input
                         type="text"
                         id="url"
                         {...register("url")}
-                        className="rounded-lg border border-gray-300 p-3 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
                         placeholder={t("urlPlaceholder")}
                     />
                     {errors.url && <FormatErrorMessage field="url" message={errors.url.message || t("required")} />}
                 </div>
 
                 {/* Platform Selection */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1">
                     <label htmlFor="platform" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Globe className="w-5 h-5 text-adminPrimary" />
+                        <Globe className="w-4 h-4 text-adminPrimary" />
                         {t("platform")}
                     </label>
                     <select
                         id="platform"
                         {...register("platform")}
-                        className="rounded-lg border border-gray-300 p-3 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
                     >
                         <option value="">{t("selectPlatform")}</option>
                         {Object.values(PlatformsEnum).map((platform) => (
@@ -338,15 +338,15 @@ const AddAnalysis = () => {
                 </div>
 
                 {/* Classification Selection */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1">
                     <label htmlFor="classify" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Tag className="w-5 h-5 text-adminPrimary" />
+                        <Tag className="w-4 h-4 text-adminPrimary" />
                         {t("classify")}
                     </label>
                     <select
                         id="classify"
                         {...register("classify")}
-                        className="rounded-lg border border-gray-300 p-3 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
                     >
                         <option value="">{t("selectClassify")}</option>
                         {Object.values(AnalysisClassifyEnum).map((classify) => (
@@ -359,15 +359,15 @@ const AddAnalysis = () => {
                 </div>
 
                 {/* Content Type Selection */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1">
                     <label htmlFor="contentType" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-adminPrimary" />
+                        <FileText className="w-4 h-4 text-adminPrimary" />
                         {t("contentType")}
                     </label>
                     <select
                         id="contentType"
                         {...register("contentType")}
-                        className="rounded-lg border border-gray-300 p-3 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
                     >
                         <option value="">{t("selectContentType")}</option>
                         {Object.values(ContentTypesEnum).map((type) => (
@@ -380,9 +380,9 @@ const AddAnalysis = () => {
                 </div>
 
                 {/* Sector Selection */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1">
                     <label htmlFor="sectorId" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-adminPrimary" />
+                        <Building2 className="w-4 h-4 text-adminPrimary" />
                         {t("sector")}
                     </label>
                     <div className="w-full relative">
@@ -396,7 +396,7 @@ const AddAnalysis = () => {
                                     setShowSectorDropdown(true);
                                 }}
                                 onFocus={() => setShowSectorDropdown(true)}
-                                className="col-span-6 rounded-lg border border-gray-300 p-3 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
+                                className="col-span-6 rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
                                 placeholder={t("selectOrAddSector")}
                             />
                         </div>
@@ -446,111 +446,10 @@ const AddAnalysis = () => {
                     </div>
                 </div>
 
-                {/* Location Selection */}
-                <div className="flex flex-col gap-2">
-                    <label htmlFor="location" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <MapPin className="w-5 h-5 text-adminPrimary" />
-                        {t("location")}
-                    </label>
-                    <div className="space-y-2">
-                        {/* Region Input */}
-                        <div className="relative">
-                            <input
-                                type="text"
-                                value={regionInput}
-                                onChange={handleRegionInputChange}
-                                onFocus={() => setShowRegionDropdown(true)}
-                                className="w-full rounded-lg border border-gray-300 p-3 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
-                                placeholder={t("selectRegion")}
-                            />
-                            {showRegionDropdown && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
-                                    {saudiLocations
-                                        .filter(region => 
-                                            getLocalizedName(region).toLowerCase().includes(regionInput.toLowerCase())
-                                        )
-                                        .map((region) => (
-                                            <div
-                                                key={region.name}
-                                                onClick={() => handleRegionSelect(region)}
-                                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                            >
-                                                {getLocalizedName(region)}
-                                            </div>
-                                        ))
-                                    }
-                                </div>
-                            )}
-                        </div>
-
-                        {/* City Input */}
-                        <div className="relative">
-                            <input
-                                type="text"
-                                value={cityInput}
-                                onChange={handleCityInputChange}
-                                onFocus={() => setShowCityDropdown(true)}
-                                disabled={!selectedRegion}
-                                className="w-full rounded-lg border border-gray-300 p-3 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all disabled:bg-gray-100"
-                                placeholder={t("selectCity")}
-                            />
-                            {showCityDropdown && selectedRegion && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
-                                    {selectedRegion.cities
-                                        .filter(city => 
-                                            getLocalizedName(city).toLowerCase().includes(cityInput.toLowerCase())
-                                        )
-                                        .map((city) => (
-                                            <div
-                                                key={city.name}
-                                                onClick={() => handleCitySelect(city)}
-                                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                            >
-                                                {getLocalizedName(city)}
-                                            </div>
-                                        ))
-                                    }
-                                </div>
-                            )}
-                        </div>
-
-                        {/* District Input */}
-                        <div className="relative">
-                            <input
-                                type="text"
-                                value={districtInput}
-                                onChange={handleDistrictInputChange}
-                                onFocus={() => setShowDistrictDropdown(true)}
-                                disabled={!selectedCity}
-                                className="w-full rounded-lg border border-gray-300 p-3 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all disabled:bg-gray-100"
-                                placeholder={t("selectDistrict")}
-                            />
-                            {showDistrictDropdown && selectedCity && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
-                                    {selectedCity.districts
-                                        .filter(district => 
-                                            getLocalizedName(district).toLowerCase().includes(districtInput.toLowerCase())
-                                        )
-                                        .map((district) => (
-                                            <div
-                                                key={district.name}
-                                                onClick={() => handleDistrictSelect(district)}
-                                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                            >
-                                                {getLocalizedName(district)}
-                                            </div>
-                                        ))
-                                    }
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
                 {/* SubAnalysis Selection */}
-                <div className="flex flex-col gap-2 col-span-2">
+                <div className="flex flex-col gap-1">
                     <label htmlFor="subAnalysisId" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-adminPrimary" />
+                        <Building2 className="w-4 h-4 text-adminPrimary" />
                         {t("subAnalysis")}
                     </label>
                     <div className="w-full relative">
@@ -561,14 +460,14 @@ const AddAnalysis = () => {
                                 value={subAnalysisInput}
                                 onChange={handleSubAnalysisInputChange}
                                 onFocus={() => setShowSubAnalysisDropdown(true)}
-                                className="col-span-5 rounded-lg border border-gray-300 p-3 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
+                                className="col-span-5 rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
                                 placeholder={t("selectOrAddSubAnalysis")}
                             />
                             <button
                                 type="button"
                                 onClick={handleAddNewSubAnalysis}
                                 disabled={addSubAnalysisStatus === 'loading'}
-                                className="col-span-1 p-3 bg-adminPrimary text-white text-center rounded-lg hover:bg-adminPrimary/90 focus:outline-none focus:ring-2 focus:ring-adminPrimary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="col-span-1 px-3 py-1 bg-adminPrimary text-white text-center rounded-lg hover:bg-adminPrimary/90 focus:outline-none focus:ring-2 focus:ring-adminPrimary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {addSubAnalysisStatus === 'loading' ? (
                                     <div className="flex items-center gap-2 justify-center">
@@ -607,24 +506,123 @@ const AddAnalysis = () => {
                     </div>
                 </div>
 
+                {/* Location Selection */}
+                <div className="flex flex-col gap-1">
+                    <label htmlFor="location" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-adminPrimary" />
+                        {t("location")}
+                    </label>
+                    <div className="space-y-2">
+                        {/* Region Input */}
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={regionInput}
+                                onChange={handleRegionInputChange}
+                                onFocus={() => setShowRegionDropdown(true)}
+                                className="w-full rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                                placeholder={t("selectRegion")}
+                            />
+                            {showRegionDropdown && (
+                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                    {saudiLocations
+                                        .filter(region => 
+                                            getLocalizedName(region).toLowerCase().includes(regionInput.toLowerCase())
+                                        )
+                                        .map((region) => (
+                                            <div
+                                                key={region.name}
+                                                onClick={() => handleRegionSelect(region)}
+                                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            >
+                                                {getLocalizedName(region)}
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            )}
+                        </div>
+
+                        {/* City Input */}
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={cityInput}
+                                onChange={handleCityInputChange}
+                                onFocus={() => setShowCityDropdown(true)}
+                                disabled={!selectedRegion}
+                                className="w-full rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all disabled:bg-gray-100"
+                                placeholder={t("selectCity")}
+                            />
+                            {showCityDropdown && selectedRegion && (
+                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                    {selectedRegion.cities
+                                        .filter(city => 
+                                            getLocalizedName(city).toLowerCase().includes(cityInput.toLowerCase())
+                                        )
+                                        .map((city) => (
+                                            <div
+                                                key={city.name}
+                                                onClick={() => handleCitySelect(city)}
+                                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            >
+                                                {getLocalizedName(city)}
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            )}
+                        </div>
+
+                        {/* District Input */}
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={districtInput}
+                                onChange={handleDistrictInputChange}
+                                onFocus={() => setShowDistrictDropdown(true)}
+                                disabled={!selectedCity}
+                                className="w-full rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all disabled:bg-gray-100"
+                                placeholder={t("selectDistrict")}
+                            />
+                            {showDistrictDropdown && selectedCity && (
+                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                    {selectedCity.districts
+                                        .filter(district => 
+                                            getLocalizedName(district).toLowerCase().includes(districtInput.toLowerCase())
+                                        )
+                                        .map((district) => (
+                                            <div
+                                                key={district.name}
+                                                onClick={() => handleDistrictSelect(district)}
+                                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            >
+                                                {getLocalizedName(district)}
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
                 {/* Note Input */}
-                <div className="flex flex-col gap-2 md:col-span-2">
+                <div className="flex flex-col gap-1">
                     <label htmlFor="note" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <MessageSquare className="w-5 h-5 text-adminPrimary" />
+                        <MessageSquare className="w-4 h-4 text-adminPrimary" />
                         {t("note")}
                     </label>
                     <textarea
                         id="note"
                         {...register("note")}
-                        className="rounded-lg border border-gray-300 p-3 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all min-h-[50px] resize-none"
+                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all h-full resize-none"
                         placeholder={t("notePlaceholder")}
                     />
                     {errors.note && <FormatErrorMessage field="note" message={errors.note.message || t("required")} />}
                 </div>
 
             </div>
-
-
 
             {/* Submit Button */}
             <div className="flex justify-center items-center gap-2">

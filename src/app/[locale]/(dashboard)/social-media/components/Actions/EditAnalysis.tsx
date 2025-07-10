@@ -25,7 +25,10 @@ import {
     Share2,
     Heart,
     Eye,
-    CircleUserRound
+    CircleUserRound,
+    Calculator,
+    TrendingUp,
+    Podcast
 } from 'lucide-react';
 import Image from "next/image";
 import toast from "react-hot-toast";
@@ -450,38 +453,18 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
     };
 
     return (
-        <div className="p-4 space-y-6">
-            <div className="flex justify-end gap-2 mb-4">
-                <button
-                    onClick={handleSave}
-                    disabled={updateAnalysisStatus === 'loading'}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-                >
-                    { updateAnalysisStatus === 'loading' ? <Spinner />: <>
-                        <Save className="w-4 h-4" />
-                        {t("save")}
-                    </> }
-                </button>
-                <button
-                    onClick={onCancel}
-                    disabled={updateAnalysisStatus === 'loading'}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                >
-                    <XCircle className="w-4 h-4" />
-                    {t("cancel")}
-                </button>
-            </div>
+        <div className="pt-4 flex flex-col gap-3">
 
             <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
+                <div className="space-y-1">
                     <h3 className="font-semibold text-primary flex items-center gap-2">
-                        <Globe className="w-5 h-5 text-primary" />
+                        {/* <Globe className="w-4 h-4 text-primary" /> */}
                         {t("platform")}
                     </h3>
                     <select
                         value={editedAnalysis.platform}
                         onChange={(e) => handleInputChange('platform', e.target.value)}
-                        className="w-full p-2 border border-primary rounded-md text-primary"
+                        className="w-full px-3 py-1 border border-primary rounded-md text-primary"
                     >
                         {Object.values(PlatformsEnum).map(platform => (
                             <option key={platform} value={platform}>
@@ -491,26 +474,22 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                     </select>
                 </div>
 
-                <div className="space-y-2">
-                    <h3 className="font-semibold text-primary flex items-center gap-2">
-                        <User className="w-5 h-5 text-primary" />
-                        {t("publisher")}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                        <img
-                            src={editedAnalysis.publisher?.avatar || '/logo.png'}
-                            alt="Publisher"
-                            // width={40}
-                            // height={40}
-                            className="w-10 h-10 rounded-full"
-                        />
-                        <p className="text-primary">{editedAnalysis.publisher?.name}</p>
-                    </div>
+                <div className="space-y-1">
+                    <h4 className="font-semi-bold text-primary flex items-center gap-1">
+                        {/* <Calendar className="w-4 h-4" /> */}
+                        {t("createdAt")}
+                    </h4>
+                    <input
+                        type="datetime-local"
+                        className="w-full rounded-md border border-primary px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                        value={editedAnalysis.createdAt ? new Date(editedAnalysis.createdAt).toISOString().slice(0, 16) : ""}
+                        onChange={e => handleInputChange('createdAt', new Date(e.target.value).toISOString())}
+                    />
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1">
                     <h3 className="font-semibold text-primary flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-primary" />
+                        {/* <Building2 className="w-4 h-4 text-primary" /> */}
                         {t("sector")}
                     </h3>
                     <div className="w-full relative" ref={sectorDropdownRef}>
@@ -523,7 +502,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                     setShowSectorDropdown(true);
                                 }}
                                 onFocus={() => setShowSectorDropdown(true)}
-                                className="col-span-6 rounded-lg border border-primary p-3 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all flex-1"
+                                className="col-span-6 rounded-lg border border-primary px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all flex-1"
                                 placeholder={t("selectOrAddSector")}
                             />
                         </div>
@@ -542,7 +521,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                                 setSectorInput(sector.name);
                                                 setShowSectorDropdown(false);
                                             }}
-                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            className="px-3 py-1 hover:bg-gray-100 cursor-pointer"
                                         >
                                             {sector.name}
                                         </div>
@@ -551,7 +530,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                 {sectorInput && role === 'super_admin' && !allSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
                                     <div
                                         onClick={handleAddNewSector}
-                                        className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
+                                        className="w-full px-3 py-1 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                     >
                                         {t("addNewSector")}: {sectorInput}
                                     </div>
@@ -561,27 +540,9 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                     </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1">
                     <h3 className="font-semibold text-primary flex items-center gap-2">
-                        <Tag className="w-5 h-5 text-primary" />
-                        {t("classify")}
-                    </h3>
-                    <select
-                        value={editedAnalysis.classify}
-                        onChange={(e) => handleInputChange('classify', e.target.value)}
-                        className="w-full p-2 border border-primary rounded-md text-primary"
-                    >
-                        {Object.values(AnalysisClassifyEnum).map(classify => (
-                            <option key={classify} value={classify}>
-                                {t(classify)}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className="space-y-2">
-                    <h3 className="font-semibold text-primary flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-primary" />
+                        {/* <FileText className="w-4 h-4 text-primary" /> */}
                         {t("subAnalysis")}
                     </h3>
                     <div className="w-full relative" ref={subAnalysisDropdownRef}>
@@ -594,19 +555,19 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                     setShowSubAnalysisDropdown(true);
                                 }}
                                 onFocus={() => setShowSubAnalysisDropdown(true)}
-                                className="col-span-5 rounded-lg border border-primary p-3 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all flex-1"
+                                className="col-span-5 rounded-lg border border-primary px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all flex-1"
                                 placeholder={t("selectOrAddSubAnalysis")}
                             />
                             <button
                                 type="button"
                                 onClick={handleAddNewSubAnalysis}
                                 disabled={addSubAnalysisStatus === 'loading'}
-                                className="col-span-1 p-3 bg-primary text-white flex justify-center rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="col-span-1 px-3 py-1 bg-primary text-white flex justify-center rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {addSubAnalysisStatus === 'loading' ? (
                                     <Spinner />
                                 ) : (
-                                    <Plus className="w-4 h-4" />
+                                    <Plus className="w-6 h-6"/>
                                 )}
                             </button>
                         </div>
@@ -623,7 +584,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                                 setSubAnalysisInput(sub.body);
                                                 setShowSubAnalysisDropdown(false);
                                             }}
-                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            className="px-3 py-1 hover:bg-gray-100 cursor-pointer"
                                         >
                                             {sub.body}
                                         </div>
@@ -632,7 +593,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                 {subAnalysisInput && !allSubAnalysis.some(s => s.body.toLowerCase() === subAnalysisInput.toLowerCase()) && (
                                     <div
                                         onClick={handleAddNewSubAnalysis}
-                                        className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
+                                        className="w-full px-3 py-1 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                     >
                                         {t("addNewSubAnalysis")}: {subAnalysisInput}
                                     </div>
@@ -642,15 +603,33 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                     </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1">
                     <h3 className="font-semibold text-primary flex items-center gap-2">
-                        <Type className="w-5 h-5 text-primary" />
+                        {/* <Tag className="w-4 h-4 text-primary" /> */}
+                        {t("classify")}
+                    </h3>
+                    <select
+                        value={editedAnalysis.classify}
+                        onChange={(e) => handleInputChange('classify', e.target.value)}
+                        className="w-full px-3 py-1 border border-primary rounded-md text-primary"
+                    >
+                        {Object.values(AnalysisClassifyEnum).map(classify => (
+                            <option key={classify} value={classify}>
+                                {t(classify)}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="space-y-1">
+                    <h3 className="font-semibold text-primary flex items-center gap-2">
+                        {/* <Type className="w-4 h-4 text-primary" /> */}
                         {t("contentType")}
                     </h3>
                     <select
                         value={editedAnalysis.content?.type}
                         onChange={(e) => handleInputChange('content.type', e.target.value)}
-                        className="w-full p-2 border border-primary rounded-md text-primary"
+                        className="w-full px-3 py-1 border border-primary rounded-md text-primary"
                     >
                         {Object.values(ContentTypesEnum).map(type => (
                             <option key={type} value={type}>
@@ -661,165 +640,136 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                 </div>
             </div>
 
-            {editedAnalysis.location && (
-                <div className="space-y-2">
-                    <h4 className="font-medium text-primary flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-primary" />
-                        {t("location")}
-                    </h4>
-                    <div className="space-y-2">
-                        <div className="relative" ref={regionDropdownRef}>
-                            <input
-                                type="text"
-                                value={regionInput}
-                                onChange={handleRegionInputChange}
-                                onFocus={() => setShowRegionDropdown(true)}
-                                className="w-full rounded-lg border border-primary p-3 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
-                                placeholder={t("selectRegion")}
-                            />
-                            {showRegionDropdown && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
-                                    {saudiLocations
-                                        .filter(region => 
-                                            getLocalizedName(region).toLowerCase().includes(regionInput.toLowerCase())
-                                        )
-                                        .map((region) => (
-                                            <div
-                                                key={region.name}
-                                                onClick={() => handleRegionSelect(region)}
-                                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                            >
-                                                {getLocalizedName(region)}
-                                            </div>
-                                        ))
-                                    }
-                                </div>
-                            )}
-                        </div>
+            <div className="w-full">
+                {editedAnalysis.location && (
+                    <div className="space-y-1">
+                        <h4 className="font-medium text-primary flex items-center gap-2">
+                            {/* <MapPin className="w-4 h-4 text-primary" /> */}
+                            {t("location")}
+                        </h4>
+                        <div className="space-y-1 grid grid-cols-3 gap-2">
+                            <div className="relative" ref={regionDropdownRef}>
+                                <input
+                                    type="text"
+                                    value={regionInput}
+                                    onChange={handleRegionInputChange}
+                                    onFocus={() => setShowRegionDropdown(true)}
+                                    className="w-full rounded-lg border border-primary px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                                    placeholder={t("selectRegion")}
+                                />
+                                {showRegionDropdown && (
+                                    <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
+                                        {saudiLocations
+                                            .filter(region => 
+                                                getLocalizedName(region).toLowerCase().includes(regionInput.toLowerCase())
+                                            )
+                                            .map((region) => (
+                                                <div
+                                                    key={region.name}
+                                                    onClick={() => handleRegionSelect(region)}
+                                                    className="px-3 py-1 hover:bg-gray-100 cursor-pointer"
+                                                >
+                                                    {getLocalizedName(region)}
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                )}
+                            </div>
 
-                        <div className="relative" ref={cityDropdownRef}>
-                            <input
-                                type="text"
-                                value={cityInput}
-                                onChange={handleCityInputChange}
-                                onFocus={() => setShowCityDropdown(true)}
-                                disabled={!selectedRegion}
-                                className="w-full rounded-lg border border-primary p-3 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all disabled:bg-gray-100"
-                                placeholder={t("selectCity")}
-                            />
-                            {showCityDropdown && selectedRegion && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
-                                    {selectedRegion.cities
-                                        .filter(city => 
-                                            getLocalizedName(city).toLowerCase().includes(cityInput.toLowerCase())
-                                        )
-                                        .map((city) => (
-                                            <div
-                                                key={city.name}
-                                                onClick={() => handleCitySelect(city)}
-                                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                            >
-                                                {getLocalizedName(city)}
-                                            </div>
-                                        ))
-                                    }
-                                </div>
-                            )}
-                        </div>
+                            <div className="relative" ref={cityDropdownRef}>
+                                <input
+                                    type="text"
+                                    value={cityInput}
+                                    onChange={handleCityInputChange}
+                                    onFocus={() => setShowCityDropdown(true)}
+                                    disabled={!selectedRegion}
+                                    className="w-full rounded-lg border border-primary px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all disabled:bg-gray-100"
+                                    placeholder={t("selectCity")}
+                                />
+                                {showCityDropdown && selectedRegion && (
+                                    <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
+                                        {selectedRegion.cities
+                                            .filter(city => 
+                                                getLocalizedName(city).toLowerCase().includes(cityInput.toLowerCase())
+                                            )
+                                            .map((city) => (
+                                                <div
+                                                    key={city.name}
+                                                    onClick={() => handleCitySelect(city)}
+                                                    className="px-3 py-1 hover:bg-gray-100 cursor-pointer"
+                                                >
+                                                    {getLocalizedName(city)}
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                )}
+                            </div>
 
-                        <div className="relative" ref={districtDropdownRef}>
-                            <input
-                                type="text"
-                                value={districtInput}
-                                onChange={handleDistrictInputChange}
-                                onFocus={() => setShowDistrictDropdown(true)}
-                                disabled={!selectedCity}
-                                className="w-full rounded-lg border border-primary p-3 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all disabled:bg-gray-100"
-                                placeholder={t("selectDistrict")}
-                            />
-                            {showDistrictDropdown && selectedCity && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
-                                    {selectedCity.districts
-                                        .filter(district => 
-                                            getLocalizedName(district).toLowerCase().includes(districtInput.toLowerCase())
-                                        )
-                                        .map((district) => (
-                                            <div
-                                                key={district.name}
-                                                onClick={() => handleDistrictSelect(district)}
-                                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                            >
-                                                {getLocalizedName(district)}
-                                            </div>
-                                        ))
-                                    }
-                                </div>
-                            )}
+                            <div className="relative" ref={districtDropdownRef}>
+                                <input
+                                    type="text"
+                                    value={districtInput}
+                                    onChange={handleDistrictInputChange}
+                                    onFocus={() => setShowDistrictDropdown(true)}
+                                    disabled={!selectedCity}
+                                    className="w-full rounded-lg border border-primary px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all disabled:bg-gray-100"
+                                    placeholder={t("selectDistrict")}
+                                />
+                                {showDistrictDropdown && selectedCity && (
+                                    <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
+                                        {selectedCity.districts
+                                            .filter(district => 
+                                                getLocalizedName(district).toLowerCase().includes(districtInput.toLowerCase())
+                                            )
+                                            .map((district) => (
+                                                <div
+                                                    key={district.name}
+                                                    onClick={() => handleDistrictSelect(district)}
+                                                    className="px-3 py-1 hover:bg-gray-100 cursor-pointer"
+                                                >
+                                                    {getLocalizedName(district)}
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-
-            <div className="border-t pt-4">
-                <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
-                    <BarChart2 className="w-5 h-5 text-primary" />
-                    {t("statistics")}
-                </h3>
-                <div className="grid grid-cols-4 gap-4">
-                    <div className="bg-red-50 p-3 rounded-lg">
-                        <div className="flex items-center gap-2">
-                            <Heart className="w-5 h-5 text-red-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.reactions.toLocaleString()}</span>
-                        </div>
-                        <p className="text-sm text-primary">Reactions</p>
-                    </div>
-                    <div className="bg-green-50 p-3 rounded-lg">
-                        <div className="flex items-center gap-2">
-                            <MessageCircle className="w-5 h-5 text-green-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.comments.toLocaleString()}</span>
-                        </div>
-                        <p className="text-sm text-primary">Comments</p>
-                    </div>
-                    <div className="bg-blue-50 p-3 rounded-lg">
-                        <div className="flex items-center gap-2">
-                            <Share2 className="w-5 h-5 text-blue-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.shares.toLocaleString()}</span>
-                        </div>
-                        <p className="text-sm text-primary">Shares</p>
-                    </div>
-                    <div className="bg-purple-50 p-3 rounded-lg">
-                        <div className="flex items-center gap-2">
-                            <Eye className="w-5 h-5 text-purple-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.views.toLocaleString()}</span>
-                        </div>
-                        <p className="text-sm text-primary">Views</p>
-                    </div>
-                </div>
+                )}
             </div>
 
-            <div className="border-t pt-4">
-                <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
-                    <Info className="w-5 h-5 text-primary" />
+            <div className="border-t p-1 flex flex-col gap-3">
+                {/* <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
+                    <Info className="w-4 h-4 text-primary" />
                     {t("additionalInformation")}
-                </h3>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <h4 className="font-medium text-primary flex items-center gap-2">
-                            <Calendar className="w-4 h-4" />
-                            {t("createdAt")}
-                        </h4>
-                        <input
-                            type="datetime-local"
-                            className="w-full rounded-lg border border-primary p-2 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
-                            value={editedAnalysis.createdAt ? new Date(editedAnalysis.createdAt).toISOString().slice(0, 16) : ""}
-                            onChange={e => handleInputChange('createdAt', new Date(e.target.value).toISOString())}
-                        />
+                </h3> */}
+
+                <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-1">
+                        {/* <h3 className="font-semibold text-primary flex items-center gap-2">
+                            <User className="w-4 h-4 text-primary" />
+                            {t("publisher")}
+                        </h3> */}
+                        <div className="flex items-center gap-2">
+                            <img
+                                src={editedAnalysis.publisher?.avatar || '/logo.png'}
+                                alt="Publisher"
+                                // width={40}
+                                // height={40}
+                                className="w-8 h-8 rounded-full"
+                            />
+                            <p className="text-primary">{editedAnalysis.publisher?.name}</p>
+                        </div>
                     </div>
-                    <div className="space-y-2">
-                        <h4 className="font-medium text-primary flex items-center gap-2">
+
+                    <div className="space-y-1">
+                        {/* <h4 className="font-medium text-primary flex items-center gap-2">
                             <User className="w-4 h-4" />
                             {t("addedBy")}
-                        </h4>
+                        </h4> */}
                         <div className="flex items-center gap-2">
                             {/* <img
                                 src={editedAnalysis.addedByData?.avatar?.secure_url || '/logo.png'}
@@ -829,21 +779,89 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                 className="w-10 h-10 rounded-full"
                             /> */}
                             <CircleUserRound className='w-4 h-4 text-primary'/>
-                            <p className="text-primary">{editedAnalysis.addedByData?.name}</p>
+                            <p className="text-primary px-3 py-1">{editedAnalysis.addedByData?.name}</p>
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        {/* <h4 className="font-medium text-primary flex items-center gap-2">
+                            <User className="w-4 h-4" />
+                            {t("tweetType")}
+                        </h4> */}
+                        <div className="flex items-center gap-2">
+                            {/* <img
+                                src={editedAnalysis.addedByData?.avatar?.secure_url || '/logo.png'}
+                                alt="Added By"
+                                // width={30}
+                                // height={30}
+                                className="w-10 h-10 rounded-full"
+                            /> */}
+                            <Podcast className='w-4 h-4 text-primary'/>
+                            <p className="text-primary px-3 py-1">{t(editedAnalysis.tweetType)}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                    {/* <h3 className="font-semibold text-primary mb-3 flex items-center gap-1">
+                        <BarChart2 className="w-4 h-4 text-primary" />
+                        {t("statistics")}
+                    </h3> */}
+                    <div className="grid grid-cols-6 gap-1">
+                        <div className="bg-red-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
+                            <Heart className="w-4 h-4 text-red-500" />
+                            <span className="font-medium text-primary">{editedAnalysis.statistics.reactions.toLocaleString()}</span>
+                        </div>
+                        <div className="bg-green-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
+                            <MessageCircle className="w-4 h-4 text-green-500" />
+                            <span className="font-medium text-primary">{editedAnalysis.statistics.comments.toLocaleString()}</span>
+                        </div>
+                        <div className="bg-blue-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
+                            <Share2 className="w-4 h-4 text-blue-500" />
+                            <span className="font-medium text-primary">{editedAnalysis.statistics.shares.toLocaleString()}</span>
+                        </div>
+                        <div className="bg-purple-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
+                            <Eye className="w-4 h-4 text-purple-500" />
+                            <span className="font-medium text-primary">{editedAnalysis.statistics.views.toLocaleString()}</span>
+                        </div>
+                        <div className="bg-orange-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
+                            <TrendingUp className="w-4 h-4 text-purple-500" />
+                            <span className="font-medium text-primary">{editedAnalysis.statistics.views.toLocaleString()}</span>
+                        </div>
+                        <div className="bg-indigo-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
+                            <Calculator className="w-4 h-4 text-purple-500" />
+                            <span className="font-medium text-primary">{(editedAnalysis.statistics.reactions + editedAnalysis.statistics.comments + editedAnalysis.statistics.shares).toLocaleString()}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="border-t pt-4">
+            <div className="border-t pt-1 flex justify-end gap-2">
                 <Link 
                     href={editedAnalysis.url}
                     target="_blank"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                    className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
                 >
-                    <ExternalLink className="w-4 h-4" />
+                    {/* <ExternalLink className="w-4 h-4" /> */}
                     {t("viewOriginalPost")}
                 </Link>
+                <button
+                    onClick={handleSave}
+                    disabled={updateAnalysisStatus === 'loading'}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                >
+                    { updateAnalysisStatus === 'loading' ? <Spinner />: <>
+                        {/* <Save className="w-4 h-4" /> */}
+                        {t("save")}
+                    </> }
+                </button>
+                <button
+                    onClick={onCancel}
+                    disabled={updateAnalysisStatus === 'loading'}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                >
+                    {/* <XCircle className="w-4 h-4" /> */}
+                    {t("cancel")}
+                </button>
             </div>
         </div>
     );
