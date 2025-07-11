@@ -85,7 +85,7 @@ const ActiveFiltersDisplay: React.FC<ActiveFiltersDisplayProps> = ({
                                     onClick={() => {
                                         const newFilters = { ...filters };
                                         newFilters.dateRange = undefined;
-                                        newFilters.noDate = true;
+                                        newFilters.noDate = false;
                                         setFilters(newFilters);
                                         dispatch(fetchAllNews({}));
                                     }} 

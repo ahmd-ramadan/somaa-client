@@ -2,9 +2,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 import FormatErrorMessage from "@/components/ui/FormatErrormessage";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
 import { handleError } from "@/utils/errorUtils";
@@ -297,6 +296,38 @@ const AddAnalysis = () => {
         }
     };
 
+    const sectorDropdownRef = useRef<HTMLDivElement>(null);
+    const subAnalysisDropdownRef = useRef<HTMLDivElement>(null);
+    const regionDropdownRef = useRef<HTMLDivElement>(null);
+    const cityDropdownRef = useRef<HTMLDivElement>(null);
+    const districtDropdownRef = useRef<HTMLDivElement>(null);
+
+    // Add click outside handler
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (sectorDropdownRef.current && !sectorDropdownRef.current.contains(event.target as Node)) {
+                setShowSectorDropdown(false);
+            }
+            if (subAnalysisDropdownRef.current && !subAnalysisDropdownRef.current.contains(event.target as Node)) {
+                setShowSubAnalysisDropdown(false);
+            }
+            if (regionDropdownRef.current && !regionDropdownRef.current.contains(event.target as Node)) {
+                setShowRegionDropdown(false);
+            }
+            if (cityDropdownRef.current && !cityDropdownRef.current.contains(event.target as Node)) {
+                setShowCityDropdown(false);
+            }
+            if (districtDropdownRef.current && !districtDropdownRef.current.contains(event.target as Node)) {
+                setShowDistrictDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showCityDropdown, showDistrictDropdown, showRegionDropdown, showSectorDropdown, showSubAnalysisDropdown]);
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -402,7 +433,7 @@ const AddAnalysis = () => {
                         </div>
                         
                         {showSectorDropdown && (
-                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                            <div ref={sectorDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
                                 {selectedSectors
                                     .filter(sector => 
                                         sector.name.toLowerCase().includes(sectorInput.toLowerCase())
@@ -479,7 +510,7 @@ const AddAnalysis = () => {
                             </button>
                         </div>
                         {showSubAnalysisDropdown && (
-                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                            <div ref={subAnalysisDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
                                 {allSubAnalysis
                                     .filter(sub => sub.body.toLowerCase().includes(subAnalysisInput.toLowerCase()))
                                     .map((sub) => (
@@ -524,7 +555,7 @@ const AddAnalysis = () => {
                                 placeholder={t("selectRegion")}
                             />
                             {showRegionDropdown && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                <div ref={regionDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
                                     {saudiLocations
                                         .filter(region => 
                                             getLocalizedName(region).toLowerCase().includes(regionInput.toLowerCase())
@@ -555,7 +586,7 @@ const AddAnalysis = () => {
                                 placeholder={t("selectCity")}
                             />
                             {showCityDropdown && selectedRegion && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                <div ref={cityDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
                                     {selectedRegion.cities
                                         .filter(city => 
                                             getLocalizedName(city).toLowerCase().includes(cityInput.toLowerCase())
@@ -586,7 +617,7 @@ const AddAnalysis = () => {
                                 placeholder={t("selectDistrict")}
                             />
                             {showDistrictDropdown && selectedCity && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                <div ref={districtDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
                                     {selectedCity.districts
                                         .filter(district => 
                                             getLocalizedName(district).toLowerCase().includes(districtInput.toLowerCase())

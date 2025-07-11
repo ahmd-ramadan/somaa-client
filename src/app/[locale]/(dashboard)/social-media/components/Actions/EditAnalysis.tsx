@@ -129,7 +129,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
+    }, [showCityDropdown, showDistrictDropdown, showRegionDropdown, showSectorDropdown, showSubAnalysisDropdown]);
 
     useEffect(() => {
         if (allSectorsStatus === "idle") {

@@ -102,7 +102,7 @@ const AddNews = () => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
+    }, [showSectorDropdown]);
 
     const onSubmit = async (data: IFormInputs) => {
         try {
@@ -204,7 +204,7 @@ const AddNews = () => {
                         </div>
                         
                         {showSectorDropdown && (
-                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                            <div ref={sectorDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
                                 {selectedSectors
                                     .filter(sector => 
                                         sector.name.toLowerCase().includes(sectorInput.toLowerCase())
