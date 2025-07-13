@@ -67,7 +67,7 @@ const DashboardPage = () => {
                     <div className='flex flex-col gap-1'>
                         <h2 className="text-xl font-semibold">{t("adminsTableTitle")}</h2>
                         <p className="text-sm text-primary flex items-center gap-2">
-                            <UserCog size={20} className="transition-colors transition-all duration-300" />
+                            <UserCog size={20} className="transition-colors duration-300" />
                             {t("showAllAdmins")} <span className='text-secondary font-bold'>: {admins.length}</span>
                         </p>
                     </div>

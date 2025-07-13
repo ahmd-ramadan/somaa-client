@@ -84,10 +84,20 @@ const ActiveFiltersDisplay: React.FC<ActiveFiltersDisplayProps> = ({
                                 <button 
                                     onClick={() => {
                                         const newFilters = { ...filters };
-                                        newFilters.dateRange = undefined;
-                                        newFilters.noDate = false;
+
+                                        // Reset to today's data
+                                        const today = new Date();
+                                        const startOfDay = new Date(today);
+                                        startOfDay.setHours(0, 0, 0, 0);
+                                        const endOfDay = new Date(today);
+                                        endOfDay.setHours(23, 59, 59, 999);
+                                        
+                                        newFilters.dateRange = checkIsTodayDate(values.start, values.end) ? {} : { end: endOfDay, start: startOfDay };
+                                        const query = checkIsTodayDate(values.start, values.end) ? {} : { startDate: endOfDay, endDate: startOfDay };
+                                        
+                                        newFilters.noDate = true;
                                         setFilters(newFilters);
-                                        dispatch(fetchAllNews({}));
+                                        dispatch(fetchAllNews(query));
                                     }} 
                                     className="text-gray-400 hover:text-red-500 transition-colors ml-1"
                                     title={t("removeDateFilter")}
@@ -150,17 +160,7 @@ const ActiveFiltersDisplay: React.FC<ActiveFiltersDisplayProps> = ({
                             // Clear all groupings
                             resetGrouping()
 
-                            // Reset to today's data
-                            const today = new Date();
-                            const startOfDay = new Date(today);
-                            startOfDay.setHours(0, 0, 0, 0);
-                            const endOfDay = new Date(today);
-                            endOfDay.setHours(23, 59, 59, 999);
-
-                            dispatch(fetchAllNews({
-                                startDate: startOfDay,
-                                endDate: endOfDay
-                            }));
+                            dispatch(fetchAllNews({}));
                         }}
                         className="text-sm text-red-600 hover:text-red-700 transition-colors flex items-center gap-1"
                     >

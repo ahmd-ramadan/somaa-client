@@ -3,6 +3,7 @@ import { X, AlertCircle } from 'lucide-react';
 import { AnalysisClassifyEnum, ContentTypesEnum, TweetTypesEnum, PlatformsEnum } from "@/interfaces/analysis.types";
 import { fetchAllAnalysis } from "@/lib/features/socialMedia/analysisThunks";
 import { ActiveFiltersDisplayProps } from '../types';
+import NewsFilters from '@/app/[locale]/(dashboard)/news/components/NewsFilters';
 
 const ActiveFiltersDisplay: React.FC<ActiveFiltersDisplayProps> = ({
     filters,
@@ -91,10 +92,20 @@ const ActiveFiltersDisplay: React.FC<ActiveFiltersDisplayProps> = ({
                                 <button 
                                     onClick={() => {
                                         const newFilters = { ...filters };
-                                        newFilters.dateRange = undefined;
+                                        
+                                        // Reset to today's data
+                                        const today = new Date();
+                                        const startOfDay = new Date(today);
+                                        startOfDay.setHours(0, 0, 0, 0);
+                                        const endOfDay = new Date(today);
+                                        endOfDay.setHours(23, 59, 59, 999);
+                                        
+                                        newFilters.dateRange = checkIsTodayDate(values.start, values.end) ? {} : { end: endOfDay, start: startOfDay };
+                                        const query = checkIsTodayDate(values.start, values.end) ? {} : { startDate: endOfDay, endDate: startOfDay };
+                                        
                                         newFilters.noDate = true;
                                         setFilters(newFilters);
-                                        dispatch(fetchAllAnalysis({}));
+                                        dispatch(fetchAllAnalysis(query));
                                     }} 
                                     className="text-gray-400 hover:text-red-500 transition-colors ml-1"
                                     title={t("removeDateFilter")}
@@ -152,22 +163,13 @@ const ActiveFiltersDisplay: React.FC<ActiveFiltersDisplayProps> = ({
                                     newFilters.dateRange = undefined;
                                 }
                             });
+                            newFilters.noDate = true
                             setFilters(newFilters);
 
                             // Clear all groupings
                             resetGrouping()
 
-                            // Reset to today's data
-                            const today = new Date();
-                            const startOfDay = new Date(today);
-                            startOfDay.setHours(0, 0, 0, 0);
-                            const endOfDay = new Date(today);
-                            endOfDay.setHours(23, 59, 59, 999);
-
-                            dispatch(fetchAllAnalysis({
-                                startDate: startOfDay,
-                                endDate: endOfDay
-                            }));
+                            dispatch(fetchAllAnalysis({}));
                         }}
                         className="text-sm text-red-600 hover:text-red-700 transition-colors flex items-center gap-1"
                     >

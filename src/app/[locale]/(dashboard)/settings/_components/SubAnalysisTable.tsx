@@ -134,7 +134,7 @@ const SubAnalysisTable = () => {
                 <th scope="row" className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{subAnalysis.body}</th>
                 <td className="px-3 py-2">
                   <span className="inline-flex items-center rounded-full text-xs font-medium">
-                    {subAnalysis?.socialMediaMonitoringCount.toLocaleString() || 0 }
+                    {subAnalysis?.socialMediaMonitoringCount?.toLocaleString() || 0 }
                   </span>
                 </td>
                 <td className="px-3 py-2">

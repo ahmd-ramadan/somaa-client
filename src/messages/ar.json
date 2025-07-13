@@ -761,7 +761,9 @@
         "admin": "أدمن",
         "totalSocialMediaMonitoringCount": "إجمالي الرصد من السوشيال ميديا",
         "totalNewsMonitoringCount": "إجمالي الرصد من الأخبار",
-        "showAllAdmins": "عدد الادمنز"
+        "showAllAdmins": "عدد الادمنز",
+        "totalMonitoringNewsCount": "إجمالي الرصد من الأخبار",
+        "totalMonitoringSocialMediaCount": "إجمالي الرصد من السوشيال ميديا"
     },
     "SettingsPage": {
         "settingsPageTitle": "صفحة الإعدادات",

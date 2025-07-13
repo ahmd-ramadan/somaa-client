@@ -141,7 +141,7 @@ const SectorsTable = () => {
                 </td>
                 <td className="px-3 py-2">
                   <span className="inline-flex items-center rounded-full text-xs font-medium">
-                    {sector?.socialMediaMonitoringCount.toLocaleString() || 0 }
+                    {sector?.socialMediaMonitoringCount?.toLocaleString() || 0 }
                   </span>
                 </td>
                 <td className="px-3 py-2">

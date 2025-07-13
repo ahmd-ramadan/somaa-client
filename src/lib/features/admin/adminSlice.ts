@@ -50,7 +50,7 @@ const adminSlice = createSlice({
                     state.addAdminStatus = 'succeeded';
                     state.admins.push(newAdmin);
                 } else {
-                    state.adminsStatus = 'failed';
+                    state.addAdminStatus = 'failed';
                 }
             })
             .addCase(addAdmin.rejected, (state) => {

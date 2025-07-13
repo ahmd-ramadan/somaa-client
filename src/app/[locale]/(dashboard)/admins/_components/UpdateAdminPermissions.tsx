@@ -50,11 +50,11 @@ const UpdatePermissions = ({ admin }: IUpdatePermissionsProps) => {
             // Dispatch the action to update permissions
             const formData = { adminId: admin._id, permissions: data.permissions }
             const action = await dispatch(updateAdminPermissions({token: token as string, data: formData }));
-            const { success, msgEn, msgAr } = action.payload as any;
+            const { success, message } = action.payload as any;
             if (success) {
-                toast.success(getLocalizedMessage({locale, msgEn, msgAr, msg: "Admin updated successfully"}));
+                toast.success(message || "Admin updated successfully");
             } else {
-                toast.error(getLocalizedMessage({locale, msgAr, msgEn, msg: 'Operation failed'}));
+                toast.error(message || 'Operation failed');
             }
         } catch (error) {
             const { message } = handleError(error);

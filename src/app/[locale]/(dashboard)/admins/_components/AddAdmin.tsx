@@ -77,7 +77,7 @@ const AddAdmin = () => {
     };
 
     const giveColSpan = (name: string): string => {
-        return ["email", "phone"].includes(name) ? "sm:col-span-2" : "col-span-1";
+        return ["email", "phone", "name"].includes(name) ? "sm:col-span-2" : "col-span-1";
     };
 
     const renderInputsSignUpForm = InputsAdminSignUpForm.map((input) => {
@@ -90,7 +90,7 @@ const AddAdmin = () => {
                 <input
                     type={type}
                     {...register(name)}
-                    className={`bg-white px-3 py-1 mt-1 w-full rounded-md border border-gray-300 dark:border-white text-md text-gray-700 shadow-sm`}
+                    className={`bg-white px-3 py-1 mt-1 w-full rounded-md border border-gray-300 text-md text-gray-700 shadow-sm`}
                 />
                 {errors[name] && <FormatErrorMessage message={errors[name].message as string} field={t(label)} />}
             </div>

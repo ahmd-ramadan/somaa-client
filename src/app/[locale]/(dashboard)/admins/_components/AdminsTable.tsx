@@ -97,8 +97,8 @@ const AdminsTable = ({ admins }: AdminsTableProps) => {
                                     <p key={idx} className='flex items-center gap-1'><CheckIcon className='text-green-600'/>{t(p)}</p>
                                 ))
                             }</td>
-                            <td className="px-3 py-2">{newsMonitoringCount}</td>
-                            <td className="px-3 py-2">{socialMediaMonitoringCount}</td>
+                            <td className="px-3 py-2">{newsMonitoringCount || 0}</td>
+                            <td className="px-3 py-2">{socialMediaMonitoringCount || 0}</td>
                             <td className="px-3 py-2 flex items-center gap-2">
                                 { !isDeleted && 
                                     <>

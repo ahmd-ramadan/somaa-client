@@ -48,6 +48,9 @@ export const useNewsFilters = (allNews: INews[]) => {
         if (filters.pressType?.length && !filters.pressType.includes(news.pressType)) {
             matches = false;
         }
+        if (filters.adType?.length && !filters.adType.includes(news.adType)) {
+            matches = false;
+        }
 
         if (filters.sector?.length && !filters.sector.includes(news.sectorData.name)) {
             matches = false;
