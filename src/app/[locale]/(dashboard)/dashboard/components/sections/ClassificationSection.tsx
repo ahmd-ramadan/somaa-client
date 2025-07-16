@@ -39,19 +39,19 @@ const ClassificationSection = ({ allAnalysis, allNews }: ClassificationSectionPr
         switch (type) {
             case AnalysisClassifyEnum.POSITIVE:
                 // return <span className="text-4xl animate-bounce">😊</span>;
-                return <Smile className="text-green-400 w-12 h-12"/>
+                return <Smile className="text-green-400 w-16 h-16"/>
             case AnalysisClassifyEnum.NEUTRAL:
                 // return <span className="text-4xl animate-pulse">😐</span>;
-                return <Meh className="text-gray-400 w-12 h-12"/>
+                return <Meh className="text-gray-400 w-16 h-16"/>
             case AnalysisClassifyEnum.NEGATIVE:
                 // return <span className="text-4xl animate-ping">😠</span>;
-                return <Frown className="text-red-400 w-12 h-12"/>
+                return <Frown className="text-red-400 w-16 h-16"/>
         }
     };
 
     return (
-        <div className="w-1/6 p-2 bg-gray-700/50 rounded-lg">
-            <div className="flex flex-col items-center justify-between gap-6">
+        <div className="w-full">
+            <div className="flex items-center justify-between gap-3">
                 {allCalssifications.map((cls, index) => (
                     <motion.div 
                         key={index} 
@@ -61,7 +61,7 @@ const ClassificationSection = ({ allAnalysis, allNews }: ClassificationSectionPr
                         whileHover={{ scale: 1.1 }}
                         transition={{ duration: 0.3, delay: index * 0.1 }}
                     >
-                        <div className={`w-12 h-12 ${
+                        <div className={`w-16 h-16 ${
                             cls.type === AnalysisClassifyEnum.POSITIVE ? 'border-green-500 bg-green-500/10' : 
                             cls.type === AnalysisClassifyEnum.NEUTRAL ? 'border-gray-500 bg-gray-500/10' : 
                             'border-red-500 bg-red-500/10'

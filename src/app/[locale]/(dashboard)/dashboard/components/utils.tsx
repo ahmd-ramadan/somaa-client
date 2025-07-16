@@ -11,17 +11,17 @@ import React, { ReactNode } from 'react';
 export const getPlatformIcon = (platform: PlatformsEnum): ReactNode => {
     switch (platform) {
         case PlatformsEnum.FACEBOOK:
-            return <FacebookIcon className='w-5 h-5'/>;
+            return <FacebookIcon className='h-4 w-4'/>;
         case PlatformsEnum.X:
-            return <XIcon className='w-5 h-5' />;
+            return <XIcon className='h-4 w-4' />;
         case PlatformsEnum.INSTAGRAM:
-            return <InstagramIcon className='w-5 h-5' />;
+            return <InstagramIcon className='h-4 w-4' />;
         case PlatformsEnum.LINKEDIN:
-            return <LinkedInIcon  className='w-5 h-5'/>;
+            return <LinkedInIcon  className='h-4 w-4'/>;
         case PlatformsEnum.YOUTUBE:
-            return <YoutubeIcon className='w-5 h-5'/>;
+            return <YoutubeIcon className='h-4 w-4'/>;
         case PlatformsEnum.TIKTOK:
-            return <TikTokIcon className='w-5 h-5'/>;
+            return <TikTokIcon className='h-4 w-4'/>;
         default:
             return null;
     }

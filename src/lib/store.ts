@@ -9,6 +9,7 @@ import analysisReducer from './features/socialMedia/analysisSlice';
 import sectorReducer from './features/sector/sectorSlice';
 import subAnalysisReducer from './features/subAnalysis/subAnalysisSlice';
 import newsReducer from './features/news/newsSlice';
+import newspaperReducer from './features/newspaper/newspaperSlice';
 
 export const makeStore = () => {
     return configureStore({
@@ -22,7 +23,8 @@ export const makeStore = () => {
             analysis: analysisReducer,
             sectors: sectorReducer,
             subAnalysis: subAnalysisReducer,
-            news: newsReducer
+            news: newsReducer,
+            newspapers: newspaperReducer,
         },
     })
 }

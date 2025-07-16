@@ -412,6 +412,7 @@
             "comments": "Comments",
             "shares": "Shares",
             "views": "Views",
+            "appearance": "Appearance",
             "total": "Total",
             "createdAt": "Date",
             "addedBy": "Monitor",
@@ -423,6 +424,7 @@
             "totalComments": "Total Comments",
             "totalShares": "Total Shares",
             "totalViews": "Total Views",
+            "totalStatistics": "Total Statistics",
             "totalAppearance": "Total Appearance",
             "selectTemplate": "Select Template",
             "tweetType": "Post Type",
@@ -580,7 +582,11 @@
             "fetchingFromDatabase": "",
             "noResultsFound": "",
             "editModalTitle": "Edit Montoring Data",
-            "noActiveFilters": "No active filters"
+            "noActiveFilters": "No active filters",
+            "newsPaperPlaceholder": "Newspaper name",
+            "newspaperNameRequired": "News paper name is required",
+            "addNewNewspaper": "Add new newspaper",
+            "selectOrAddNewspaper": "Select newspaper"
         },
         "AddNews": {
             "url": "Source",
@@ -654,10 +660,13 @@
             "addNewsBtn": "Save Monitoring",
             "newsPlaceholder": "...",
             "urlPlaceholder": "https://osus-solutions.com/news/details/000000",
-            "titlePlaceholder": "Article title...",
+            "titlePlaceholder": "Montoring title...",
             "enterCustomDistrict": "Add District Name",
             "addNewsBtnLoad": "Saving...",
-            "newsPaperPlaceholder": "Newspaper name"
+            "newsPaperPlaceholder": "Newspaper name",
+            "newspaperNameRequired": "News paper name is required",
+            "addNewNewspaper": "Add new newspaper",
+            "selectOrAddNewspaper": "Select newspaper"
         },
         "ExportModal": {
             "title": "Title",

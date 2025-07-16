@@ -6,9 +6,9 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useTranslations } from 'next-intl';
 import { selectSideBarLink, setPageTitle } from '@/lib/features/layout/layoutSlice';
 import Modal from '@/components/ui/Modal';
-import { showAuthComponentsForAnalysis } from '@/utils/authComponents';
+import { showAuthComponentsForNews } from '@/utils/authComponents';
 import AllNewsTable from './components/AllNewsTable';
-import AddNews from './components/AddNews';
+import AddNews from './components/Actions/AddNews';
 
 const NewsPage = () => {
     const dispatch = useAppDispatch();
@@ -35,7 +35,7 @@ const NewsPage = () => {
                         {/* <p className="text-sm">{t("showAllNews")}: (<span className='text-secondary font-semibold'>{selectedAllNews?.length}</span> / {allAnalysis?.length})</p> */}
                     </div>
                     { 
-                        showAuthComponentsForAnalysis({ role, permissions }) && <div className="flex items-center gap-1 flex-end">
+                        showAuthComponentsForNews({ role, permissions }) && <div className="flex items-center gap-1 flex-end">
                             <button 
                                     className="p-2 bg-secondary text-white rounded-md"
                                     onClick={() => setIsAddNewsModalOpen(true)}

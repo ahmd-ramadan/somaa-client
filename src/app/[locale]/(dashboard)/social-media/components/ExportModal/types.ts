@@ -27,9 +27,17 @@ export interface ExportStats {
     totalShares: number;
     totalViews: number;
     totalAppearance: number;
+    totalStatistics: number;
 }
 
 export interface ExportData {
     sortedData: IAnalysis[];
     stats: ExportStats;
+}
+
+export interface ModalFooterProps {
+  onClose: () => void;
+  onExport: () => void;
+  isExportDisabled: boolean;
+  isExporting?: boolean;
 } 

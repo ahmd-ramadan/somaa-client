@@ -11,6 +11,7 @@ export const AVAILABLE_COLUMNS: Column[] = [
     { id: 'comments', label: 'Comments', selected: false },
     { id: 'shares', label: 'Shares', selected: false },
     { id: 'views', label: 'Views', selected: false },
+    { id: 'appearance', label: 'Appearance', selected: false },
     { id: 'total', label: 'Total', selected: false },
     { id: 'createdAt', label: 'Created At', selected: false },
     { id: 'addedBy', label: 'Added By', selected: false },

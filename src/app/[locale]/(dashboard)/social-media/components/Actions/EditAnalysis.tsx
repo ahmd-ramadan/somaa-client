@@ -461,8 +461,9 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                         {/* <Globe className="w-4 h-4 text-primary" /> */}
                         {t("platform")}
                     </h3>
-                    <select
+                    {/* <select
                         value={editedAnalysis.platform}
+                        disabled={true}
                         onChange={(e) => handleInputChange('platform', e.target.value)}
                         className="w-full px-3 py-1 border border-primary rounded-md text-primary"
                     >
@@ -471,7 +472,13 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                 {t(platform)}
                             </option>
                         ))}
-                    </select>
+                    </select> */}
+                    <input
+                        type="text"
+                        className="w-full rounded-md border cursor-not-allowed border-primary px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                        value={t(analysis.platform ) }
+                        disabled={true}
+                    />
                 </div>
 
                 <div className="space-y-1">

@@ -3,7 +3,6 @@
 import { IAnalysis } from "@/interfaces/analysis.types"
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from "react";
-import { MapLocation } from "./MapComponent";
 
 interface IMapSectionProps {
     allAnalysis: IAnalysis[]
@@ -21,41 +20,32 @@ const MapWithNoSSR = dynamic(
         ),
     }
 );
-const MapSection = ({ allAnalysis }: IMapSectionProps) => {
 
-    const [lastAnalysisLocation, setLastAnalysisLocation] = useState<MapLocation>({ lat: 31.9522, lng: 35.9231 })
-    const [mapCenter, setMapCenter] = useState<[number, number]>([31.9522, 35.9231]); // Default to Jordan
+const SAUDI_CENTER: [number, number] = [23.8859, 45.0792];
+
+const MapSection = ({ allAnalysis }: IMapSectionProps) => {
     const [isMounted, setIsMounted] = useState(false);
+    // Get last 5 analyses with valid locations
+    const last5Analyses = allAnalysis
+        .filter(a => a.location && typeof a.location.lat === 'number' && typeof a.location.lng === 'number')
+        // .slice(0, 10);
 
     useEffect(() => {
         setIsMounted(true);
     }, []);
-    useEffect(() => {
-        if(allAnalysis) setLastAnalysisLocation(deriveLastAnalysisLocation(allAnalysis))
-    }, [allAnalysis])
-
-    const deriveLastAnalysisLocation = (analysisData: IAnalysis[]): MapLocation => {
-        const location = analysisData.at(-1)?.location
-        console.log(location);
-        return { lat: location?.lat as number, lng: location?.lng as number }
-    }
 
     return (
-        <div className="w-5/6 bg-gray-800/50 backdrop-blur-sm rounded-lg shadow border border-gray-700/50 hover:shadow-xl transition-all duration-300 flex flex-col">
-        {/* <h3 className="text-lg font-semibold text-blue-400 mb-4 flex items-center gap-2">
-            <MapPin className="w-5 h-5" />
-            خريطة التحليلات
-        </h3> */}
-        <div className="flex-1 relative">
-            {isMounted && (
-                <MapWithNoSSR 
-                    center={mapCenter}
-                    lastAnalysisLocation={lastAnalysisLocation}
-                    key="dashboard-map"
-                />
-            )}
+        <div className="w-full h-full min-h-[300px] flex flex-col bg-gray-800/50 backdrop-blur-sm rounded-lg shadow border border-gray-700/50 hover:shadow-xl transition-all duration-300">
+            <div className="flex-1 relative w-full h-full">
+                {isMounted && (
+                    <MapWithNoSSR
+                        center={SAUDI_CENTER}
+                        analyses={last5Analyses}
+                        key="dashboard-map"
+                    />
+                )}
+            </div>
         </div>
-    </div>
     )
 }
 

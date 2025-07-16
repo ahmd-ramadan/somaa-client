@@ -9,6 +9,7 @@ export interface IDashboardClassify {
 export interface IDashboardSubAnalysis {
     name: string,
     count: number,
+    totalEngagement: number,
     classifications: IDashboardClassify[]
 }
 

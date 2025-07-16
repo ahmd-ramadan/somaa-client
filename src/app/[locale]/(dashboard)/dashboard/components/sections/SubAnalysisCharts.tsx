@@ -2,7 +2,7 @@
 
 import { AnalysisClassifyEnum, IAnalysis } from "@/interfaces/analysis.types";
 import { motion } from "framer-motion";
-import { BarChart as BarChartIcon, TrendingUp, Smile } from "lucide-react";
+import { BarChart as BarChartIcon, LineChart, TrendingUp, Smile, Meh, Frown } from "lucide-react";
 import { IDashboardSubAnalysis } from "./types";
 import { useEffect, useState } from "react";
 import {
@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import { getTotalStatistics } from "@/utils/numbers";
 import html2canvas from "html2canvas";
+import { useTranslations } from "next-intl";
 
 interface ISubAnalysischarts {
     allAnalysis: IAnalysis[]
@@ -17,6 +18,7 @@ interface ISubAnalysischarts {
 
 const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
 
+    const t = useTranslations("DashboardPage")
     const [maxClassificationsType, setMaxClassificationsType] = useState<AnalysisClassifyEnum>(AnalysisClassifyEnum.POSITIVE)
     const [allSubAnalysis, setAllSubAnalysis] = useState<IDashboardSubAnalysis[]>([])
     const [downloading, setDownloading] = useState(false);
@@ -39,7 +41,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
         return AnalysisClassifyEnum.POSITIVE
     }
 
-    const deriveSubAnalysis = (analysisData: IAnalysis[]): IDashboardSubAnalysis[] => {
+    const deriveSubAnalysis = (analysisData: IAnalysis[]): any[] => {
         const analysisMap = new Map<string, { count: number, classifications: Map<AnalysisClassifyEnum, number> }>();
         
         analysisData.forEach(analysis => {
@@ -123,14 +125,10 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                         {data?.fullName || label}
                     </div>
                     {data && (
-                        <div className="text-xs text-gray-400 mb-2">عدد التحليلات: <span className="font-bold text-white">{data.total}</span></div>
+                        <div className="text-xs text-gray-400 mb-2">{t("analysisNumbers")}: <span className="font-bold text-white">{data.total}</span></div>
                     )}
                     {payload.map((entry: any, idx: number) => {
-                        let arabicLabel = '';
-                        if (entry.dataKey === 'positive') arabicLabel = 'إيجابي';
-                        else if (entry.dataKey === 'neutral') arabicLabel = 'محايد';
-                        else if (entry.dataKey === 'negative') arabicLabel = 'سلبي';
-                        else arabicLabel = entry.name;
+                        let arabicLabel = t(entry.dataKey);
                         return (
                             <div key={idx} className="flex items-center gap-2 mb-1 last:mb-0">
                                 <span className={`inline-block w-3 h-3 rounded-full`} style={{ background: entry.color }}></span>
@@ -184,18 +182,14 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
         return (
             <div className="flex gap-3 flex-wrap justify-end items-center text-xs pb-2">
                 {payload.map((entry: any, idx: number) => {
-                    let arabicLabel = '';
-                    if (entry.value === 'positive') arabicLabel = 'إيجابي';
-                    else if (entry.value === 'neutral') arabicLabel = 'محايد';
-                    else if (entry.value === 'negative') arabicLabel = 'سلبي';
-                    else arabicLabel = entry.value;
+                    let arabicLabel = t(entry.value);
                     return (
                         <div key={idx} className="flex items-center gap-1">
                             <span className="w-3 h-3 rounded-full block" style={{ background: entry.color }}></span>
                             <span className={
-                                arabicLabel === 'إيجابي' ? 'text-green-400' :
-                                arabicLabel === 'محايد' ? 'text-gray-400' :
-                                'text-red-400'
+                                arabicLabel === t('positive') ? 'text-green-400' :
+                                arabicLabel === t('negative') ? 'text-red-400' :
+                                'text-gray-400'
                             }>
                                 {arabicLabel}
                             </span>
@@ -233,7 +227,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
     };
 
     return (
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-1 over:shadow-xl transition-all duration-300">
+        <div className="flex-1 bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-1 over:shadow-xl transition-all duration-300">
             {/* Statistics Row */}
             <div className="flex justify-between items-center mb-1">
                 <motion.div 
@@ -242,7 +236,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                     transition={{ duration: 0.2 }}
                 >
                     <BarChartIcon className="w-4 h-4 text-blue-400" />
-                    <span className="text-sm text-gray-300">إجمالي الرصد</span>
+                    <span className="text-sm text-gray-300">{t("totalMonitoring")}</span>
                     <span className="text-sm font-semibold text-gray-300">{allAnalysis.length}</span>
                 </motion.div>
                 <motion.div 
@@ -252,7 +246,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                     transition={{ duration: 0.2 }}
                 >
                     <TrendingUp className={`w-4 h-4`}/>
-                    <span className="text-sm text-gray-300">إجمالي التفاعلات</span>
+                    <span className="text-sm text-gray-300">{t("totalStatistics")}</span>
                     <span className={`text-sm`}>
                         {allAnalysis.reduce((acc, curr) => (
                             acc + getTotalStatistics(curr?.statistics)
@@ -274,7 +268,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                             </svg>
-                        ) : 'تحميل كصورة'}
+                        ) : t("uploadImage")}
                     </button>
                 </motion.div>
             </div>
@@ -295,7 +289,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                     {getAreaChartData().length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-[200px] text-gray-400">
                             <Smile className="w-10 h-10 mb-2 text-blue-400" />
-                            <span>لا توجد بيانات لعرضها</span>
+                            <span>{t("noDataToShow")}</span>
                         </div>
                     ) : (
                         <>
@@ -366,7 +360,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                                             stackId="1" 
                                             stroke="#22c55e" 
                                             fill="url(#colorPositive)" 
-                                            name="إيجابي"
+                                            name="positive"
                                             isAnimationActive={true}
                                             animationDuration={1200}
                                             strokeWidth={3}
@@ -381,7 +375,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                                             stackId="1" 
                                             stroke="#9CA3AF" 
                                             fill="url(#colorNeutral)" 
-                                            name="محايد"
+                                            name="neutral"
                                             isAnimationActive={true}
                                             animationDuration={1200}
                                             strokeWidth={3}
@@ -396,7 +390,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                                             stackId="1" 
                                             stroke="#ef4444" 
                                             fill="url(#colorNegative)" 
-                                            name="سلبي"
+                                            name="negative"
                                             isAnimationActive={true}
                                             animationDuration={1200}
                                             strokeWidth={3}

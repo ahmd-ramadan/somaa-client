@@ -3,7 +3,7 @@
 import { IAnalysis, PlatformsEnum } from "@/interfaces/analysis.types";
 import { IDashboardPlatform } from "./types";
 import { useEffect, useState } from "react";
-import { Pause, Play } from "lucide-react";
+import { Globe, Pause, Play } from "lucide-react";
 import { motion, useAnimation } from "framer-motion"; // Import useAnimation
 import { getPlatformIcon, getPlatformName } from "../utils";
 

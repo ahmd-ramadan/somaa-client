@@ -1,26 +1,25 @@
 'use client'
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { AnalysisClassifyEnum, IAnalysis } from "@/interfaces/analysis.types";
-import { BarChart, Bell, EyeIcon, Heart, LineChart, MessageCircle, Pause, Play, Share2, Users } from "lucide-react";
+import { BarChart, EyeIcon, Heart, MessageCircle, Pause, Play, Share2, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createTickerVariants } from "./animations";
-import Image from "next/image";
 import { formatDistanceToNow } from "./utils";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 interface IImportantAnalysisSectionProps {
     allAnalysis: IAnalysis[]
 }
 const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProps) => {
-
+    
+    const t = useTranslations("DashboardPage")
     const locale = useLocale();
 
     const [importantAnalysis, setImportantAnalysis] = useState<IAnalysis[]>([])
     const [isImportantAnalysisAnimating, setIsImportantAnalysisAnimating] = useState(true);
     const importantTickerRef = useRef<HTMLDivElement>(null);
     const [importantTickerPosition, setImportantTickerPosition] = useState(0);
-    const [isImportantTickerPaused, setIsImportantTickerPaused] = useState(false);
 
     useEffect(() => {
         if(allAnalysis) setImportantAnalysis(deriveImportantAnalysis(allAnalysis));
@@ -56,14 +55,14 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
                         className="rounded-full hover:bg-gray-700 transition-colors"
                     >
                         {isImportantAnalysisAnimating ? (
-                            <Pause className="h-4 w-4 text-blue-400" />
+                            <Pause className="h-4 w-4 text-blue-300" />
                         ) : (
-                            <Play className="h-4 w-4 text-blue-400" />
+                            <Play className="h-4 w-4 text-blue-300" />
                         )}
                     </button>
                     <h3 className="text-sm text-gray-300 flex items-center gap-1">
-                        {/* <Bell className="w-5 h-5 text-blue-400" /> */}
-                        الرصد الهام
+                        {/* <Bell className="w-5 h-5 text-blue-300" /> */}
+                        {t("importantMonitoring")}
                     </h3>
                 </div>
                 <div className="flex items-center justify-center">
@@ -94,7 +93,7 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
                                         <div className="flex gap-1">
                                             { analysis.publisher.avatar ? 
                                                 <img 
-                                                    src={analysis.publisher.avatar}
+                                                    src={analysis?.publisher?.avatar}
                                                     alt={analysis.publisher?.name?.charAt(0)}
                                                     // width={50}
                                                     // height={50}
@@ -110,7 +109,7 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
                                                 </span>
                                                 <div className="flex gap-2">
                                                     <div className="flex items-center gap-1">
-                                                        <Users className="w-3 h-3 text-blue-400"/>
+                                                        <Users className="w-3 h-3 text-blue-300"/>
                                                         <span className="text-xs font-medium text-gray-300">{analysis.publisher.followers.toLocaleString()}</span>
                                                     </div>
                                                     <span className="text-xs text-gray-400">
@@ -128,11 +127,7 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
                                                 ? 'bg-gray-500/20 text-gray-400'
                                                 : 'bg-red-500/20 text-red-400'
                                         }`}>
-                                            {analysis.classify === AnalysisClassifyEnum.POSITIVE 
-                                                ? 'إيجابي' 
-                                                : analysis.classify === AnalysisClassifyEnum.NEUTRAL 
-                                                ? 'محايد'
-                                                : 'سلبي'}
+                                            {t(analysis.classify)}
                                         </div>
                                     </div>
 
@@ -145,23 +140,23 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
                                         {/* Statistics */}
                                         <div className="flex items-center justify-around text-xs text-gray-400">
                                             <div className="flex items-center gap-1">
-                                                <EyeIcon className="w-3 h-3 text-blue-400"/>
+                                                <EyeIcon className="w-3 h-3 text-blue-300"/>
                                                 {analysis.statistics?.views.toLocaleString() || 0}
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <Share2 className="w-3 h-3 text-blue-400"/>
+                                                <Share2 className="w-3 h-3 text-blue-300"/>
                                                 {analysis.statistics?.shares.toLocaleString() || 0}
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <Heart className="w-3 h-3 text-blue-400"/>
+                                                <Heart className="w-3 h-3 text-blue-300"/>
                                                 {analysis.statistics?.reactions.toLocaleString() || 0}
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <MessageCircle className="w-3 h-3 text-blue-400"/>
+                                                <MessageCircle className="w-3 h-3 text-blue-300"/>
                                                 {analysis.statistics?.comments.toLocaleString() || 0}
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <BarChart className="w-3 h-3 text-blue-400"/>
+                                                <BarChart className="w-3 h-3 text-blue-300"/>
                                                 {analysis.statistics?.appearance.toLocaleString() || 0}
                                             </div>
                                         </div>

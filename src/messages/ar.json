@@ -191,7 +191,7 @@
         "analysisNumbers": "عدد التحليلات",
         "allSectors": "كل القطاعات",
         "selectSector": "اختر قطاع",
-        "socialMedia": "السوشيال ميديا",
+        "socialMedia": "التواصل الإجتماعي",
         "news": "الأخبار",
         "showBtn": "عرض",
         "cancelBtn": "إلغاء"
@@ -391,7 +391,7 @@
             "addAnalysisBtnLoad": "حفظ ..."
         },
         "addModalTitle": "إضافة رصد جديد",
-        "AllAnalysisTableTitle": "نتائج الرصد من السوشيال ميديا",
+        "AllAnalysisTableTitle": "نتائج الرصد من التواصل الإجتماعي",
         "addBtn": "إضافة رصد جديد",
         "showAllAnalysis": "النتائج المعروضة",
         "ExportModal": {
@@ -412,6 +412,7 @@
             "comments": "التعليقات",
             "shares": "المشاركات",
             "views": "المشاهدات",
+            "appearance": "الظهور",
             "total": "الإجمالي",
             "createdAt": "التاريخ",
             "addedBy": "الراصد",
@@ -424,6 +425,7 @@
             "totalShares": "إجمالي المشاراكات",
             "totalViews": "إجمالي المشاهدات",
             "totalAppearance": "إجمالي الظهور",
+            "totalStatistics": "إجمالي التفاعلات",
             "selectTemplate": "حدد القالب",
             "tweetType": "نوع المنشور",
             "tweet": "منشور",
@@ -475,7 +477,7 @@
             "visual": "مرئي",
             "radio": "إذاعي",
             "print": "مطبوع",
-            "social_media_platforms": "منصات السوشيال ميديا",
+            "social_media_platforms": "منصات التواصل الإجتماعي",
             "youtube": "يوتيوب",
             "other": "أخري",
             "pressType": "نوع المادة الصحفية",
@@ -580,7 +582,11 @@
             "fetchingFromDatabase": "",
             "noResultsFound": "",
             "editModalTitle": "تعديل الرصد",
-            "noActiveFilters":"لا توجد فلاتر نشطة"
+            "noActiveFilters":"لا توجد فلاتر نشطة",
+            "newsPaperPlaceholder": "اسم الصحيفة",
+            "newspaperNameRequired": "إسم الصحيفة مطلوب",
+            "addNewNewspaper": "إضافة صحيفة جديدة",
+            "selectOrAddNewspaper": "أضف الصحيفة"
         },
         "AddNews": {
             "url": "المصدر",
@@ -615,7 +621,7 @@
             "visual": "مرئي",
             "radio": "إذاعي",
             "print": "مطبوع",
-            "social_media_platforms": "منصات السوشيال ميديا",
+            "social_media_platforms": "منصات التواصل الإجتماعي",
             "youtube": "يوتيوب",
             "other": "أخري",
             "selectPressType": "اختر نوع المادة الصحفية",
@@ -654,10 +660,13 @@
             "addNewsBtn": "حفظ الرصد",
             "newsPlaceholder": "...",
             "urlPlaceholder": "https://osus-solutions.com/news/details/0000000",
-            "titlePlaceholder": "عنوان المقال ...",
+            "titlePlaceholder": "عنوان الرصد ...",
             "enterCustomDistrict": "أضف اسم الحي",
             "addNewsBtnLoad": "حفظ ...",
-            "newsPaperPlaceholder": "اسم الصحيفة"
+            "newsPaperPlaceholder": "اسم الصحيفة",
+            "newspaperNameRequired": "إسم الصحيفة مطلوب",
+            "addNewNewspaper": "إضافة صحيفة جديدة",
+            "selectOrAddNewspaper": "أضف الصحيفة"
         },
         "ExportModal": {
             "title": "العنوان",
@@ -678,7 +687,7 @@
             "visual": "مرئي",
             "radio": "إذاعي",
             "print": "مطبوع",
-            "social_media_platforms": "منصات السوشيال ميديا",
+            "social_media_platforms": "منصات التواصل الإجتماعي",
             "youtube": "يوتيوب",
             "other": "أخري",
             "positive": "إيجابي",
@@ -759,11 +768,11 @@
         "updatePerModalTitle": "تحديث صلاحيات الأدمن ",
         "deleteAdminModalTitle": "حذف الأدمن",
         "admin": "أدمن",
-        "totalSocialMediaMonitoringCount": "إجمالي الرصد من السوشيال ميديا",
+        "totalSocialMediaMonitoringCount": "إجمالي الرصد من التواصل الإجتماعي",
         "totalNewsMonitoringCount": "إجمالي الرصد من الأخبار",
         "showAllAdmins": "عدد الادمنز",
         "totalMonitoringNewsCount": "إجمالي الرصد من الأخبار",
-        "totalMonitoringSocialMediaCount": "إجمالي الرصد من السوشيال ميديا"
+        "totalMonitoringSocialMediaCount": "إجمالي الرصد من التواصل الإجتماعي"
     },
     "SettingsPage": {
         "settingsPageTitle": "صفحة الإعدادات",
@@ -779,7 +788,7 @@
             "cancelBtn": "إلغاء",
             "addSectorPlaceholder": "أدخل إسم القطاع",
             "sectorName": "إسم القطاع",
-            "totalSocialMediaMonitoringCount": "إجمالي الرصد من السوشيال ميديا",
+            "totalSocialMediaMonitoringCount": "إجمالي الرصد من التواصل الإجتماعي",
             "totalNewsMonitoringCount": "إجمالي الرصد من الأخبار",
             "sectorCreatedAt": "تاريخ الإضافة",
             "edit": "تعديل",
@@ -799,7 +808,7 @@
             "cancelBtn": "إلغاء",
             "addSubAnalysisBodyPlaceholder": "أدخل إسم التحليل",
             "subAnalysisBody": "نص التحليل",
-            "totalSocialMediaMonitoringCount": "إجمالي الرصد من السوشيال ميديا",
+            "totalSocialMediaMonitoringCount": "إجمالي الرصد من التواصل الإجتماعي",
             "subAnalysisCreatedAt": "تاريخ الإضافة",
             "edit": "تعديل",
             "loadingData": "",

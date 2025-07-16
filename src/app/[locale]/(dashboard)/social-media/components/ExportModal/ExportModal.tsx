@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocale, useTranslations } from "next-intl";
 import { ExportModalProps } from './types';
 import { useColumnManagement, useTemplateManagement, useDragAndDrop, useSorting } from './hooks';
@@ -12,6 +12,7 @@ import TemplateManager from './TemplateManager';
 const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, data }) => {
     const t = useTranslations("SocialMediaPage.ExportModal");
     const locale = useLocale();
+    const [isExporting, setIsExporting] = useState(false);
 
     // Custom hooks for state management
     const {
@@ -63,9 +64,14 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, data }) => {
         handleSaveTemplate(selectedColumns);
     };
 
-    const handleExport = () => {
-        if (selectedColumns.length === 0) return;
-        generateExcelFile(data, selectedColumns, sortOrder, t);
+    const handleExport = async () => {
+        setIsExporting(true);
+        try {
+            if (selectedColumns.length === 0) return;
+            await generateExcelFile(data, selectedColumns, sortOrder, t, locale);
+        } finally {
+            setIsExporting(false);
+        }
     };
 
     if (!isOpen) return null;
@@ -112,6 +118,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, data }) => {
                     onClose={onClose}
                     onExport={handleExport}
                     isExportDisabled={selectedColumns.length === 0}
+                    isExporting={isExporting}
                 />
             </div>
         </div>

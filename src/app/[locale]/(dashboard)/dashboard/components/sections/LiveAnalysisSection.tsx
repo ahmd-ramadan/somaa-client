@@ -1,25 +1,24 @@
 'use client'
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { AnalysisClassifyEnum, IAnalysis } from "@/interfaces/analysis.types";
-import { BarChart, EyeIcon, Heart, LineChart, MessageCircle, Pause, Play, Share2, Users } from "lucide-react";
+import { BarChart, EyeIcon, Heart, MessageCircle, Pause, Play, Share2, Users } from "lucide-react";
 import { useRef, useState } from "react";
 import { createTickerVariants } from "./animations";
-import Image from "next/image";
+import { useLocale, useTranslations } from "next-intl";
 import { formatDistanceToNow } from "./utils";
-import { useLocale } from "next-intl";
 
 interface ILiveAnalysisSectionProps {
     allAnalysis: IAnalysis[]
 }
 const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
 
+	const t = useTranslations("DashboardPage");
     const locale = useLocale();
 
     const [isLiveAnalysisAnimating, setIsLiveAnalysisAnimating] = useState(true);
     const liveTickerRef = useRef<HTMLDivElement>(null);
     const [liveTickerPosition, setLiveTickerPosition] = useState(0);
-    const [isLiveTickerPaused, setIsLiveTickerPaused] = useState(false);
 
     const toggleLiveAnalysisAnimation = () => {
         if (liveTickerRef.current) {
@@ -42,14 +41,14 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
                         className="rounded-full hover:bg-gray-700 transition-colors"
                     >
                         {isLiveAnalysisAnimating ? (
-                            <Pause className="h-4 w-4 text-blue-400" />
+                            <Pause className="h-4 w-4 text-blue-300" />
                         ) : (
-                            <Play className="h-4 w-4 text-blue-400" />
+                            <Play className="h-4 w-4 text-blue-300" />
                         )}
                     </button>
                     <h3 className="text-sm text-gray-300 flex items-center gap-1">
-                        {/* <LineChart className="w-5 h-5 text-blue-400" /> */}
-                        الرصد المباشر
+                        {/* <LineChart className="w-5 h-5 text-blue-300" /> */}
+                        {t("liveMonitoring")}
                     </h3>
                     
                 </div>
@@ -96,7 +95,7 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
                                                 </span>
                                                 <div className="flex gap-2">
                                                     <div className="flex items-center gap-1">
-                                                        <Users className="w-3 h-3 text-blue-400" />
+                                                        <Users className="w-3 h-3 text-blue-300" />
                                                         <span className="text-xs font-medium text-gray-300">{analysis.publisher.followers.toLocaleString()}</span>
                                                     </div>
                                                     <span className="text-xs text-gray-400">
@@ -114,11 +113,7 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
                                                 ? 'bg-gray-500/20 text-gray-400'
                                                 : 'bg-red-500/20 text-red-400'
                                         }`}>
-                                            {analysis.classify === AnalysisClassifyEnum.POSITIVE 
-                                                ? 'إيجابي' 
-                                                : analysis.classify === AnalysisClassifyEnum.NEUTRAL 
-                                                ? 'محايد'
-                                                : 'سلبي'}
+                                            {t(analysis.classify)}
                                         </div>
                                     </div>
 
@@ -132,27 +127,27 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
                                         <div className="flex items-center justify-around text-xs text-gray-400">
                                             <div className="flex items-center gap-1">
                                                 {/* <span className="w-2 h-2 rounded-full bg-blue-500"></span> */}
-                                                <EyeIcon className="w-3 h-3 text-blue-400"/>
+                                                <EyeIcon className="w-3 h-3 text-blue-300"/>
                                                 {analysis.statistics?.views.toLocaleString() || 0}
                                             </div>
                                             <div className="flex items-center gap-1">
                                                 {/* <span className="w-2 h-2 rounded-full bg-green-500"></span> */}
-                                                <Share2 className="w-3 h-3 text-blue-400"/>
+                                                <Share2 className="w-3 h-3 text-blue-300"/>
                                                 {analysis.statistics?.shares.toLocaleString() || 0}
                                             </div>
                                             <div className="flex items-center gap-1">
                                                 {/* <span className="w-2 h-2 rounded-full bg-orange-500"></span> */}
-                                                <Heart className="w-3 h-3 text-blue-400"/>
+                                                <Heart className="w-3 h-3 text-blue-300"/>
                                                 {analysis.statistics?.reactions.toLocaleString() || 0}
                                             </div>
                                             <div className="flex items-center gap-1">
                                                 {/* <span className="w-2 h-2 rounded-full bg-orange-500"></span> */}
-                                                <MessageCircle className="w-3 h-3 text-blue-400"/>
+                                                <MessageCircle className="w-3 h-3 text-blue-300"/>
                                                 {analysis.statistics?.comments.toLocaleString() || 0}
                                             </div>
                                             <div className="flex items-center gap-1">
                                                 {/* <span className="w-2 h-2 rounded-full bg-orange-500"></span> */}
-                                                <BarChart className="w-3 h-3 text-blue-400"/>
+                                                <BarChart className="w-3 h-3 text-blue-300"/>
                                                 {analysis.statistics?.appearance.toLocaleString() || 0}
                                             </div>
                                         </div>

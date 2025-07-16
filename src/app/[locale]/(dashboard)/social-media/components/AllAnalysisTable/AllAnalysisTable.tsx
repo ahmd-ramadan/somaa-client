@@ -373,7 +373,7 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
             <ExportModal
                 isOpen={isExportModalOpen}
                 onClose={() => setIsExportModalOpen(false)}
-                data={filteredAnalysis}
+                data={filteredAnalysis.filter(f => selectedItems.has(f._id.toString()))}
             />
 
             {/* Pagination */}

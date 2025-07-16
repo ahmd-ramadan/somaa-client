@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
-import { IAnalysis, PlatformsEnum } from "@/interfaces/analysis.types";
+import { IAnalysis, PlatformsEnum, TweetTypesEnum, ContentTypesEnum, AnalysisClassifyEnum } from "@/interfaces/analysis.types";
 import { fetchAllAnalysis, deleteAnalysis, updateGroupOfAnalysis } from '@/lib/features/socialMedia/analysisThunks';
 import { 
     resetAddAnalysisStatus,
@@ -13,6 +13,13 @@ import { useSocket } from '@/hooks/useSocket';
 import { useAnalysisFilters } from "@/hooks/useAnalysisFilters";
 import { GroupingState, GroupedAnalysisData, groupingOrderMap } from '../types';
 import React from 'react';
+
+const groupingPossibleValues: Record<string, string[]> = {
+//   platform: Object.values(PlatformsEnum),
+  classify: Object.values(AnalysisClassifyEnum),
+//   tweetType: Object.values(TweetTypesEnum),
+//   contentType: Object.values(ContentTypesEnum)
+};
 
 export const useAnalysisTable = () => {
     const dispatch = useAppDispatch();
@@ -173,11 +180,18 @@ export const useAnalysisTable = () => {
 
             const currentGrouping = activeGroupingsMap[level];
             const groupKeyName = activeGroupingKeys[level];
+            const allPossibleValues = groupingPossibleValues[groupKeyName] || [];
             const groups: Record<string, IAnalysis[]> = {};
 
+            // Initialize all possible groups
+            allPossibleValues.forEach(value => {
+                groups[value] = [];
+            });
+
+            // Fill with actual items
             items.forEach(item => {
                 const value = currentGrouping.getValue(item);
-                if (!groups[value]) {
+                if (!(value in groups)) {
                     groups[value] = [];
                 }
                 groups[value].push(item);

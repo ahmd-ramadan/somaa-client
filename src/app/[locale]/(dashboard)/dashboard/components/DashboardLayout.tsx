@@ -10,13 +10,15 @@ import ClassificationSection from "./sections/ClassificationSection";
 import ImportantAnalysisSection from "./sections/ImportantAnalysisSection";
 import LiveAnalysisSection from "./sections/LiveAnalysisSection";
 import MapSection from "./sections/MapSection";
-import SubAnalysisSection from "./sections/SubAnalysisSection";
 import PlatformsSections from "./sections/PlatformsSection";
 import SubAnalysisCharts from "./sections/SubAnalysisCharts";
 import SectorsSection from "./sections/SectorsSection";
 import PublishersSection from "./sections/PublishersSection";
 import TwoBadgesSection from "./sections/TowBadgesSection";
 import { Maximize2, Minimize2 } from "lucide-react";
+import SubAnalysisAndSectorsSection from "./sections/SubAnalysisAndSectorsSection";
+import { toZonedTime } from 'date-fns-tz';
+import { useTranslations } from "next-intl";
 
 // Register Chart.js components
 ChartJS.register(
@@ -31,8 +33,11 @@ ChartJS.register(
     LineElement
 );
 
+const timeZone = 'Asia/Riyadh';
+
 const DashboardLayout = () => {
 
+    const t = useTranslations("DashboardPage")
     const { socket, isConnected } = useSocket();
     const [allAnalysis, setAllAnalysis] = useState<IAnalysis[]>([]); 
     const [allNews, setAllNews] = useState<INews[]>([]); 
@@ -53,11 +58,18 @@ const DashboardLayout = () => {
     useEffect(() => {
         // Set default values: from = today 00:00, to = now
         const now = new Date();
-        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-        const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 999);
+        // احصل على بداية اليوم ونهاية اليوم في توقيت السعودية
+        const timeZone = 'Asia/Riyadh';
+        const startOfToday = new Date(now);
+        startOfToday.setHours(0, 0, 0, 0);
+        const endOfToday = new Date(now);
+        endOfToday.setHours(23, 59, 59, 999);
+        // حولهم إلى توقيت السعودية
+        const startInKSA = toZonedTime(startOfToday, timeZone);
+        const endInKSA = toZonedTime(endOfToday, timeZone);
         const format = (date: Date) => date.toISOString().slice(0, 16);
-        setStartDate(format(startOfToday));
-        setEndDate(format(endOfToday));
+        setStartDate(format(startInKSA));
+        setEndDate(format(endInKSA));
     }, []);
 
     useEffect(() => {
@@ -160,13 +172,10 @@ const DashboardLayout = () => {
                             variants={itemVariants}
                             className="flex flex-col gap-1 h-full"
                         >
-                            {/* Section 1.1 Classifications Section */}
-                            {/* <ClassificationSection allAnalysis={allAnalysis} allNews={allNews} key={1}/> */}
-
                             {/* Date Input */}
                             <div className="flex items-center gap-1 mb-1">
                                 <label className="text-[10px] text-gray-400 flex items-center gap-0.5 whitespace-nowrap">
-                                    من
+                                    {t("from")}
                                 </label>
                                 <input
                                     type="datetime-local"
@@ -175,7 +184,7 @@ const DashboardLayout = () => {
                                     className="bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition outline-none w-32 text-xs"
                                 />
                                 <label className="text-[10px] text-gray-400 flex items-center gap-0.5 whitespace-nowrap">
-                                    إلى
+                                    {t("to")}
                                 </label>
                                 <input
                                     type="datetime-local"
@@ -193,7 +202,7 @@ const DashboardLayout = () => {
                                     className="flex-1 bg-gradient-to-r from-blue-600 to-green-500 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
                                     // className="flex-1 bg-gray-700 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
                                 >
-                                    تحديث
+                                    {t("updateTime")}
                                 </button>
                             </div>
 
@@ -210,26 +219,20 @@ const DashboardLayout = () => {
                             className="col-span-2 flex flex-col gap-2 h-full"
                         >
                             {/* Section 2.1 Map and News/Social */}
-                            <div className="flex flex-row gap-1 h-1/3">
+                            <div className="flex flex-row gap-1 flex-1">
                                 {/* Map Track */}
                                 <MapSection allAnalysis={allAnalysis} />
 
-                                <ClassificationSection allAnalysis={allAnalysis} allNews={allNews}/>
-                                {/* News/Social Section */}
-                                {/* <TwoBadgesSection allAnalysisCount={allAnalysis.length} allNewsCount={allNews.length}/> */}
+                                <PublishersSection allAnalysis={allAnalysis} />
                             </div>
 
-                            {/* Section 2.2 SubAnalysis Data & Platforms */}
-                            <div className="flex items-center gap-1 bg-gray-900/50 backdrop-blur-sm flex-1">
-                                {/* Section 2.2.1 Platforms Section */}
-                                <PlatformsSections allAnalysis={allAnalysis} />
-
-                                {/* Section 2.2.2 SubAnalysis Section */}
-                                <SubAnalysisSection allAnalysis={allAnalysis} />
-                            </div>
+                            {/* Section 2.2 SubAnalysis & Sectors Data */}
+                            <SubAnalysisAndSectorsSection allAnalysis={allAnalysis} allNews={allNews}/>
 
                             {/* Section 2.3 New Statistics and Charts Section */}
-                            <SubAnalysisCharts allAnalysis={allAnalysis}/>
+                            <div className="h-1/3">
+                                <SubAnalysisCharts allAnalysis={allAnalysis}/>
+                            </div>
                         </motion.div>
 
                         {/* Side #3 */}
@@ -237,16 +240,16 @@ const DashboardLayout = () => {
                             variants={itemVariants}
                             className="flex flex-col gap-2 h-full"
                         >
+                            <ClassificationSection allAnalysis={allAnalysis} allNews={allNews} />
+                            
                             {/* Section 3.1 Sectors Data */}
                             <SectorsSection allAnalysis={allAnalysis} allNews={allNews}/>
 
-                            {/* Section 3.2 Publishers Data */}
-                            <PublishersSection allAnalysis={allAnalysis} />
                         </motion.div>
                     </div>
                     <button
                         onClick={handleToggleFullscreen}
-                        className="absolute top-2 left-2 z-50 bg-gray-800/30 hover:bg-gray-800/80 p-1 rounded transition"
+                        className="absolute top-2 end-2 z-50 bg-gray-800/30 hover:bg-gray-800/80 p-1 rounded transition"
                         title={isFullscreen ? "خروج من ملء الشاشة" : "ملء الشاشة"}
                     >
                         {isFullscreen ? <Minimize2 className="w-5 h-5 text-white" /> : <Maximize2 className="w-5 h-5 text-white" />}
