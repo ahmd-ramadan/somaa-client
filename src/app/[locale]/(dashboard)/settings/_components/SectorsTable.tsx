@@ -120,7 +120,8 @@ const SectorsTable = () => {
         </div>
       }
 
-      <table className={`${locale === 'en' ? 'text-left' : 'text-right'} w-full text-xs`}>
+      { currentSectors && currentSectors.length > 0 && 
+        <table className={`${locale === 'en' ? 'text-left' : 'text-right'} w-full text-xs`}>
         <thead className="text-xs text-primary uppercase bg-primary/20">
           <tr>
             <th scope="col" className="px-3 py-2">{t("sectorName")}</th>
@@ -162,7 +163,8 @@ const SectorsTable = () => {
             ))
           }
         </tbody>
-      </table>
+        </table>
+      }
 
       {/* Pagination */}
       {totalPages > 1 && (

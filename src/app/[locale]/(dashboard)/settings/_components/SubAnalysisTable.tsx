@@ -119,43 +119,45 @@ const SubAnalysisTable = () => {
         </div>
       }
 
-      <table className={`${locale === 'en' ? 'text-left' : 'text-right'} w-full text-xs`}>
-        <thead className="text-xs text-primary uppercase bg-primary/20">
-          <tr>
-            <th scope="col" className="px-3 py-2">{t("subAnalysisBody")}</th>
-            <th scope="col" className="px-3 py-2">{t("totalSocialMediaMonitoringCount")}</th>
-            <th scope="col" className="px-3 py-2">{t("subAnalysisCreatedAt")}</th>
-            <th scope="col" className="px-3 py-2">{t("edit")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          { currentSubAnalysis.map((subAnalysis, idx) => (
-              <tr key={subAnalysis._id} className="border-b hover:bg-gray-200">
-                <th scope="row" className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{subAnalysis.body}</th>
-                <td className="px-3 py-2">
-                  <span className="inline-flex items-center rounded-full text-xs font-medium">
-                    {subAnalysis?.socialMediaMonitoringCount?.toLocaleString() || 0 }
-                  </span>
-                </td>
-                <td className="px-3 py-2">
-                  <span className="inline-flex items-center rounded-full text-xs font-medium">
-                    {formatDate({ locale: 'ar', date: subAnalysis.createdAt, withTime:  true })}
-                  </span>
-                </td>
-                <td className="px-3 py-2">
-                  <button 
-                    onClick={() => handleEdit(subAnalysis)}
-                    className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
-                  >
-                    <Edit size={16} />
-                    <span className="sr-only">تعديل</span>
-                  </button>
-                </td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
+      { currentSubAnalysis && currentSubAnalysis.length > 0 && 
+        <table className={`${locale === 'en' ? 'text-left' : 'text-right'} w-full text-xs`}>
+          <thead className="text-xs text-primary uppercase bg-primary/20">
+            <tr>
+              <th scope="col" className="px-3 py-2">{t("subAnalysisBody")}</th>
+              <th scope="col" className="px-3 py-2">{t("totalSocialMediaMonitoringCount")}</th>
+              <th scope="col" className="px-3 py-2">{t("subAnalysisCreatedAt")}</th>
+              <th scope="col" className="px-3 py-2">{t("edit")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            { currentSubAnalysis.map((subAnalysis, idx) => (
+                <tr key={subAnalysis._id} className="border-b hover:bg-gray-200">
+                  <th scope="row" className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{subAnalysis.body}</th>
+                  <td className="px-3 py-2">
+                    <span className="inline-flex items-center rounded-full text-xs font-medium">
+                      {subAnalysis?.socialMediaMonitoringCount?.toLocaleString() || 0 }
+                    </span>
+                  </td>
+                  <td className="px-3 py-2">
+                    <span className="inline-flex items-center rounded-full text-xs font-medium">
+                      {formatDate({ locale: 'ar', date: subAnalysis.createdAt, withTime:  true })}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2">
+                    <button 
+                      onClick={() => handleEdit(subAnalysis)}
+                      className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      <Edit size={16} />
+                      <span className="sr-only">تعديل</span>
+                    </button>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      }
 
       {/* Pagination */}
       {totalPages > 1 && (
