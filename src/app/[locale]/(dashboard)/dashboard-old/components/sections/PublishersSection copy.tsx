@@ -54,7 +54,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                     repeat: Infinity,
                     repeatType: "loop",
                     duration: 30,
-                    ease: "linear",
+                    ease: "easeInOut",
                     repeatDelay: 0,
                 },
             },
@@ -93,7 +93,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                     <div className="relative flex-1 overflow-hidden">
                         <motion.div
                             className="absolute inset-0 flex"
-                            variants={createPublisherTickerVariants()}
+                            // variants={createPublisherTickerVariants()}
                             animate={!isPublishersAnimating ? "pause" : "animate"}
                         >
                             <div className="flex gap-2">
@@ -319,7 +319,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                     <div className="relative flex-1 overflow-hidden">
                         <motion.div
                             className="absolute inset-0 flex"
-                            variants={createPublisherTickerVariants()}
+                            // variants={createPublisherTickerVariants()}
                             animate={!isPublishersAnimating ? "pause" : "animate"}
                         >
                             <div className="flex gap-2">

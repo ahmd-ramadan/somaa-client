@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { formatDate } from '@/utils/formatDateAndTime';
 import Link from 'next/link';
-import PublisherEmbed from '../../../dashboard-2/components/sections/PublisherEmbed';
+import PublisherEmbed from '../../../dashboard/components/sections/PublisherEmbed';
 
 interface ViewAnalysisProps {
     analysis: IAnalysis;

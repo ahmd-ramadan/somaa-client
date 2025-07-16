@@ -20,4 +20,3 @@ export const checkImageOptimization = async (imageURL: string) => {
     const data = await res.json()
     return data.unoptimized ?? true
 }
-

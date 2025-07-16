@@ -285,7 +285,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        variants={scrollVariants}
+                        // variants={scrollVariants}
                     >
                         {/* Component 1: General Information */}
                         <motion.div 

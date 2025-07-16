@@ -137,7 +137,7 @@ const SectorsSection = ({ allAnalysis }: ISectorsSectionProps) => {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        variants={scrollVariants}
+                        // variants={scrollVariants}
                     >
                         {/* Top 4 Sectors */}
                         {allSectors

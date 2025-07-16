@@ -113,10 +113,7 @@ const AddNews = () => {
                 adType: data.adType,
                 geoClassify: data.geoClassify,
                 pressType: data.pressType, 
-                sector: {
-                    sectorId: selectedSector || data.sectorId,
-                    name: allSectors.find(s => s._id === (selectedSector || data.sectorId))?.name || ''
-                },
+                sectorId: selectedSector || data.sectorId,
                 note: data.note,
                 isFlagged: isFlagged,
                 isHighlighted: isHighlighted,

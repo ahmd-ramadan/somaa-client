@@ -116,7 +116,7 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
     }, [allNewspapers, allNewspapersStatus]);
     useEffect(() => {
         if (dispatch && allSectorsStatus === "idle") {
-            dispatch(fetchAllSectors);
+            dispatch(fetchAllSectors());
         }
     }, [allSectorsStatus, allSectors]);
 

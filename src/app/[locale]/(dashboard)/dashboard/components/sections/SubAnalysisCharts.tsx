@@ -217,7 +217,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
         setDownloading(true);
         const chartNode = document.getElementById('enhanced-area-chart');
         if (chartNode) {
-            const canvas = await html2canvas(chartNode, { backgroundColor: 'null' });
+            const canvas = await html2canvas(chartNode, {});
             const link = document.createElement('a');
             link.download = 'chart.png';
             link.href = canvas.toDataURL();
