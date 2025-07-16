@@ -137,12 +137,12 @@ const SectorsTable = () => {
                 <th scope="row" className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{sector.name}</th>
                 <td className="px-3 py-2">
                   <span className="inline-flex items-center rounded-full text-xs font-medium">
-                    {sector?.newsMonitoringCount?.toLocaleString() || 0}
+                    {sector?.socialMediaMonitoringCount?.toLocaleString() || 0}
                   </span>
                 </td>
                 <td className="px-3 py-2">
                   <span className="inline-flex items-center rounded-full text-xs font-medium">
-                    {sector?.socialMediaMonitoringCount?.toLocaleString() || 0 }
+                    {sector?.newsMonitoringCount?.toLocaleString() || 0 }
                   </span>
                 </td>
                 <td className="px-3 py-2">
