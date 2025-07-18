@@ -7,7 +7,10 @@ import {
     Eye, 
     ArrowUpDown,
     ArrowUp,
-    ArrowDown
+    ArrowDown,
+    TrendingUp,
+    LineChart,
+    BarChartIcon
 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -56,28 +59,31 @@ const TableHeader: React.FC<TableHeaderProps> = ({
                 <th scope="col" className="px-2 py-1 text-start">{t("classify")}</th>
                 <th scope="col" className="px-2 py-1 text-start">{t("analysis")}</th>
                 <th scope="col" className="px-2 py-1">
-                    <Heart className="w-4 h-4 text-red-500 fill-red-600" />
+                    <Heart className="w-4 h-4 text-secondary red-500 fill-secondary" />
                 </th>
                 <th scope="col" className="px-2 py-1">
-                    <MessageCircle className="w-4 h-4 text-green-500 fill-green-600" />
+                    <MessageCircle className="w-4 h-4 text-secondary" />
                 </th>
                 <th scope="col" className="px-2 py-1">
-                    <Share2 className="w-4 h-4 text-black fill-balck" />
+                    <Share2 className="w-4 h-4 text-secondary" />
                 </th>
                 <th scope="col" className="px-2 py-1">
                     <Eye className="w-4 h-4 text-secondary" />
                 </th>
                 <th scope="col" className="px-2 py-1">
+                    <BarChartIcon className="w-4 h-4 text-secondary" />
+                </th>
+                <th scope="col" className="px-2 py-1">
                     <div className="flex items-center gap-1">
-                        <span>🧾</span>
+                        <span>📊</span>
                         <button
                             onClick={toggleSortOrder}
-                            className="p-1 hover:bg-gray-200 rounded inline-flex items-center justify-center"
+                            className="hover:bg-gray-200 rounded inline-flex items-center justify-center"
                             title={sortOrder === 'none' ? t("sort") : sortOrder === 'asc' ? t("sortDesc") : t("sortAsc")}
                         >
-                            {sortOrder === 'none' && <ArrowUpDown className="w-4 h-4" />}
-                            {sortOrder === 'asc' && <ArrowUp className="w-4 h-4" />}
-                            {sortOrder === 'desc' && <ArrowDown className="w-4 h-4" />}
+                            {sortOrder === 'none' && <ArrowUpDown className="text-secondary w-4 h-4" />}
+                            {sortOrder === 'asc' && <ArrowUp className="text-secondary w-4 h-4" />}
+                            {sortOrder === 'desc' && <ArrowDown className="text-secondary w-4 h-4" />}
                         </button>
                     </div>
                 </th>

@@ -59,7 +59,7 @@ export interface IFormInputs  {
     subAnalysisId: string;
     subAnalysisBody: string;
     note?: string;
-    isFlagged?: boolean;
+    // isFlagged?: boolean;
     isHighlighted?: boolean;
 }
 
@@ -252,7 +252,7 @@ const AddAnalysis = () => {
     };
 
     const [isHighlighted, setIsHighlighted] = useState<boolean>(false);
-    const [isFlagged, setIsFlagged] = useState<boolean>(false);
+    // const [isFlagged, setIsFlagged] = useState<boolean>(false);
 
     const onSubmit = async (data: IFormInputs) => {
         try {
@@ -264,7 +264,7 @@ const AddAnalysis = () => {
                 sectorId: selectedSector || data.sectorId,
                 subAnalysisId: selectedSubAnalysis || data.subAnalysisId,
                 note: data.note,
-                isFlagged: isFlagged,
+                // isFlagged: isFlagged,
                 isHighlighted: isHighlighted
             };
 
@@ -286,7 +286,7 @@ const AddAnalysis = () => {
                 // toast.success("تم إضافة الرصد بنجاح" || t("analysisAddedSuccessfully"));
                 // router.push("/analysis");
                 data.isHighlighted = false;
-                data.isFlagged = false;
+                // data.isFlagged = false;
             } else {
                 const errorMessage = message
                 toast.error(errorMessage);
@@ -671,7 +671,7 @@ const AddAnalysis = () => {
                         >
                             <Star className="w-6 h-6" />
                         </button>
-                        <button
+                        {/* <button
                             type="button"
                             onClick={() => setIsFlagged(!isFlagged)}
                             className={`p-2 rounded-lg transition-all ${
@@ -681,7 +681,7 @@ const AddAnalysis = () => {
                             }`}
                         >
                             <Flag className="w-6 h-6" />
-                        </button>
+                        </button> */}
                     </div>
                 </div>
                 <button

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { INews } from "@/interfaces/news.types";
 import { formatDate } from "@/utils/formatDateAndTime";
 import { useLocale } from "next-intl";
@@ -7,7 +7,8 @@ import {
     Edit,
     Trash2,
     Eye as EyeIcon,
-    CircleUserRound
+    CircleUserRound,
+    Copy
 } from 'lucide-react';
 import { showAuthComponentsForNews } from '@/utils/authComponents';
 import { getClassificationColor } from '../utils/tableUtils';
@@ -67,6 +68,16 @@ const TableRow: React.FC<TableRowProps> = ({
         withTime: true 
     });
 
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = () => {
+      navigator.clipboard.writeText(url)
+        .then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500); // Optional: reset after 1.5s
+        });
+    };
+
     return (
         <tr className="hover:bg-primary/20">
             <td className="px-2 py-1">
@@ -77,7 +88,8 @@ const TableRow: React.FC<TableRowProps> = ({
             </td>
             <td className="px-2 py-1 text-start">
                 <Link
-                    className="text-secondary font-semibold underline"
+                    className="text-secondary text-sm underline"
+                    target='_blank'
                     href={url}
                 >
                     {title}
@@ -97,7 +109,14 @@ const TableRow: React.FC<TableRowProps> = ({
                 </div>
             </th>
             <td className="px-2 py-1">
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-1">
+                    { !copied && <Copy 
+                            className='w-5 h-5 text-adminPrimary hover:bg-adminPrimary hover:text-white rounded-md cursor-pointer p-1' 
+                            onClick={handleCopy}
+                        /> 
+                    }
+                    {copied && <span className="text-green-500 text-[10px] whitespace-nowrap">{t("copied")}!</span>}
+
                     {showAuthComponentsForNews({ role, permissions }) 
                         && (role === 'super_admin' || addedBy.toString() === userId.toString()) ?
                         <>

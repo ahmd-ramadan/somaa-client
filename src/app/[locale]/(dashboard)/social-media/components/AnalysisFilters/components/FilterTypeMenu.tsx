@@ -108,7 +108,7 @@ const FilterTypeMenu: React.FC<FilterTypeMenuProps> = ({
                     }
                 }
 
-                console.log(newFilters[type]);
+                // console.log(newFilters[type]);
             }
         } else {
             // For other filter types, add the exact value

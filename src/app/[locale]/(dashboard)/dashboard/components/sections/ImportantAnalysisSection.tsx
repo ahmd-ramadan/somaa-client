@@ -44,8 +44,9 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
             className={
                 "rounded-lg shadow-lg border border-gray-700/50 p-1 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col " +
                 (importantAnalysis.length === 0
-                    ? "bg-gradient-to-br from-primary via-blue-800 to-blue-700"
-                    : "bg-primary animate-pulse")
+                    // ? "bg-gradient-to-br from-primary via-blue-800 to-blue-700"
+                    ? "bg-gradient-to-r from-primary to-green-500"
+                    : "bg-gradient-to-r from-primary to-green-500")
             }
         >
             <div className="p-1 flex items-center justify-between">
@@ -81,7 +82,7 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
                         {importantAnalysis.map((analysis, index) => (
                             <motion.div 
                                 key={analysis._id || index} 
-                                className="bg-gray-700/50 p-2 rounded-lg"
+                                className="bg-primary p-2 rounded-lg animate-pulse"
                                 initial={{ x: -20, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ delay: index * 0.1 }}

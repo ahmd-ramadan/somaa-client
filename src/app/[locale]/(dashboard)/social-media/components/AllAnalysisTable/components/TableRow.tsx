@@ -7,12 +7,14 @@ import {
     Edit,
     Trash2,
     Eye as EyeIcon,
-    CircleUserRound
+    CircleUserRound,
+    Copy
 } from 'lucide-react';
 import { showAuthComponentsForAnalysis } from '@/utils/authComponents';
 import { getClassificationColor } from '../utils/tableUtils';
 import { UserRoleTypes } from '@/types';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useState } from "react";
 
 interface TableRowProps {
     analysis: IAnalysis;
@@ -67,6 +69,16 @@ const TableRow: React.FC<TableRowProps> = ({
         withTime: true 
     });
 
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = () => {
+      navigator.clipboard.writeText(url)
+        .then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500); // Optional: reset after 1.5s
+        });
+    };
+
     return (
         <tr className="hover:bg-primary/20">
             <td className="px-2 py-1">
@@ -78,6 +90,7 @@ const TableRow: React.FC<TableRowProps> = ({
             <td className="px-2 py-1 text-start">
                 <Link
                     className="text-secondary font-semibold underline"
+                    target='_blank'
                     href={url}
                 >
                     {t(platform)}
@@ -93,7 +106,7 @@ const TableRow: React.FC<TableRowProps> = ({
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity duration-200 rounded-md" />
                 </div>
                 <div className='flex flex-col justify-start items-start gap-1'>
-                    <p className="text-sm font-semibold">{publisher.name}</p>
+                    <p className="text-sm">{publisher.name}</p>
                     <p className="text-xs text-gray-600">@{publisher?.handle}</p>
                 </div>
             </th>
@@ -104,6 +117,7 @@ const TableRow: React.FC<TableRowProps> = ({
             <td className="px-2 py-1">{comments.toLocaleString()}</td>
             <td className="px-2 py-1">{shares.toLocaleString()}</td>
             <td className="px-2 py-1">{views.toLocaleString()}</td>
+            <td className="px-2 py-1">{appearance.toLocaleString()}</td>
             <td className="px-2 py-1">{(reactions + comments + shares).toLocaleString()}</td>
             <td className="px-2 py-1 w-fit">{formattedDate}</td>
             <th scope="row" className="px-2 py-1 font-medium text-gray-900">
@@ -113,7 +127,14 @@ const TableRow: React.FC<TableRowProps> = ({
                 </div>
             </th>
             <td className="px-2 py-1">
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-1">
+                    { !copied && <Copy 
+                            className='w-5 h-5 text-adminPrimary hover:bg-adminPrimary hover:text-white rounded-md cursor-pointer p-1' 
+                            onClick={handleCopy}
+                        /> 
+                    }
+                    {copied && <span className="text-green-500 text-[10px] whitespace-nowrap">{t("copied")}!</span>}
+
                     {showAuthComponentsForAnalysis({ role, permissions }) 
                         && (role === 'super_admin' || addedBy.toString() === userId.toString()) ?
                         <>

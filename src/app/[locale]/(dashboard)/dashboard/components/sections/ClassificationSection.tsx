@@ -9,6 +9,7 @@ interface ClassificationSectionProps {
     allAnalysis: IAnalysis[];
     allNews: INews[]
 } 
+
 const ClassificationSection = ({ allAnalysis, allNews }: ClassificationSectionProps) => {
 
     const [allCalssifications, setAllcassifications] = useState<IDashboardClassify[]>(DashboardClassificationsDefault)

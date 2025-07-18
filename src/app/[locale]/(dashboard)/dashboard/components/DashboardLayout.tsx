@@ -199,7 +199,7 @@ const DashboardLayout = () => {
                                             socket.emit('getAllNews', { startDate: new Date(startDate), endDate: new Date(endDate) });
                                         }
                                     }}
-                                    className="flex-1 bg-gradient-to-r from-blue-600 to-green-500 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
+                                    className="flex-1 bg-gradient-to-r from-primary to-green-500 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
                                     // className="flex-1 bg-gray-700 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
                                 >
                                     {t("updateTime")}

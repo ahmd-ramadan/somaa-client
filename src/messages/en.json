@@ -172,7 +172,7 @@
         "neutral": "Neutral",
         "to": "To",
         "from": "From",
-        "updateTime": "update",
+        "updateTime": "Apply",
         "topReactions": "Top Reactions",
         "reactionsTop": "Top Reactions",
         "commentsTop": "Top Comments",
@@ -200,6 +200,7 @@
     "SocialMediaPage": {
         "socialMediaPageTitle": "Social Media",
         "AllAnalysisTable": {
+            "copied": "Copied",
             "noResultsFound": "",
             "loadingData": "",
             "fetchingFromDatabase": "",
@@ -331,7 +332,9 @@
             "clearAllFilters": "Clear All Filters",
             "filtersAndGrouping": "Filters and Grouping",
             "selectFilterTypeToStart": "Select filter type to start",
-            "editModalTitle":"Edit Montoring Data"
+            "editModalTitle":"Edit Montoring Data",
+            "sortDesc": "Sort Descinding",
+            "sortAsc": "Sort Ascending"
         },
         "AddAnalysis": {
             "url": "Source",
@@ -450,6 +453,7 @@
     "NewsPage": {
         "NewsPageTitle": "News",
         "AllNewsTable": {
+            "copied": "Copied",
             "noResultsFoundFilters": "Doesn't match any results",
             "itemsSelected": "Selected Items",
             "clearSelection": "Clear Selection",

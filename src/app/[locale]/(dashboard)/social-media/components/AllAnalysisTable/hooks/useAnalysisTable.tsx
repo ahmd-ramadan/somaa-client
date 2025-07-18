@@ -159,10 +159,10 @@ export const useAnalysisTable = () => {
         });
 
         if (activeGroupingKeys.length === 0) {
-            const totalItems = filteredAnalysis.length;
+            const totalItems = sorted.length;
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = startIndex + itemsPerPage;
-            const paginated = filteredAnalysis.slice(startIndex, endIndex);
+            const paginated = sorted.slice(startIndex, endIndex);
             return [{
                 key: 'all-data',
                 label: 'All Analysis',
@@ -252,12 +252,17 @@ export const useAnalysisTable = () => {
     const collapseAllGroups = () => toggleAllGroups(true);
 
     const toggleSortOrder = () => {
+        console.log('Current sort order:', sortOrder);
         setSortOrder(current => {
+            let next: 'none' | 'asc' | 'desc';
             switch (current) {
-                case 'none': return 'desc';
-                case 'desc': return 'asc';
-                case 'asc': return 'none';
+                case 'none': next = 'desc'; break;
+                case 'desc': next = 'asc'; break;
+                case 'asc': next = 'none'; break;
+                default: next = 'none';
             }
+            console.log('New sort order:', next);
+            return next;
         });
     };
 

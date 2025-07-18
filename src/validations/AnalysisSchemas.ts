@@ -47,9 +47,9 @@ export const addAnalysisSchema = yup.object().shape({
         .string()
         .max(1000, 'Note must not exceed 1000 characters')
         .optional(),
-    isFlagged: yup
-        .boolean()
-        .optional(),
+    // isFlagged: yup
+    //     .boolean()
+    //     .optional(),
     ishighlighted: yup
         .boolean()
         .optional(),

@@ -172,7 +172,7 @@
         "neutral": "محايد",
         "to": "إلى",
         "from": "من",
-        "updateTime": "تحديث",
+        "updateTime": "تطبيق",
         "topReactions": "الأعلى تفاعل",
         "reactionsTop": "الأعلى إعجاب",
         "commentsTop": "الأعلى تعليقات",
@@ -199,6 +199,7 @@
     "SocialMediaPage": {
         "socialMediaPageTitle": "التواصل الإجتماعي",
         "AllAnalysisTable": {
+            "copied": "تم النسخ",
             "noResultsFoundFilters": "لا يتوافق مع أي نتائج",
             "noResultsFound": "",
             "loadingData": "",
@@ -331,7 +332,9 @@
             "clearAllFilters": "إزالة كل الفلاتر",
             "filtersAndGrouping": "الفلاتر والتجميع",
             "selectFilterTypeToStart": "اختر نوع الفلتر للبدء",
-            "editModalTitle": "تعديل الرصد"
+            "editModalTitle": "تعديل الرصد",
+            "sortDesc": "ترتيب تنازلي",
+            "sortAsc": "ترتيب تصاعدي"
         },
         "AddAnalysis": {
             "url": "المصدر",
@@ -450,6 +453,7 @@
     "NewsPage": {
         "NewsPageTitle": "الأخبار",
         "AllNewsTable": {
+            "copied": "تم النسخ",
             "itemsSelected": "العناصر المحددة",
             "clearSelection": "إلغاء التحديد",
             "allSectors": "كل القطاعات",
