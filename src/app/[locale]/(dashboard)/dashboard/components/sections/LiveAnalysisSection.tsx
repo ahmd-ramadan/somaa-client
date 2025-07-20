@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 import { createTickerVariants } from "./animations";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDistanceToNow } from "./utils";
+import { getPlatformIcon } from "../../../social-media/components/AllAnalysisTable/components/TableRow";
 
 interface ILiveAnalysisSectionProps {
     allAnalysis: IAnalysis[]
@@ -19,6 +20,8 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
     const [isLiveAnalysisAnimating, setIsLiveAnalysisAnimating] = useState(true);
     const liveTickerRef = useRef<HTMLDivElement>(null);
     const [liveTickerPosition, setLiveTickerPosition] = useState(0);
+    const [imageError, setImageError] = useState<Map<string, boolean>>(new Map());
+
 
     const toggleLiveAnalysisAnimation = () => {
         if (liveTickerRef.current) {
@@ -77,18 +80,19 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
                                     <div className="flex justify-between">
                                         {/* UserInfo */}
                                         <div className="flex gap-1">
-                                            { analysis.publisher.avatar ? 
-                                                <img 
-                                                    src={analysis.publisher.avatar}
-                                                    alt={analysis.publisher?.name?.charAt(0)}
-                                                    // width={50}
-                                                    // height={50}
-                                                    className="rounded-full w-10 h-10 bg-gray-600 flex items-center justify-center text-gray-300"
-                                                /> :
-                                                <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-gray-300">
-                                                {analysis.publisher?.name?.charAt(0) || '?'
+                                            { analysis?.publisher?.avatar && !imageError.get(analysis._id) ? (
+                                                    <img
+                                                        src={analysis.publisher.avatar}
+                                                        onError={() => setImageError(prev => new Map(prev).set(analysis._id, true))}
+                                                        alt="Publisher avatar"
+                                                        className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
+                                                    />
+                                                ) : (
+                                                    <div className='bg-gray-100 w-10 h-10 flex items-center justify-center rounded-md'>
+                                                        {getPlatformIcon(analysis.platform)}
+                                                    </div>
+                                                )
                                             }
-                                            </div>}
                                             <div className="flex flex-col justify-start items-start gap-1 mb-1">
                                                 <span className="text-xs font-medium text-gray-300">
                                                     {analysis.publisher?.name || 'Unknown Publisher'}

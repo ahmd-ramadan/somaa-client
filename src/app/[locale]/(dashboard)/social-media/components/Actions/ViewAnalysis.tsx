@@ -1,18 +1,11 @@
-import React from 'react';
+'use client'
+
+import React, { useState } from 'react';
 import { useLocale, useTranslations } from "next-intl";
 import { IAnalysis } from "@/interfaces/analysis.types";
 import { 
-    Globe, 
-    User, 
-    Building2, 
-    Tag, 
-    FileText, 
-    Type, 
-    Calendar, 
     MapPin,  
-    ExternalLink, 
-    BarChart2, 
-    Info,
+    ExternalLink,
     MessageCircle,
     Share2,
     Heart,
@@ -24,7 +17,7 @@ import {
 } from 'lucide-react';
 import { formatDate } from '@/utils/formatDateAndTime';
 import Link from 'next/link';
-import PublisherEmbed from '../../../dashboard/components/sections/PublisherEmbed';
+import { getPlatformIcon } from '../AllAnalysisTable/components/TableRow';
 
 interface ViewAnalysisProps {
     analysis: IAnalysis;
@@ -33,6 +26,8 @@ interface ViewAnalysisProps {
 const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
     const t = useTranslations("SocialMediaPage.AllAnalysisTable");
     const locale = useLocale();
+
+    const [imageError, setImageError] = useState(false);
 
     return (
         <div className='grid grid-cols-1 gap-2'>
@@ -129,13 +124,18 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                                 {t("publisher")}
                             </h3> */}
                             <div className="flex items-center gap-2">
-                                <img
-                                    src={analysis.publisher?.avatar || '/logo.png'}
-                                    alt="Publisher"
-                                    // width={40}
-                                    // height={40}
-                                    className="w-8 h-8 rounded-full"
-                                />
+                                {analysis?.publisher?.avatar && !imageError ? (
+                                    <img
+                                        src={analysis.publisher.avatar}
+                                        onError={() => setImageError(true)}
+                                        alt="Publisher avatar"
+                                        className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
+                                    />
+                                ) : (
+                                    <div className='bg-gray-100 w-10 h-10 flex items-center justify-center rounded-md'>
+                                        {getPlatformIcon(analysis.platform)}
+                                    </div>
+                                )}
                                 <p className="text-primary">{analysis.publisher?.name}</p>
                             </div>
                         </div>

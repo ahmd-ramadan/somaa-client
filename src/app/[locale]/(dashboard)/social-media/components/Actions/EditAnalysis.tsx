@@ -38,6 +38,7 @@ import Link from 'next/link';
 import { updateAnalysis } from '@/lib/features/socialMedia/analysisThunks';
 import { ApiResponse } from '@/utils/apiService';
 import { useSocket } from '@/hooks/useSocket';
+import { getPlatformIcon } from '../AllAnalysisTable/components/TableRow';
 
 interface EditAnalysisProps {
     analysis: IAnalysis;
@@ -104,6 +105,8 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
     const regionDropdownRef = React.useRef<HTMLDivElement>(null);
     const cityDropdownRef = React.useRef<HTMLDivElement>(null);
     const districtDropdownRef = React.useRef<HTMLDivElement>(null);
+    const [imageError, setImageError] = useState(false);
+
 
     // Add click outside handler
     useEffect(() => {
@@ -761,13 +764,18 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                             {t("publisher")}
                         </h3> */}
                         <div className="flex items-center gap-2">
-                            <img
-                                src={editedAnalysis.publisher?.avatar || '/logo.png'}
-                                alt="Publisher"
-                                // width={40}
-                                // height={40}
-                                className="w-8 h-8 rounded-full"
-                            />
+                            {analysis?.publisher?.avatar && !imageError ? (
+                                <img
+                                    src={analysis.publisher.avatar}
+                                    onError={() => setImageError(true)}
+                                    alt="Publisher avatar"
+                                    className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
+                                />
+                            ) : (
+                                <div className='bg-gray-100 w-10 h-10 flex items-center justify-center rounded-md'>
+                                    {getPlatformIcon(analysis.platform)}
+                                </div>
+                            )}
                             <p className="text-primary">{editedAnalysis.publisher?.name}</p>
                         </div>
                     </div>

@@ -23,7 +23,7 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
     const match = url.split('/status/');
     const tweetId = match[1];
     return (
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full flex justify-center items-center overflow-auto custom-scrollbar ">
         <TweetEmbed className="w-full" tweetId={tweetId} options={{ theme: 'dark', align: 'center' }} />
       </div>
     );
@@ -31,7 +31,7 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
 
   if (platform === 'facebook') {
     return (
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full overflow-auto custom-scrollbar text-white">
           <FacebookEmbed url={url} className="w-full" />
       </div>
     );
@@ -39,7 +39,7 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
 
   if (platform === 'instagram') {
     return (
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full flex justify-center items-center overflow-auto custom-scrollbar">
         <InstagramEmbed url={url}  className="w-full"/>
     </div>
     );
@@ -47,7 +47,7 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
 
   if (platform === 'linkedin') {
     return (
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full flex justify-center items-center overflow-auto custom-scrollbar">
           <LinkedInEmbed url={url} className="w-full" />
       </div>
     );
@@ -63,7 +63,7 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
       : '/tiktok-placeholder.png';
 
     return (
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full flex justify-center items-center overflow-auto custom-scrollbar">
         <iframe
           src={`https://www.tiktok.com/embed/v2/${videoId}`}
           // width="325"
@@ -78,7 +78,7 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
 
   if (platform === 'youtube') {
     return (
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full flex justify-center items-center overflow-auto custom-scrollbar">
           <YouTubeEmbed url={url} className="w-full" />
       </div>
     );

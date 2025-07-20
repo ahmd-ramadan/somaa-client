@@ -1,5 +1,5 @@
 import React from 'react';
-import { IAnalysis } from "@/interfaces/analysis.types";
+import { IAnalysis, PlatformsEnum } from "@/interfaces/analysis.types";
 import { formatDate } from "@/utils/formatDateAndTime";
 import { useLocale } from "next-intl";
 import Link from "next/link";
@@ -15,6 +15,12 @@ import { getClassificationColor } from '../utils/tableUtils';
 import { UserRoleTypes } from '@/types';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useState } from "react";
+import XIcon from '@/components/icons/SocialMedia/X';
+import FacebookIcon from '@/components/icons/SocialMedia/Facebook';
+import YoutubeIcon from '@/components/icons/SocialMedia/Youtube';
+import InstagramIcon from '@/components/icons/SocialMedia/Instagram';
+import TikTokIcon from '@/components/icons/SocialMedia/TikTok';
+import LinkedInIcon from '@/components/icons/SocialMedia/LinkedIn';
 
 interface TableRowProps {
     analysis: IAnalysis;
@@ -27,6 +33,23 @@ interface TableRowProps {
     permissions: any;
     userId: string;
     t: (key: string) => string;
+}
+
+export const getPlatformIcon = (platform: PlatformsEnum) => {
+    switch(platform) {
+        case PlatformsEnum.X :
+            return <XIcon className='w-8 h-8 text-primary' />
+        case PlatformsEnum.FACEBOOK :
+            return <FacebookIcon className='w-8 h-8 text-primary' />
+        case PlatformsEnum.YOUTUBE :
+            return <YoutubeIcon className='w-8 h-8 text-primary' />
+        case PlatformsEnum.INSTAGRAM :
+            return <InstagramIcon className='w-8 h-8 text-primary' />
+        case PlatformsEnum.TIKTOK:
+            return <TikTokIcon className='w-8 h-8 text-primary' />
+        case PlatformsEnum.LINKEDIN:
+            return <LinkedInIcon className='w-8 h-8 text-primary' />
+    }
 }
 
 const TableRow: React.FC<TableRowProps> = ({
@@ -70,6 +93,7 @@ const TableRow: React.FC<TableRowProps> = ({
     });
 
     const [copied, setCopied] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     const handleCopy = () => {
       navigator.clipboard.writeText(url)
@@ -98,11 +122,18 @@ const TableRow: React.FC<TableRowProps> = ({
             </td>
             <th scope="row" className="px-2 py-1 font-medium text-gray-900 whitespace-nowrap flex justify-start gap-2 items-center">
                 <div className="relative group">
-                    <img
-                        src={analysis?.publisher?.avatar || '/logo.png'}
-                        alt="Publisher avatar"
-                        className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
-                    />
+                    {analysis?.publisher?.avatar && !imageError ? (
+                        <img
+                            src={analysis.publisher.avatar}
+                            onError={() => setImageError(true)}
+                            alt="Publisher avatar"
+                            className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
+                        />
+                    ) : (
+                        <div className='bg-gray-100 w-10 h-10 flex items-center justify-center rounded-md'>
+                            {getPlatformIcon(platform)}
+                        </div>
+                    )}
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity duration-200 rounded-md" />
                 </div>
                 <div className='flex flex-col justify-start items-start gap-1'>
