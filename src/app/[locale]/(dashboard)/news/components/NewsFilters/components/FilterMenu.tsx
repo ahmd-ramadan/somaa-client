@@ -5,6 +5,8 @@ import { NewsAdTypesEnum, NewsClassifyEnum, NewsGeographicalClassifyEnum, NewsPr
 import { fetchAllNews } from "@/lib/features/news/newsthunks";
 import { ChevronDown, Filter, X } from "lucide-react";
 
+import { toZonedTime, format } from 'date-fns-tz'
+const timeZone = 'Asia/Riyadh';
 
 const FilterMenu: React.FC<FilterMenuProps> = ({
     filters,
@@ -47,9 +49,15 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
         const endOfDay = new Date(today);
         endOfDay.setHours(23, 59, 59, 999);
 
+        const startInKSA = toZonedTime(startOfDay, timeZone);
+        const endInKSA = toZonedTime(endOfDay, timeZone);
+        
+        const formatDate = (date: Date) => format(date, 'yyyy-MM-dd\'T\'HH:mm', { timeZone });
+        
+
         setDateRange({
-            from: (filters?.dateRange?.start || new Date()).toISOString().slice(0, 16),
-            to: (filters?.dateRange?.end || new Date()).toISOString().slice(0, 16)
+            from: formatDate((filters?.dateRange?.start || startInKSA)),
+            to: formatDate(filters?.dateRange?.end || endInKSA)
         });
 
         // Only set initial filters if they don't exist

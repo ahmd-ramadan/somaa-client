@@ -17,7 +17,7 @@ import PublishersSection from "./sections/PublishersSection";
 import TwoBadgesSection from "./sections/TowBadgesSection";
 import { Maximize2, Minimize2 } from "lucide-react";
 import SubAnalysisAndSectorsSection from "./sections/SubAnalysisAndSectorsSection";
-import { toZonedTime } from 'date-fns-tz';
+import { toZonedTime, format } from 'date-fns-tz'
 import { useTranslations } from "next-intl";
 
 // Register Chart.js components
@@ -56,21 +56,29 @@ const DashboardLayout = () => {
     }, []);
 
     useEffect(() => {
+        if(startDate || endDate) { return }
+
+        // console.log(startDate, "Start ....", endDate)
+
         // Set default values: from = today 00:00, to = now
         const now = new Date();
-        // احصل على بداية اليوم ونهاية اليوم في توقيت السعودية
-        const timeZone = 'Asia/Riyadh';
+
         const startOfToday = new Date(now);
         startOfToday.setHours(0, 0, 0, 0);
+        
         const endOfToday = new Date(now);
         endOfToday.setHours(23, 59, 59, 999);
-        // حولهم إلى توقيت السعودية
+        
         const startInKSA = toZonedTime(startOfToday, timeZone);
         const endInKSA = toZonedTime(endOfToday, timeZone);
-        const format = (date: Date) => date.toISOString().slice(0, 16);
-        setStartDate(format(startInKSA));
-        setEndDate(format(endInKSA));
-    }, []);
+        
+        const formatDate = (date: Date) => format(date, 'yyyy-MM-dd\'T\'HH:mm', { timeZone });
+        
+        setStartDate(formatDate(startInKSA));
+        setEndDate(formatDate(endInKSA));
+
+        // console.log(startDate, " *** ", endDate)
+    }, [isMounted]);
 
     useEffect(() => {
         if(!socket || !isConnected) {
@@ -89,7 +97,7 @@ const DashboardLayout = () => {
         });
 
         socket.on('allNews', (newsData: INews[]) => {
-            console.log("newsData: ", newsData)
+            // console.log("newsData: ", newsData)
             setAllNews(newsData);
             setError(null);
         });
@@ -144,6 +152,8 @@ const DashboardLayout = () => {
         }
     };
 
+    // console.log("Date ", startDate, endDate)
+    
     return (
         <div
             ref={dashboardRef}
@@ -180,7 +190,7 @@ const DashboardLayout = () => {
                                 <input
                                     type="datetime-local"
                                     value={startDate}
-                                    onChange={e => setStartDate(e.target.value)}
+                                    onChange={e => setStartDate(e.target.value.slice(0, 16))}
                                     className="bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition outline-none w-32 text-xs"
                                 />
                                 <label className="text-[10px] text-gray-400 flex items-center gap-0.5 whitespace-nowrap">
@@ -189,7 +199,7 @@ const DashboardLayout = () => {
                                 <input
                                     type="datetime-local"
                                     value={endDate}
-                                    onChange={e => setEndDate(e.target.value)}
+                                    onChange={e => setEndDate(e.target.value.slice(0, 16))}
                                     className="bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-green-500 focus:border-green-500 transition outline-none w-32 text-xs"
                                 />
                                 <button
