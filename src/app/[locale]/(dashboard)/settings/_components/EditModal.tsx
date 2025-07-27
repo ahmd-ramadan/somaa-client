@@ -2,7 +2,7 @@
 
 import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface EditModalProps {
     isOpen: boolean;
@@ -17,12 +17,13 @@ const EditModal = ({ isOpen, onClose, onSave, title, value, label }: EditModalPr
     const t = useTranslations("SettingsPage")
     const [inputValue, setInputValue] = useState<string>(value)
     
-    
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onSave(inputValue);
     };
+
     
+    console.log(inputValue)
     if (!isOpen) return null;
 
     return (
@@ -48,7 +49,7 @@ const EditModal = ({ isOpen, onClose, onSave, title, value, label }: EditModalPr
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded-md text-start"
-                            autoFocus
+                            // autoFocus
                         />
                     </div>
                     

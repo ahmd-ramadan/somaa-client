@@ -132,7 +132,7 @@ const SubAnalysisTable = () => {
           <tbody>
             { currentSubAnalysis.map((subAnalysis, idx) => (
                 <tr key={subAnalysis._id} className="border-b hover:bg-gray-200">
-                  <th scope="row" className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{subAnalysis.body}</th>
+                  <th scope="row" className="px-3 py-2 font-medium text-gray-900">{subAnalysis.body}</th>
                   <td className="px-3 py-2">
                     <span className="inline-flex items-center rounded-full text-xs font-medium">
                       {subAnalysis?.socialMediaMonitoringCount?.toLocaleString() || 0 }
@@ -194,14 +194,14 @@ const SubAnalysisTable = () => {
         </div>
       )}
 
-      <EditModal
+      { editingAnalysis  && <EditModal
         isOpen={!!editingAnalysis}
         onClose={() => setEditingAnalysis(null)}
         onSave={handleSave}
         title={t("editModalTitle")}
         value={editingAnalysis?.body || ''}
         label={t("subAnalysisBody")}
-      />
+      /> }
 
       <AddSubAnalysisModal
         isOpen={isAddModalOpen}

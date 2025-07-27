@@ -134,7 +134,7 @@ const SectorsTable = () => {
         <tbody>
           { currentSectors.map((sector, idx) => (
               <tr key={sector._id} className="border-b hover:bg-gray-200">
-                <th scope="row" className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{sector.name}</th>
+                <th scope="row" className="px-3 py-2 font-medium text-gray-900">{sector.name}</th>
                 <td className="px-3 py-2">
                   <span className="inline-flex items-center rounded-full text-xs font-medium">
                     {sector?.socialMediaMonitoringCount?.toLocaleString() || 0}
@@ -152,7 +152,7 @@ const SectorsTable = () => {
                 </td>
                 <td className="px-3 py-2">
                   <button 
-                    onClick={() => handleEdit(sector)}
+                    onClick={() => setEditingSector(sector)}
                     className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
                   >
                     <Edit size={16} />
@@ -201,14 +201,14 @@ const SectorsTable = () => {
         </div>
       )}
 
-      <EditModal
+      { editingSector && <EditModal
         isOpen={!!editingSector}
         onClose={() => setEditingSector(null)}
         onSave={handleSave}
         title={t("editModalTitle")}
         value={editingSector?.name || ''}
         label={t("sectorName")}
-      />
+      /> }
 
       <AddSectorModal
         isOpen={isAddModalOpen}
