@@ -10,16 +10,13 @@ import ClassificationSection from "./sections/ClassificationSection";
 import ImportantAnalysisSection from "./sections/ImportantAnalysisSection";
 import LiveAnalysisSection from "./sections/LiveAnalysisSection";
 import MapSection from "./sections/MapSection";
-import PlatformsSections from "./sections/PlatformsSection";
 import SubAnalysisCharts from "./sections/SubAnalysisCharts";
 import SectorsSection from "./sections/SectorsSection";
 import PublishersSection from "./sections/PublishersSection";
-import TwoBadgesSection from "./sections/TowBadgesSection";
 import { Maximize2, Minimize2 } from "lucide-react";
 import SubAnalysisAndSectorsSection from "./sections/SubAnalysisAndSectorsSection";
 import { toZonedTime, format } from 'date-fns-tz'
 import { useTranslations } from "next-intl";
-import TriangleFrame from "./sections/EmaraLogoSection";
 
 // Register Chart.js components
 ChartJS.register(
@@ -156,126 +153,119 @@ const DashboardLayout = () => {
     // console.log("Date ", startDate, endDate)
     
     return (
-        <div
-            ref={dashboardRef}
-            className="w-full h-screen bg-gray-900 p-4 overflow-y-auto overflow-x-hidden"
-        >
-            {error && (
-                <div className="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
-                    {error}
-                </div>
-            )}
-            {!isConnected && (
-                <div className="fixed top-4 right-4 bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
-                    Connecting to server...
-                </div>
-            )}
-            {isMounted && (
-                <motion.div 
-                    className="flex flex-col h-full gap-4"
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                >
-                    <div className="grid grid-cols-4 gap-2 h-full">
-                        {/* Side #1 */}
-                        <motion.div
-                            variants={itemVariants}
-                            className="flex flex-col gap-1 h-full"
-                        >
-                            {/* Logo */}
-                            {/* <div className="w-full">
-                                <img
-                                    src="/emara-logo.png"
-                                    alt="إمارة منطقة الرياض"
-                                />
-
-                            </div> */}
-                            <TriangleFrame />
-                            {/* Date Input */}
-                            <div className="flex items-center gap-1 mb-1">
-                                <label className="text-[10px] text-gray-400 flex items-center gap-0.5 whitespace-nowrap">
-                                    {t("from")}
-                                </label>
-                                <input
-                                    type="datetime-local"
-                                    value={startDate}
-                                    onChange={e => setStartDate(e.target.value.slice(0, 16))}
-                                    className="bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition outline-none w-32 text-xs"
-                                />
-                                <label className="text-[10px] text-gray-400 flex items-center gap-0.5 whitespace-nowrap">
-                                    {t("to")}
-                                </label>
-                                <input
-                                    type="datetime-local"
-                                    value={endDate}
-                                    onChange={e => setEndDate(e.target.value.slice(0, 16))}
-                                    className="bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-green-500 focus:border-green-500 transition outline-none w-32 text-xs"
-                                />
-                                <button
-                                    onClick={() => {
-                                        if (socket && isConnected && startDate && endDate) {
-                                            socket.emit('getAllAnalysis', { startDate: new Date(startDate), endDate: new Date(endDate) });
-                                            socket.emit('getAllNews', { startDate: new Date(startDate), endDate: new Date(endDate) });
-                                        }
-                                    }}
-                                    className="flex-1 bg-gradient-to-r from-primary to-green-500 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
-                                    // className="flex-1 bg-gray-700 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
-                                >
-                                    {t("updateTime")}
-                                </button>
-                            </div>
-
-                            {/* Section 1.2 Important Analysis Section */}
-                            <ImportantAnalysisSection allAnalysis={allAnalysis}/>
-
-                            {/* Section 1.3 Analysis Section */}
-                            <LiveAnalysisSection allAnalysis={allAnalysis} />
-                        </motion.div>
-
-                        {/* Side #2 */}
-                        <motion.div
-                            variants={itemVariants}
-                            className="col-span-2 flex flex-col gap-2 h-full"
-                        >
-                            {/* Section 2.1 Map and News/Social */}
-                            <div className="flex flex-row gap-1 flex-1">
-                                {/* Map Track */}
-                                <MapSection allAnalysis={allAnalysis} />
-
-                                <PublishersSection allAnalysis={allAnalysis} />
-                            </div>
-
-                            {/* Section 2.2 SubAnalysis & Sectors Data */}
-                            <SubAnalysisAndSectorsSection allAnalysis={allAnalysis} allNews={allNews}/>
-
-                            {/* Section 2.3 New Statistics and Charts Section */}
-                            <div className="h-1/3">
-                                <SubAnalysisCharts allAnalysis={allAnalysis}/>
-                            </div>
-                        </motion.div>
-
-                        {/* Side #3 */}
-                        <motion.div
-                            variants={itemVariants}
-                            className="flex flex-col gap-2 h-full"
-                        >
-                            <ClassificationSection allAnalysis={allAnalysis} allNews={allNews} />
-                            
-                            {/* Section 3.1 Sectors Data */}
-                            <SectorsSection allAnalysis={allAnalysis} allNews={allNews}/>
-
-                        </motion.div>
+        <div className="backround-pattern-2">
+            <div
+                ref={dashboardRef}
+                className="bg-gray-900/90 w-full h-screen p-2 overflow-y-auto overflow-x-hidden"
+            >
+                {error && (
+                    <div className="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+                        {error}
                     </div>
-                    <button
-                        onClick={handleToggleFullscreen}
-                        className="absolute top-2 end-2 z-50 bg-gray-800/30 hover:bg-gray-800/80 p-1 rounded transition"
-                        title={isFullscreen ? "خروج من ملء الشاشة" : "ملء الشاشة"}
+                )}
+                {!isConnected && (
+                    <div className="fixed top-4 right-4 bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+                        Connecting to server...
+                    </div>
+                )}
+                {isMounted && (
+                    <motion.div 
+                        className="flex flex-col h-full gap-4"
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
                     >
-                        {isFullscreen ? <Minimize2 className="w-5 h-5 text-white" /> : <Maximize2 className="w-5 h-5 text-white" />}
-                    </button>
-                </motion.div>
-            )}
+                        <div className="grid grid-cols-4 gap-2 h-full">
+                            {/* Side #1 */}
+                            <motion.div
+                                variants={itemVariants}
+                                className="flex flex-col gap-1 h-full"
+                            >
+                                {/* Date Input */}
+                                <div className="flex items-center gap-1 mb-1">
+                                    <label className="text-[10px] text-gray-400 flex items-center gap-0.5 whitespace-nowrap">
+                                        {t("from")}
+                                    </label>
+                                    <input
+                                        type="datetime-local"
+                                        value={startDate}
+                                        onChange={e => setStartDate(e.target.value.slice(0, 16))}
+                                        className="bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition outline-none w-32 text-xs"
+                                    />
+                                    <label className="text-[10px] text-gray-400 flex items-center gap-0.5 whitespace-nowrap">
+                                        {t("to")}
+                                    </label>
+                                    <input
+                                        type="datetime-local"
+                                        value={endDate}
+                                        onChange={e => setEndDate(e.target.value.slice(0, 16))}
+                                        className="bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-green-500 focus:border-green-500 transition outline-none w-32 text-xs"
+                                    />
+                                    <button
+                                        onClick={() => {
+                                            if (socket && isConnected && startDate && endDate) {
+                                                socket.emit('getAllAnalysis', { startDate: new Date(startDate), endDate: new Date(endDate) });
+                                                socket.emit('getAllNews', { startDate: new Date(startDate), endDate: new Date(endDate) });
+                                            }
+                                        }}
+                                        className="flex-1 bg-gradient-to-r from-primary to-secondary text-white px-2 py-0.5 rounded shadow hover:from-secondary hover:to-primary transition font-semibold text-xs whitespace-nowrap"
+                                        // className="flex-1 bg-gray-700 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
+                                    >
+                                        {t("updateTime")}
+                                    </button>
+                                </div>
+
+                                {/* Section 1.2 Important Analysis Section */}
+                                <ImportantAnalysisSection allAnalysis={allAnalysis}/>
+
+                                {/* Section 1.3 Analysis Section */}
+                                <LiveAnalysisSection allAnalysis={allAnalysis} />
+                            </motion.div>
+
+                            {/* Side #2 */}
+                            <motion.div
+                                variants={itemVariants}
+                                className="col-span-2 flex flex-col gap-2 h-full"
+                            >
+                                {/* Section 2.1 Map and News/Social */}
+                                <div className="flex flex-row gap-1 flex-1">
+                                    {/* Map Track */}
+                                    <MapSection allAnalysis={allAnalysis} />
+
+                                    <PublishersSection allAnalysis={allAnalysis} />
+                                </div>
+
+                                {/* Section 2.2 SubAnalysis & Sectors Data */}
+                                <SubAnalysisAndSectorsSection allAnalysis={allAnalysis} allNews={allNews}/>
+
+                                {/* Section 2.3 New Statistics and Charts Section */}
+                                <div className="h-1/3">
+                                    <SubAnalysisCharts allAnalysis={allAnalysis}/>
+                                </div>
+                            </motion.div>
+
+                            {/* Side #3 */}
+                            <motion.div
+                                variants={itemVariants}
+                                className="flex flex-col gap-2 h-full"
+                            >
+                                <ClassificationSection allAnalysis={allAnalysis} allNews={allNews} />
+                                
+                                {/* Section 3.1 Sectors Data */}
+                                <SectorsSection allAnalysis={allAnalysis} allNews={allNews}/>
+
+                            </motion.div>
+                        </div>
+                        <button
+                            onClick={handleToggleFullscreen}
+                            className="absolute top-2 end-2 z-50 bg-gray-800/30 hover:bg-gray-800/80 p-1 rounded transition"
+                            title={isFullscreen ? "خروج من ملء الشاشة" : "ملء الشاشة"}
+                        >
+                            {isFullscreen ? <Minimize2 className="w-5 h-5 text-white" /> : <Maximize2 className="w-5 h-5 text-white" />}
+                        </button>
+                    </motion.div>
+                )}
+            </div>
         </div>
     );
 };

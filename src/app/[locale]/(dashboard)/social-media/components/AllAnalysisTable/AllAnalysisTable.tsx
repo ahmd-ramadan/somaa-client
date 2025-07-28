@@ -165,10 +165,10 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
     if (allAnalysisStatus === 'loading') {
         return (
             <div 
-                className="flex flex-col items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg"
+                className="flex flex-col items-center justify-center py-16 text-gray-500  rounded-lg"
                 style={{ minHeight: `calc(100vh - 120px)` }}    
             >
-                <div className="flex items-center justify-center w-16 h-16 mb-4 bg-gray-100 rounded-full">
+                <div className="flex items-center justify-center w-16 h-16 mb-4 rounded-full">
                     <Spinner size="100px"/>
                 </div>
                 <div className="text-xl font-semibold mb-2 text-primary">{t("loadingData")}</div>
@@ -182,9 +182,9 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
     return (
         <div className="space-y-0 min-h-svh">
             {/* Fixed Filters Section at Top */}
-            <div ref={pageHeader} className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+            <div ref={pageHeader} className="sticky top-0 z-40 bg-transparent border-b border-gray-200 shadow-sm">
                 {/* Filters Toggle Button */}
-                <div className="px-4 py-1 bg-gray-50 border-b border-gray-200">
+                <div className="px-4 py-1 border-b border-gray-200">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <span className="text-sm font-medium text-gray-700">{t("showAllAnalysis")}: </span>
@@ -193,7 +193,7 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setShowFilters(!showFilters)}
-                                className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                                className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
                             >
                                 <Filter className="w-4 h-4" />
                                 {/* <span>{t("filters")}</span> */}
@@ -227,7 +227,7 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
 
                 {/* Filters Content - Collapsible */}
                 {showFilters && (
-                    <div className="px-4 py-3 bg-white">
+                    <div className="px-4 py-3">
                         <AnalysisFilters
                             filters={filters}
                             setFilters={setFilters}
@@ -244,10 +244,10 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
             {/* No Data State */}
             {filteredAnalysis.length === 0 && (
                 <div 
-                    className="flex flex-col items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg" 
+                    className="flex flex-col items-center justify-center py-16 text-gray-500 rounded-lg" 
                     style={{ minHeight: `calc(100vh - ${headerHeight}px - 120px)` }}
                 >
-                    <div className="flex items-center justify-center w-16 h-16 mb-4 bg-gray-100 rounded-full">
+                    <div className="flex items-center justify-center w-16 h-16 mb-4 rounded-full">
                         <SearchX className="w-8 h-8 text-gray-400" />
                     </div>
                     <div className="text-xl font-semibold mb-2 text-primary">{t("noDataFound")}</div>
@@ -260,7 +260,7 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
 
             {/* Table Container */}
             {filteredAnalysis.length > 0 && (
-                <div className="bg-white shadow-sm relative">
+                <div className="shadow-sm relative">
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200 text-xs">
                             <TableHeader
@@ -298,7 +298,7 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
 
             {/* Selection indicator */}
             {selectedItems.size > 0 && (
-                <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg px-4 py-2 flex items-center gap-2">
+                <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 rounded-lg shadow-lg px-4 py-2 flex items-center gap-2">
                     <span className="text-sm font-medium text-gray-700">
                         {selectedItems.size} {t("itemsSelected")}
                     </span>

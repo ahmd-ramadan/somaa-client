@@ -58,7 +58,7 @@ const UsersPage = () => {
             <div className="mb-6 w-full border shadow-md rounded-md bg-white">
                 <div className="p-4 flex items-center justify-between">
                     <div className='flex flex-col gap-1'>
-                        <h2 className="text-xl font-semibold">{t("usersTableTitle")}</h2>
+                        <h2 className="text-xl font-semibold text-secondary">{t("usersTableTitle")}</h2>
                         <p className="text-sm text-primary flex items-center gap-2">
                             <Users size={20} className="transition-all duration-300" />
                             {t("showAllUsers")} <span className='text-secondary font-bold'>: {users.length}</span>

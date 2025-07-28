@@ -76,7 +76,7 @@ const SubAnalysisTable = () => {
   return (
     <>
       <div className="flex justify-between items-center mb-4 px-2">
-        <h2 className="text-xl font-semibold text-gray-900">
+        <h2 className="text-xl font-semibold text-secondary">
          {t("totalShowedSubAnalysis")}: <strong className='text-secondary'>{allSubAnalysis.length}</strong>
         </h2>
         <button

@@ -15,13 +15,14 @@ const config: Config = {
       },
       colors: {
         primary: "#00224D",
-        // primary: "#16a34a",
-        // primary: "#4f46e5",
         secondary: "#C80036", 
         adminPrimary: "#00224D",
-        // adminPrimary: "#10a37f",
-        // adminPrimary: "#16a34a",
         adminSecondary: "#C80036",
+
+        // primary: "#057a38",
+        // secondary: "#00224D",
+        // adminPrimary: "#057a38",
+        // adminSecondary: "#00224D",
       },
       scrollbar: {
         DEFAULT: {

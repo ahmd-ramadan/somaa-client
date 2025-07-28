@@ -63,7 +63,7 @@ const AuthLayout = ({ children }: IAuthLayoutProps) => {
             <div className="relative min-h-screen w-full flex items-center justify-center p-4">
                 <div className="w-full max-w-[400px] bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 sm:p-8 flex flex-col gap-6 border border-white/20">
                     {/* Logo */}
-                    <div className="relative h-20 w-64 mx-auto mb-2">
+                    {/* <div className="relative h-20 w-64 mx-auto mb-2">
                         <Image 
                             src="/auth-image.png"
                             alt="OSUS Solutions Logo"
@@ -71,7 +71,7 @@ const AuthLayout = ({ children }: IAuthLayoutProps) => {
                             className="object-contain"
                             priority
                         />
-                    </div>
+                    </div> */}
 
                     {/* Form Content */}
                     <div className="w-full">

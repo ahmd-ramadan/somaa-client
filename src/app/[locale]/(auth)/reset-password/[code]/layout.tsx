@@ -1,7 +1,5 @@
 import { ILocaleParams } from "@/interfaces";
-import { getData } from "@/utils/apiService";
 import { translate } from "@/utils/metaData";
-import { getName } from "@/utils/nameUtils";
 import { Metadata } from "next";
 import { ReactNode } from "react";
 

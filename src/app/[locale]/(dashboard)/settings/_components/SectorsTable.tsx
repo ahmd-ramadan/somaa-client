@@ -77,7 +77,7 @@ const SectorsTable = () => {
   return (
     <>
       <div className="flex justify-between items-center mb-4 px-2">
-        <h2 className="text-xl font-semibold text-gray-900">
+        <h2 className="text-xl font-semibold text-secondary">
          {t("totalShowedSectors")}: <strong className='text-secondary'>{allSectors.length}</strong>
         </h2>
         <button

@@ -118,7 +118,7 @@ const Sidebar = () => {
                     flex h-20 items-center
                     ${isCompact ? 'justify-center' : 'px-3 justify-between'}
                 `}>
-                    <div className={`transition-opacity duration-200 ${isCompact ? 'opacity-0 w-0' : 'opacity-100'}`}>
+                    {/* <div className={`transition-opacity duration-200 ${isCompact ? 'opacity-0 w-0' : 'opacity-100'}`}>
                        <Image
                             src="/logo.png"
                             alt="logo"
@@ -126,7 +126,7 @@ const Sidebar = () => {
                             height={80}
                             className="object-contain"
                        />
-                    </div>
+                    </div> */}
                     {/* This button is now ALWAYS visible */}
                     <button
                         onClick={() => setIsCompact(!isCompact)}

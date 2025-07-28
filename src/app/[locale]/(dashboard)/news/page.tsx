@@ -31,7 +31,7 @@ const NewsPage = () => {
             <div className="mb-6 w-full border shadow-md rounded-md bg-white min-h-[800px]">
                 <div className="p-4 flex items-center justify-between">
                     <div className='flex flex-col gap-1'>
-                        <h2 className="text-xl font-semibold text-primary">{t("AllNewsTableTitle")}</h2>
+                        <h2 className="text-xl font-semibold text-secondary">{t("AllNewsTableTitle")}</h2>
                         {/* <p className="text-sm">{t("showAllNews")}: (<span className='text-secondary font-semibold'>{selectedAllNews?.length}</span> / {allAnalysis?.length})</p> */}
                     </div>
                     { 

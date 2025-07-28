@@ -6,11 +6,35 @@
 @import "~slick-carousel/slick/slick-theme.css";
 
 :root {
+  
   --color-primary: #00224D;
   --color-secondary: #C80036;
   --color-admin-primary: #00224D;
   --color-admin-secondary: #C80036;
+
+  /* --color-primary: #057a38;
+  --color-secondary: #00224D;
+  --color-admin-primary: #057a38;
+  --color-admin-secondary: #00224D; */
+
 }
+
+
+/* .backround-pattern {
+  background-image: url('/emara-logo-2.jpg');  
+  background-repeat: no-repeat;
+  background-size: 500px 500px;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.backround-pattern-2 {
+  background-image: url('/emara-logo.png');  
+  background-repeat: no-repeat;
+  background-size: 90% 40%;
+  background-position: center;
+  background-attachment: fixed;
+} */
 
 [data-theme="dark"] {
   --color-primary: #00224D; /* Dark mode color */
@@ -685,4 +709,14 @@ body {
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #4a5568 #2d3748;
+}
+
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 40px solid transparent;
+  border-right: 40px solid transparent;
+  border-bottom: 70px solid #3498db;
+  display: inline-block;
+  margin: 10px;
 }

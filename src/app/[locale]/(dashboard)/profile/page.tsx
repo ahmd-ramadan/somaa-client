@@ -47,7 +47,7 @@ const ProfilePage = () => {
 
     return (
         <div className="flex flex-col p-2 md:p-4 gap-4 h-full">
-            <h1 className="md:text-2xl text-xl font-bold">{t('headTitle')}</h1>
+            <h1 className="md:text-2xl text-xl font-bold text-secondary">{t('headTitle')}</h1>
 
             <ProfileGeneralInfoSection />
 

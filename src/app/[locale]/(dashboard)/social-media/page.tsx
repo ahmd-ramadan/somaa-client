@@ -26,11 +26,11 @@ const SocialMediaPage = () => {
     const closeAddAnalysisModal = () => setIsAddAnalysisModalOpen(false);
 
     return (
-        <div className="">
-            <div className="w-full border shadow-md rounded-md bg-white min-h-screen">
+        <div className="backround-pattern">
+            <div className="bg-white w-full border shadow-md rounded-md min-h-screen">
                 <div className="p-4 flex items-center justify-between">
                     <div className='flex flex-col gap-1'>
-                        <h2 className="text-lg font-semibold text-primary">{t("AllAnalysisTableTitle")}</h2>
+                        <h2 className="text-lg font-semibold text-secondary">{t("AllAnalysisTableTitle")}</h2>
                         {/* <p className="text-sm">{t("showAllAnalysis")}: (<span className='text-secondary font-semibold'>{selectedAllAnalysis?.length}</span> / {allAnalysis?.length})</p> */}
                     </div>
                     { 
