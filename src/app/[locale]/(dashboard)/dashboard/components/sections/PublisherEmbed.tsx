@@ -23,8 +23,8 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
     const match = url.split('/status/');
     const tweetId = match[1];
     return (
-      <div className="w-full flex justify-center items-center overflow-auto custom-scrollbar ">
-        <TweetEmbed className="w-full" tweetId={tweetId} options={{ theme: 'dark', align: 'center' }} />
+      <div className="w-full h-full overflow-auto custom-scrollbar">
+        <TweetEmbed className="w-full h-full overflow-auto custom-scrollbar" tweetId={tweetId} options={{ theme: 'dark', align: 'center' }} />
       </div>
     );
   }
@@ -32,7 +32,7 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
   if (platform === 'facebook') {
     return (
       <div className="w-full overflow-auto custom-scrollbar text-white">
-          <FacebookEmbed url={url} className="w-full" />
+          <FacebookEmbed url={url} className="w-full h-full overflow-auto custom-scrollbar" />
       </div>
     );
   }
@@ -40,7 +40,7 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
   if (platform === 'instagram') {
     return (
       <div className="w-full flex justify-center items-center overflow-auto custom-scrollbar">
-        <InstagramEmbed url={url}  className="w-full"/>
+        <InstagramEmbed url={url}  className="w-full h-full overflow-auto custom-scrollbar"/>
     </div>
     );
   }
@@ -48,7 +48,7 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
   if (platform === 'linkedin') {
     return (
       <div className="w-full flex justify-center items-center overflow-auto custom-scrollbar">
-          <LinkedInEmbed url={url} className="w-full" />
+          <LinkedInEmbed url={url} className="w-full h-full overflow-auto custom-scrollbar" />
       </div>
     );
   }
@@ -79,7 +79,7 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
   if (platform === 'youtube') {
     return (
       <div className="w-full flex justify-center items-center overflow-auto custom-scrollbar">
-          <YouTubeEmbed url={url} className="w-full" />
+          <YouTubeEmbed url={url} className="w-full h-full overflow-auto custom-scrollbar" />
       </div>
     );
   }
