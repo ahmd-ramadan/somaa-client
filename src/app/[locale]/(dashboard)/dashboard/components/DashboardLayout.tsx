@@ -19,6 +19,7 @@ import { Maximize2, Minimize2 } from "lucide-react";
 import SubAnalysisAndSectorsSection from "./sections/SubAnalysisAndSectorsSection";
 import { toZonedTime, format } from 'date-fns-tz'
 import { useTranslations } from "next-intl";
+import TriangleFrame from "./sections/EmaraLogoSection";
 
 // Register Chart.js components
 ChartJS.register(
@@ -182,6 +183,15 @@ const DashboardLayout = () => {
                             variants={itemVariants}
                             className="flex flex-col gap-1 h-full"
                         >
+                            {/* Logo */}
+                            {/* <div className="w-full">
+                                <img
+                                    src="/emara-logo.png"
+                                    alt="إمارة منطقة الرياض"
+                                />
+
+                            </div> */}
+                            <TriangleFrame />
                             {/* Date Input */}
                             <div className="flex items-center gap-1 mb-1">
                                 <label className="text-[10px] text-gray-400 flex items-center gap-0.5 whitespace-nowrap">
