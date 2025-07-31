@@ -1,0 +1,29 @@
+/* .selected-flag {
+    background: #f9fafb !important;       
+    border-radius: 8px !important;          
+    border: 1px solid #e5e7eb !important; 
+    height: 40px !important;
+    min-width: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    transition: box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 0 10px !important;
+    cursor: pointer;
+}
+
+.selected-flag:focus,
+.selected-flag:hover {
+    border-color: #6366f1 !important;        
+    box-shadow: 0 0 0 2px #6366f133;
+    background: #eef2ff !important;
+}
+
+.selected-flag .arrow {
+    border-top: 6px solid #6366f1 !important; 
+    margin-left: 8px;
+}
+  
+.flag {
+    margin-right: 6px;
+} */

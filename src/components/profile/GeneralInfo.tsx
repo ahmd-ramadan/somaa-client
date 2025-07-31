@@ -11,14 +11,14 @@ import toast from 'react-hot-toast';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { RootState } from '@/lib/store';
 import { updateUserProfile } from '@/lib/features/user/userThunks';
-import { getLocalizedMessage } from '@/utils/getLocalizedMessage';
 import { handleError } from '@/utils/errorUtils';
 import { ProfileInfoSchema } from '@/validations/ProfileInfoSchema';
 import Spinner from '../ui/Spinner';
 import FullProfileIcon from '../icons/FullProfile';
 import EmailFormIcon from '../icons/EmailForm';
 import PhoneIcon from '../icons/phone';
-
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 interface IInfoFormInputs {
     name: string;
@@ -98,14 +98,25 @@ const ProfileGeneralInfoSection = () => {
                     name={name as InfoTypes}
                     control={control}
                     render={({ field }) => (
-                        <input
-                            id={id}
-                            type="text"
-                            readOnly={ name === 'email'}
-                            {...field}
-                            autoComplete="new-password"
-                            className="mt-1 block p-2 w-full rounded-md border border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                        />
+                        name === 'phone' ? (
+                            <PhoneInput
+                                {...field}
+                                defaultCountry="SA"
+                                international
+                                countryCallingCodeEditable={false}
+                                className="p-2 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                                placeholder="Enter phone number"
+                            />
+                        ) : (
+                            <input
+                                id={id}
+                                type="text"
+                                readOnly={ name === 'email'}
+                                {...field}
+                                autoComplete="new-password"
+                                className="mt-1 block p-2 w-full rounded-md border border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                            />
+                        )
                     )}
                 />
             </div>

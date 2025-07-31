@@ -11,6 +11,9 @@ import { ILoggedInUser } from '@/interfaces';
 import { RootState } from '@/lib/store';
 import { approveOnUser, deleteUser } from '@/lib/features/user/userThunks';
 import { Check, Trash2 } from 'lucide-react';
+import { useSocket } from '@/hooks/useSocket';
+
+import styles from '@/cssModules/connectionStatus.module.css'
 
 interface UsersTableProps {
     users: ILoggedInUser[];
@@ -32,6 +35,32 @@ const UsersTable = ({ users , isRequestsUsers }: UsersTableProps) => {
     const [selectedUser, setSelectedUser] = useState<ILoggedInUser>({} as ILoggedInUser);
     const [isDelModaOpen, setIsDelModaOpen] = useState(false);
     const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+
+
+    const { isConnected, socket } = useSocket();
+    const [error, setError] = useState<string | null>(null);
+    const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+    useEffect(() => {
+        if(!socket || !isConnected) {
+            return;
+        }
+ 
+        const handleError = (error: any) => {
+            console.error('Socket error:', error);
+            setError(error.message || 'An error occurred');
+        };
+
+        socket.emit('getOnlineUsers');
+
+        socket.on('updateOnlineUsers', (users: string[]) => {
+            setOnlineUsers(users);
+        });
+        socket.on('error', handleError);
+
+        return () => {
+            socket.off('error');
+        };
+    }, [socket, isConnected])
 
     useEffect(() => {
         if(isRequestsUsers) setSelectedUsers(users.filter(u => u.isRequest))
@@ -84,6 +113,7 @@ const UsersTable = ({ users , isRequestsUsers }: UsersTableProps) => {
                 <tr>
                     <th scope="col" className="px-3 py-2">{t("userName")}</th>
                     <th scope="col" className="px-3 py-2">{t("userStatus")}</th>
+                    <th scope="col" className="px-3 py-2">{t("connectStatus")}</th>
                     <th scope="col" className="px-3 py-2">{t("joinAt")}</th>
                     <th scope="col" className="px-3 py-2">{t("email")}</th>
                     <th scope="col" className="px-3 py-2">{t("actions")}</th>
@@ -106,6 +136,24 @@ const UsersTable = ({ users , isRequestsUsers }: UsersTableProps) => {
                         <tr key={_id} className={`border-b hover:bg-gray-200`}>
                             <th scope="row" className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{name}</th>
                             <td className={`px-3 py-2 font-semibold ${!isDeleted ? 'text-green-600': 'text-red-800'}`}>{status}</td>
+                            <td className={`px-3 py-2 font-semibold`}>
+                                { onlineUsers.includes(_id) ?  (
+                                    <div className='flex items-center gap-1'>
+                                        <div className={`${styles.onlineIndicator}`}>
+                                            <span className={`${styles.onlineBlink}`}></span>
+                                        </div>
+                                        <p className='text-green-600'>{t("online")}</p>
+                                    </div>
+                                ) : (
+                                    <div className='flex items-center gap-2'>
+                                        <div className={`${styles.offlineIndicator}`}>
+                                            <span className={`${styles.offlineBlink}`}></span>
+                                        </div>
+                                        <p className='text-red-600'>{t("offline")}</p>
+                                    </div>
+                                ) }
+                                {/* <p>{t("")}</p> */}
+                            </td>
                             <td className="px-3 py-2">{date}</td>
                             <td className="px-3 py-2">{email}</td>
                             <td className="px-3 py-2 flex items-center gap-2">

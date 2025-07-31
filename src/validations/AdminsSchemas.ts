@@ -1,7 +1,7 @@
 import { formatValidationMessage } from '@/utils/formatValiationMessage';
 import * as yup from 'yup';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 
-const egyptianPhoneRegExp = /^(010|011|012|015)\d{8}$/;
 const passwordRegExp = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/
 // /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -12,14 +12,14 @@ export const AdminSignUpSchema = yup.object().shape({
     email: yup.string()
         .email(formatValidationMessage('email'))
         .required(formatValidationMessage('required')),
-    // phoneNumber: yup.string()
-    //     // .length(11, formatValidationMessage('length', 11))
-    //     .matches(egyptianPhoneRegExp, formatValidationMessage('default'))
-    //     .required(formatValidationMessage('required')),
+    phone: yup
+        .string()
+        .required('Phone number is required')
+        .test('is-valid-phone', formatValidationMessage('default'), value => isValidPhoneNumber(value || '')),
     password:  yup.string()
-    .matches(passwordRegExp, formatValidationMessage('passMatches'))
-    .max(20, formatValidationMessage('maxLength', 20))
-    .required(formatValidationMessage('required')),
+        .matches(passwordRegExp, formatValidationMessage('passMatches'))
+        .max(20, formatValidationMessage('maxLength', 20))
+        .required(formatValidationMessage('required')),
     confirmPassword: yup.string()
         .oneOf([yup.ref('password')], formatValidationMessage('matches'))
         .required(formatValidationMessage('required')),

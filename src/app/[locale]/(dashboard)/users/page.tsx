@@ -30,7 +30,7 @@ const UsersPage = () => {
     const [isRequestsUsers, setIsRequestsUsers] = useState<boolean>(false);
     const [selectedUsers, setSelectedUsers] = useState<ILoggedInUser[]>(users);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
+    const itemsPerPage = 30;
 
     useEffect(() => {
         if (usersStatus === 'idle' && token) {

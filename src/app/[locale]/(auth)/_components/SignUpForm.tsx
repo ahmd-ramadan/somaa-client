@@ -22,6 +22,10 @@ import FullProfileIcon from "@/components/icons/FullProfile";
 import PhoneIcon from "@/components/icons/phone";
 import EmailFormIcon from "@/components/icons/EmailForm";
 import { ApiResponse } from "@/utils/apiService";
+import { Controller } from 'react-hook-form';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import '@/cssModules/phoneInput.module.css';
 
 interface IFormInputs {
     name: string;
@@ -58,6 +62,7 @@ const SignUpForm = () => {
     const [successMsg, setSuccessMsg] = useState<string>("");
 
     const onSubmit = async (data: IFormInputs) => {
+        // console.log(data.phone)
         let newData: IReqForm = {
             name: data.name,
             email: data.email,
@@ -94,35 +99,60 @@ const SignUpForm = () => {
     }
 
     const renderInputsSignUpForm = InputsSignUpForm.map((input) => {
-        const { label, name, type } = input;
+        const { label, name, type, id } = input;
         return (
-            <div key={name} className="col-span-2">
-                <div
-                    className={`relative flex gap-2 items-center bg-white py-2 px-3 mt-1 w-full rounded-md border border-gray-300 text-sm text-gray-700 shadow-sm`}
-                >
-                    { FormIcons[name] || null }
-                    <input
-                        type={type === 'password' && (name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? 'text' : type}
-                        {...register(name)}
-                        placeholder={t(label)}
-                        autoComplete={name === 'email' ? 'new-email' : name === 'password' ? 'new-password' : ''}
-                        className={`flex-1 focus:outline-none w-full`}
-                    />
-                    
-                    {   type === 'password' && (
-                        <button
-                            type="button"
-                            className={`absolute inset-y-0 flex items-center ${locale === 'en' ? 'right-0 pr-3' : 'left-0 pl-3'}`}
-                            onClick={() => (name === 'password' ? setShowPassword(!showPassword) : setShowConfirmPassword(!showConfirmPassword))}
-                        >
-                            {name === 'password' ? (showPassword ? <EyeOnIcon width="20px" height="20px"/> : <EyeOffIcon width="20px" height="20px" />) : (showConfirmPassword ? <EyeOnIcon width="20px" height="20px" /> : <EyeOffIcon width="20px" height="20px"/>)}
-                        </button>
+            id === 'Phone' ? (
+                <Controller
+                    key={name}
+                    name="phone"
+                    control={control}
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                        <div className="col-span-2">
+                            <div className="relative flex gap-2 items-center bg-white py-2 px-3 mt-1 w-full rounded-md border border-gray-300 text-sm text-gray-700 shadow-sm">
+                                <PhoneInput
+                                    {...field}
+                                    defaultCountry="SA"
+                                    international
+                                    countryCallingCodeEditable={false}
+                                    className="w-full"
+                                    placeholder="Enter phone number"
+                                />
+                            </div>
+                            {errors['phone'] && (
+                                <FormatErrorMessage message={errors['phone'].message as string} field={t('phone')} />
+                            )}
+                        </div>
                     )}
+                />
+            ) : (    
+                <div key={name} className="col-span-2">
+                    <div
+                        className={`relative flex gap-2 items-center bg-white py-2 px-3 mt-1 w-full rounded-md border border-gray-300 text-sm text-gray-700 shadow-sm`}
+                    >
+                        { FormIcons[name] || null }
+                        <input
+                            type={type === 'password' && (name === 'password' && showPassword) || (name === 'confirmPassword' && showConfirmPassword) ? 'text' : type}
+                            {...register(name)}
+                            placeholder={t(label)}
+                            autoComplete={name === 'email' ? 'new-email' : name === 'password' ? 'new-password' : ''}
+                            className={`flex-1 focus:outline-none w-full`}
+                        />
+                        
+                        {   type === 'password' && (
+                            <button
+                                type="button"
+                                className={`absolute inset-y-0 flex items-center ${locale === 'en' ? 'right-0 pr-3' : 'left-0 pl-3'}`}
+                                onClick={() => (name === 'password' ? setShowPassword(!showPassword) : setShowConfirmPassword(!showConfirmPassword))}
+                            >
+                                {name === 'password' ? (showPassword ? <EyeOnIcon width="20px" height="20px"/> : <EyeOffIcon width="20px" height="20px" />) : (showConfirmPassword ? <EyeOnIcon width="20px" height="20px" /> : <EyeOffIcon width="20px" height="20px"/>)}
+                            </button>
+                        )}
+                    </div>
+                    {errors[name] && <FormatErrorMessage message={errors[name].message as string} field={t(label)} />}
                 </div>
-                {errors[name] && <FormatErrorMessage message={errors[name].message as string} field={t(label)} />}
-            </div>
-        );
-    });
+            )
+    )});
 
     if (registerationSuccess === true) {
         return (
@@ -145,7 +175,7 @@ const SignUpForm = () => {
     return (
         <div className="w-full flex flex-col gap-4">
             <div>
-                <p className="text-primary p-2 border-r-4 border-primary bg-primary/20 rounded-md">
+                <p className={`text-primary p-2 ${ locale == 'ar' ? 'border-r-3' : 'border-l-3'} border-primary bg-primary/20 rounded-md`}>
                     {t("signUpFormMsg")}
                 </p>
             </div>

@@ -11,6 +11,8 @@ import { IAdminPermissions } from "@/types";
 import { RootState } from "@/lib/store";
 import Spinner from "@/components/ui/Spinner";
 import { AdminSignUpSchema } from "@/validations/AdminsSchemas";
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 interface IFormInputs {
     name: string;
@@ -62,7 +64,7 @@ const AddAdmin = () => {
                 permissions: data.permissions
             };
             if (data?.phone) formData.phone = data.phone;
-            console.log(formData)
+            // console.log(formData)
             const action = await dispatch(addAdmin({ token: token as string, data: formData }));
             const { success, message } = action.payload as any;
             if (success) {
@@ -81,16 +83,35 @@ const AddAdmin = () => {
     };
 
     const renderInputsSignUpForm = InputsAdminSignUpForm.map((input) => {
-        const { label, name, type } = input;
+        const { label, name, type, id } = input;
         return (
             <div key={name} className={`${giveColSpan(name)}`}>
                 <label className="block text-sm font-medium text-gray-700">
                     {t(label)}
                 </label>
-                <input
-                    type={type}
-                    {...register(name)}
-                    className={`bg-white px-3 py-1 mt-1 w-full rounded-md border border-gray-300 text-md text-gray-700 shadow-sm`}
+                <Controller
+                    name={name as any}
+                    control={control}
+                    render={({ field }) => (
+                        name === 'phone' ? (
+                            <PhoneInput
+                                {...field}
+                                defaultCountry="SA"
+                                international
+                                countryCallingCodeEditable={false}
+                                className="p-2 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                                placeholder="Enter phone number"
+                            />
+                        ) : (
+                            <input
+                                id={id}
+                                type="text"
+                                {...field}
+                                autoComplete="new-password"
+                                className="mt-1 block p-2 w-full rounded-md border border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                            />
+                        )
+                    )}
                 />
                 {errors[name] && <FormatErrorMessage message={errors[name].message as string} field={t(label)} />}
             </div>

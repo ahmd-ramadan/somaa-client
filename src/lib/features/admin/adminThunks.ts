@@ -8,7 +8,7 @@ export const fetchAdmins = createAsyncThunk(
     'adminSlice/fetchAdmins',
     async (token: string) => {
         const response = await getData<IAdmin[]>({
-            endpoint: '/admin/?role=admin',
+            endpoint: '/admin/?role=admin&role=super_admin',
             token
         });
         return response;

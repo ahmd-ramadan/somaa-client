@@ -43,7 +43,7 @@ const LogInForm = () => {
         try {
             const action = await dispatch(login(data));
             const { success, message }  = action.payload as any;
-            console.log(action.payload)
+            // console.log(action.payload)
             if (success) {
                 toast.success(message || "!مرحبا بعودتك");
                 let path = 'dashboard';
