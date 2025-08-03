@@ -231,6 +231,11 @@ export const SideBarLinks: ISideBarLinks[] = [
         permission: "forAll",
     },
     {
+        name: "liveMonitoring",
+        link: "monitor",
+        permission: "forAll",
+    },
+    {
         name: 'socialmedia',
         link: "social-media",
         permission: 'forAll',

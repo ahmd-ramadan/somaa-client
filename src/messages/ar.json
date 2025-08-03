@@ -126,7 +126,8 @@
         "news": "الأخبار",
         "socialmedia": "التواصل الإجتماعي",
         "profile": "الملف الشخصي",
-        "settings": "الإعدادات"
+        "settings": "الإعدادات",
+        "liveMonitoring": "الرصد المباشر"
     },
     "UploadImage": {
         "uploadImage": "تحميل الصورة",

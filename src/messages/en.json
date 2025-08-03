@@ -126,7 +126,8 @@
         "news": "News",
         "socialmedia": "Social Media",
         "profile": "Profile",
-        "settings": "Settings"
+        "settings": "Settings",
+        "liveMonitoring": "Live Monitoring"
     },
     "UploadImage": {
         "uploadImage": "Upload Image",

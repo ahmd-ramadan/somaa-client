@@ -25,6 +25,7 @@ import {
     Languages,
     User,
     Settings,
+    Timer,
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -44,7 +45,8 @@ const Sidebar = () => {
         admins: <UserCog size={24} />,
         users: <Users size={24} />,
         socialmedia: <Share2 size={24} />,
-        settings: <Settings size={24} />
+        settings: <Settings size={24} />,
+        liveMonitoring: <Timer size={24} />
     };
 
     const changeLanguage = () => {
