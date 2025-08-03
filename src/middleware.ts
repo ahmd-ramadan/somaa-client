@@ -62,8 +62,14 @@ export default async function middleware(req: NextRequest) {
                 requiredPermission: restrictedRoutes[routeAccess].permission,
                 permissions
             })) {
-                // return NextResponse.redirect(new URL(`/${locale}/`, req.url));
-                return NextResponse.redirect(new URL(`/${locale}/not-authorized`, req.url));
+                // Delete the auth token by setting it to expire immediately
+                // const response = NextResponse.redirect(new URL(`/${locale}/not-authorized`, req.url));
+                const response = NextResponse.redirect(new URL(`/${locale}/login`, req.url));
+                response.cookies.set('auth-token', '', { 
+                    expires: new Date(0),
+                    path: '/'
+                });
+                return response;
             }
         } catch {
             return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
