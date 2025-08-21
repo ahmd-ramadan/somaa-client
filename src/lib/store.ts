@@ -10,6 +10,7 @@ import sectorReducer from './features/sector/sectorSlice';
 import subAnalysisReducer from './features/subAnalysis/subAnalysisSlice';
 import newsReducer from './features/news/newsSlice';
 import newspaperReducer from './features/newspaper/newspaperSlice';
+import monitorReducer from './features/monitor/monitorSlice';
 
 export const makeStore = () => {
     return configureStore({
@@ -25,6 +26,7 @@ export const makeStore = () => {
             subAnalysis: subAnalysisReducer,
             news: newsReducer,
             newspapers: newspaperReducer,
+            monitor: monitorReducer,
         },
     })
 }

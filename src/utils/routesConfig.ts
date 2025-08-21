@@ -7,5 +7,6 @@ export const restrictedRoutes: Record<string, { roles: UserRoleTypes[], permissi
     '/admins': { roles: ['super_admin'] },
     '/profile': { roles: ['super_admin', 'admin', 'user'] },
     '/news': { roles: ['super_admin', 'admin', 'user'] },
-    '/social-media': { roles: ['super_admin', 'admin', 'user'] }
+    '/social-media': { roles: ['super_admin', 'admin', 'user'] },
+    '/monitor': { roles: ['super_admin', 'admin', 'user'] }
 };
