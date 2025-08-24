@@ -45,7 +45,7 @@ interface HierarchicalGroupViewProps {
   hoveredPost: number | null;
   allowedEmbededPlatforms: PlatformsNamesEnum[];
   shuffle: (arr: IMonitorResult[]) => IMonitorResult[];
-  selectedResults: Set<string>;
+  selectedResults: string[];
   onSelectResult: (resultId: string, selected: boolean) => void;
   onSelectAllInGroup: (results: IMonitorResult[], selected: boolean) => void;
   selectionMode: boolean;
@@ -125,13 +125,13 @@ export default function HierarchicalGroupView({
             groupKey = result.platform;
             break;
           case 'language':
-            groupKey = result.language || 'Unknown';
+            groupKey = result.language || 'unknown';
             break;
           case 'sentiment':
             groupKey = result.sentiment;
             break;
           case 'gender':
-            groupKey = result.author.gender || 'Unknown';
+            groupKey = result.author.gender || 'unknown';
             break;
           case 'age':
             const age = result.author.age;
@@ -142,7 +142,7 @@ export default function HierarchicalGroupView({
               else if (age < 45) groupKey = '35-44';
               else groupKey = '45+';
             } else {
-              groupKey = 'Unknown';
+              groupKey = 'unknown';
             }
             break;
           case 'location':
@@ -227,13 +227,13 @@ export default function HierarchicalGroupView({
           groupKey = result.platform;
           break;
         case 'language':
-          groupKey = result.language || 'Unknown';
+          groupKey = result.language || 'unknown';
           break;
         case 'sentiment':
           groupKey = result.sentiment;
           break;
         case 'gender':
-          groupKey = result.author.gender || 'Unknown';
+          groupKey = result.author.gender || 'unknown';
           break;
         case 'age':
           const age = result.author.age;
@@ -244,7 +244,7 @@ export default function HierarchicalGroupView({
             else if (age < 45) groupKey = '35-44';
             else groupKey = '45+';
           } else {
-            groupKey = 'Unknown';
+            groupKey = 'unknown';
           }
           break;
         case 'location':
@@ -320,7 +320,7 @@ export default function HierarchicalGroupView({
     const isExpanded = expandedGroups.has(group.key);
     const hasChildren = Object.keys(group.children).length > 0;
     const totalResults = group.results.length;
-    const selectedInGroup = group.results.filter(r => selectedResults.has(r.url)).length;
+    const selectedInGroup = group.results.filter(r => selectedResults.includes(r.url)).length;
     const isAllSelected = selectedInGroup === totalResults && totalResults > 0;
     const isPartiallySelected = selectedInGroup > 0 && selectedInGroup < totalResults;
 
@@ -369,11 +369,11 @@ export default function HierarchicalGroupView({
               )}
             </button>
 
-            <Icon className={`w-5 h-5 ${
+            {/* <Icon className={`w-5 h-5 ${
               group.level === 0 ? 'text-blue-600' : 
               group.level === 1 ? 'text-green-600' : 
               'text-purple-600'
-            }`} />
+            }`} /> */}
             <span className="font-semibold text-gray-900">
               {group.label}
             </span>
@@ -398,66 +398,65 @@ export default function HierarchicalGroupView({
       return (
         <div className="space-y-2">
           {shuffle([...results]).map((r, idx) => {
-            const isSelected = selectedResults.has(r.url);
+            const isSelected = selectedResults.includes(r.url);
             return (
               <div
                 key={`${groupKey}-${idx}`}
-                className={`flex flex-col items-start gap-4 bg-white rounded-lg shadow-sm ${densityClass} ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
-                onMouseEnter={() => onHoverPost(idx)}
-                onMouseLeave={() => onHoverPost(null)}
+                className={`flex flex-col items-start gap-4 bg-white rounded-lg shadow-sm ${densityClass} ${isSelected ? 'ring-2 ring-secondary' : ''}`}
               >
-                {selectionMode && (
-                  <button
-                    onClick={() => onSelectResult(r.url, !isSelected)}
-                    className="flex-shrink-0 flex items-center justify-center w-5 h-5 bg-white rounded shadow-sm"
-                  >
-                    {isSelected ? (
-                      <CheckSquare className="w-5 h-5 text-blue-600" />
-                    ) : (
-                      <Square className="w-5 h-5 text-gray-400 hover:text-gray-600" />
-                    )}
-                  </button>
-                )}
-
                 <div className='flex items-start justify-between w-full'>
-                  <Link
-                    href={getProfileLink({ platform: r.platform, handle: r.author.handle }) || ""} 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className='flex items-center justify-start gap-2'
-                  >
-                    <div                
-                      className="flex w-12 h-12 rounded-lg justify-center items-center bg-gray-100">
-                      {!r.author.avatar || errorImages.includes(r.url) ?
-                        getPlatformIcon({ platform: r.platform, className: `w-6 h-6 text-secondary` })
-                      : 
-                        <img 
-                          src={r.author.avatar} 
-                          alt={r.author.name[0]} 
-                          className={`w-full h-full rounded-lg` }
-                          onError={() => {
-                            setErrorImages([... errorImages, r.url])
-                          }}
-                        />
-                      }
-                    </div>
-
-                      <div className='flex flex-col gap-1'>
-                        <div className='flex items-center gap-1'>
-                          <span className="text-base font-semibold truncate hover:underline">{r.author.name}</span>
-                          <span className="text-xs text-gray-500 truncate hover:underline">@{r.author.handle}</span>
-                          <Verified  className='w-4 h-4 text-white fill-primary'/>
-                        </div>
-                        
-
-                        <div className="flex gap-2 items-center text-xs text-gray-500 mt-1">
-                          {r?.author?.followers ? <div className='flex gap-1  items-center text-xs text-gray-500' title={t("followers")}><Users className='text-secondary w-4 h-4' /> {r?.author?.followers}</div> : null}
-                          {r?.author?.subscribers ? <div className='flex gap-1  items-center text-xs text-gray-500' title={t("subscribers")}><Bell className='text-secondary w-4 h-4'/> {r?.author?.subscribers}</div> : null}
-                          {r?.author?.following ? <div className='flex gap-1  items-center text-xs text-gray-500' title={t("followings")}><UserCheckIcon className='text-secondary w-4 h-4'/> {r?.author?.following}</div> : null}
-                          {r?.author?.friends ? <div className='flex gap-1  items-center text-xs text-gray-500' title={t("frriends")}><UserCheck2 className='text-secondary w-4 h-4'/> {r?.author?.friends}</div> : null}
-                        </div>
+                  <div className='flex items-start gap-1'>
+                    {selectionMode && (
+                      <button
+                        onClick={() => onSelectResult(r.url, !isSelected)}
+                        className="flex-shrink-0 flex items-center justify-center w-5 h-5 bg-white rounded shadow-sm"
+                      >
+                        {isSelected ? (
+                          <CheckSquare className="w-5 h-5 text-blue-600" />
+                        ) : (
+                          <Square className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                        )}
+                      </button>
+                    )}
+                    <Link
+                      href={getProfileLink({ platform: r.platform, handle: r.author.handle }) || ""} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className='flex items-center justify-start gap-2'
+                    >
+                      <div                
+                        className="flex w-12 h-12 rounded-lg justify-center items-center bg-gray-100">
+                        {!r.author.avatar || errorImages.includes(r.url) ?
+                          getPlatformIcon({ platform: r.platform, className: `w-6 h-6 text-secondary` })
+                        : 
+                          <img 
+                            src={r.author.avatar} 
+                            alt={r.author.name[0]} 
+                            className={`w-full h-full rounded-lg` }
+                            onError={() => {
+                              setErrorImages([... errorImages, r.url])
+                            }}
+                          />
+                        }
                       </div>
-                  </Link>
+
+                        <div className='flex flex-col gap-1'>
+                          <div className='flex items-center gap-1'>
+                            <span className="text-base font-semibold truncate hover:underline">{r.author.name}</span>
+                            <span className="text-xs text-gray-500 truncate hover:underline">@{r.author.handle}</span>
+                            <Verified  className='w-4 h-4 text-white fill-primary'/>
+                          </div>
+                          
+
+                          <div className="flex gap-2 items-center text-xs text-gray-500 mt-1">
+                            {r?.author?.followers ? <div className='flex gap-1  items-center text-xs text-gray-500' title={t("followers")}><Users className='text-secondary w-4 h-4' /> {r?.author?.followers}</div> : null}
+                            {r?.author?.subscribers ? <div className='flex gap-1  items-center text-xs text-gray-500' title={t("subscribers")}><Bell className='text-secondary w-4 h-4'/> {r?.author?.subscribers}</div> : null}
+                            {r?.author?.following ? <div className='flex gap-1  items-center text-xs text-gray-500' title={t("followings")}><UserCheckIcon className='text-secondary w-4 h-4'/> {r?.author?.following}</div> : null}
+                            {r?.author?.friends ? <div className='flex gap-1  items-center text-xs text-gray-500' title={t("frriends")}><UserCheck2 className='text-secondary w-4 h-4'/> {r?.author?.friends}</div> : null}
+                          </div>
+                        </div>
+                    </Link>
+                  </div>
                   
                   <div className="flex items-center gap-2">
                     <Link
@@ -469,12 +468,12 @@ export default function HierarchicalGroupView({
                     >
                       <ExternalLink className="h-4 w-4 text-secondary" />
                     </Link>
-                    <button
+                    {/* <button
                       className="text-secondary hover:text-secondary/90 p-1 rounded hover:bg-gray-50"
                       title={t('viewDetails')}
                     >
                       <Eye className="h-4 w-4" />
-                    </button>
+                    </button> */}
                   </div>
                 </div>
 
@@ -604,18 +603,18 @@ export default function HierarchicalGroupView({
           <div 
             key={`${groupKey}-${idx}`} 
             className={`${isGrid ? 'flex justify-center relative group' : `flex items-center gap-4 ${listDensityClass} bg-white rounded-lg shadow-sm`} ${
-              selectedResults.has(r.url) ? 'ring-2 ring-blue-500' : ''
+              selectedResults.includes(r.url) ? 'ring-2 ring-secondary' : ''
             }`}
-            onMouseEnter={() => onHoverPost(idx)}
-            onMouseLeave={() => onHoverPost(null)}
+            onMouseEnter={() => isGrid ? onHoverPost(idx) : null}
+            onMouseLeave={() => isGrid ? onHoverPost(null) : null}
           >
             {/* Selection checkbox */}
             {selectionMode && (
               <button
-                onClick={() => onSelectResult(r.url, !selectedResults.has(r.url))}
+                onClick={() => onSelectResult(r.url, !selectedResults.includes(r.url))}
                 className={`${isGrid ? 'absolute top-2 left-2 z-10' : 'flex-shrink-0'} flex items-center justify-center w-5 h-5 bg-white rounded shadow-sm`}
               >
-                {selectedResults.has(r.url) ? (
+                {selectedResults.includes(r.url) ? (
                   <CheckSquare className="w-5 h-5 text-blue-600" />
                 ) : (
                   <Square className="w-5 h-5 text-gray-400 hover:text-gray-600" />
@@ -623,16 +622,16 @@ export default function HierarchicalGroupView({
               </button>
             )}
 
-            {idx < 20 && allowedEmbededPlatforms.includes(r.platform) ? (
+            {allowedEmbededPlatforms.includes(r.platform) ? (
               <>
                 {isGrid ? (
                   <>
                     {renderEmbdedPlatforms(r)}
-                    {hoveredPost === idx && (
+                    {/* {hoveredPost === idx && (
                       <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg transition-all duration-300">
                         {renderHoverButtons(idx)}
                       </div>
-                    )}
+                    )} */}
                   </>
                 ) : (
                   <div className="flex items-center gap-4 w-full">
@@ -674,12 +673,12 @@ export default function HierarchicalGroupView({
                           <MapPinIcon className="h-4 w-4" />
                         </div>
                       )}
-                      <button
+                      {/* <button
                         className="text-gray-600 hover:text-gray-900 p-1 rounded hover:bg-gray-50"
                         title={t('viewDetails')}
                       >
                         <Eye className="h-4 w-4" />
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 )}

@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { IMonitorResult, PlatformsNamesEnum, MonitorSentimentsEnum, MonitorLanguagesEnum, GenderTypesEnum } from './types';
-import { RootState } from '@/lib/store';
+import { RootState, AppDispatch } from '@/lib/store';
 import TweetEmbed from 'react-tweet-embed';
 import { FacebookEmbed, InstagramEmbed, LinkedInEmbed, YouTubeEmbed } from 'react-social-media-embed';
 import { 
@@ -21,13 +21,18 @@ import {
   User,
   Calendar,
   MapPin,
-  CheckSquare
+  CheckSquare,
+  AlertTriangle,
+  TimerIcon
 } from 'lucide-react';
 import ResultsFiltersV2 from './ResultsFilters';
 import ResultsTableView from './ResultsTableView';
 import ExportControls from './ExportControls';
 import GridView from './GridView';
 import ListView from './ListView';
+import { clearCache } from '@/lib/features/monitor/monitorSlice';
+import { usePreventRefresh } from '@/hooks/usePreventRefresh';
+
 
 interface KeywordsResultsProps {
   dataSource?: string;
@@ -49,19 +54,44 @@ interface FilterState {
 }
 
 export default function KeywordsResultsV2({ dataSource }: KeywordsResultsProps) {
-  const t = useTranslations('Monitor.results');
-  const { results, monitorByKeywordsStatus, total, currentFilters } = useSelector((state: RootState) => state.monitor);
+  const t = useTranslations('Monitor.keywords.results');
+  const { 
+    results, 
+    monitorByKeywordsStatus, 
+    total, 
+    currentFilters,
+    autoRefreshEnabled,
+    isResultsCached,
+    lastUpdateTime
+  } = useSelector((state: RootState) => state.monitor);
+  const dispatch = useDispatch<AppDispatch>();
+  
   const [hoveredPost, setHoveredPost] = useState<number | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
-  const [showGrouping, setShowGrouping] = useState(false);
+  // const [showFilters, setShowFilters] = useState(false);
+  // const [showGrouping, setShowGrouping] = useState(false);
   const [groupBy, setGroupBy] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'table'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
-  const [selectedResults, setSelectedResults] = useState<Set<string>>(new Set());
+  const [selectedResults, setSelectedResults] = useState<string[]>([]);
   const [selectionMode, setSelectionMode] = useState(false);
   const [gridColumns, setGridColumns] = useState(3); // New: Grid column control
   const [listDensity, setListDensity] = useState<'compact' | 'comfortable'>('comfortable'); // New: List density control
+
+  // Browser refresh prevention state
+  const [showRefreshWarning, setShowRefreshWarning] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // Use custom hook for browser refresh prevention
+  const { showWarning, dismissWarning } = usePreventRefresh({
+    enabled: results.length > 0,
+    message: t("refreshWarningMessage"),
+    onRefreshAttempt: () => {
+      if (results.length > 0) {
+        setShowRefreshWarning(true);
+      }
+    }
+  });
 
   // Filter state
   const [filters, setFilters] = useState<FilterState>({
@@ -79,41 +109,92 @@ export default function KeywordsResultsV2({ dataSource }: KeywordsResultsProps) 
     }
   });
 
-  // Selection handlers
-  const handleSelectResult = (resultId: string, selected: boolean) => {
-    const newSelected = new Set(selectedResults);
-    if (selected) {
-      newSelected.add(resultId);
+  // Set hasUnsavedChanges when results are loaded
+  useEffect(() => {
+    if (results.length > 0) {
+      setHasUnsavedChanges(true);
+    }
+  }, [results.length]);
+
+  // Handle refresh warning actions
+  const handleRefreshWarning = (action: 'continue' | 'cancel') => {
+    if (action === 'continue') {
+      // User wants to refresh, clear cache and allow refresh
+      dispatch(clearCache());
+      setHasUnsavedChanges(false);
+      setShowRefreshWarning(false);
+      // Allow the refresh to happen
+      window.location.reload();
     } else {
-      newSelected.delete(resultId);
+      // User cancels refresh
+      setShowRefreshWarning(false);
+    }
+  };
+
+  // Selection handlers
+  const handleSelectResult = (resultId: string, selected?: boolean) => {
+    let newSelected: string[] = selectedResults;
+    const isSelected = newSelected.includes(resultId);
+    if (!isSelected) {
+      newSelected.push(resultId);
+    } else {
+      newSelected = newSelected.filter(r => r !== resultId);
     }
     setSelectedResults(newSelected);
   };
 
-  const handleSelectAllInGroup = (results: IMonitorResult[], selected: boolean) => {
-    const newSelected = new Set(selectedResults);
+  const handleSelectAllInGroup = (results: IMonitorResult[], selected?: boolean) => {
+    let newSelected = selectedResults;
     results.forEach(result => {
-      const resultId = result.url; // Use URL as unique identifier
-      if (selected) {
-        newSelected.add(resultId);
+      const resultId = result.url; 
+      const isSelected = newSelected.includes(resultId);
+      if (!isSelected) {
+        newSelected.push(resultId);
       } else {
-        newSelected.delete(resultId);
+        newSelected = newSelected.filter((r) => r !== resultId);
       }
     });
     setSelectedResults(newSelected);
   };
 
+  // Check if results are cached (recent)
+  const checkIfResultsCached = () => {
+    return isResultsCached && results.length > 0;
+  };
+
+  // Format the last update time for display
+  const formatLastUpdateTime = () => {
+    if (!lastUpdateTime) return '';
+    
+    const date = new Date(lastUpdateTime);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return t("justNow");
+    if (diffInMinutes < 60) return `${diffInMinutes} ${t("minutesAgo")}`;
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours} ${t("hoursAgo")}`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays} ${t("daysAgo")}`;
+  };
+
   const handleSelectAll = () => {
-    const allResultIds = results.map(result => result.url);
-    setSelectedResults(new Set(allResultIds));
+    if (selectedResults.length === flatFilteredResults.length) {
+      setSelectedResults([]);
+    } else {
+      const allResultIds = flatFilteredResults.map(result => result.url);
+      setSelectedResults(allResultIds);
+    }
   };
 
   const handleClearSelection = () => {
-    setSelectedResults(new Set());
+    setSelectedResults([]);
   };
 
   const getSelectedResultsArray = () => {
-    return results.filter(result => selectedResults.has(result.url));
+    return results.filter(result => selectedResults.includes(result.url));
   };
 
   // Filter and group results
@@ -445,6 +526,66 @@ export default function KeywordsResultsV2({ dataSource }: KeywordsResultsProps) 
 
   return (
     <div className="space-y-4">
+      {/* Cache Status Indicator */}
+      {/* {checkIfResultsCached() && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-blue-700 font-medium">
+                Results are cached - Auto-refresh is {autoRefreshEnabled ? 'enabled' : 'disabled'}
+              </span>
+            </div>
+            <div className="text-xs text-blue-600">
+              Last updated: {formatLastUpdateTime()}
+            </div>
+          </div>
+          {!autoRefreshEnabled && (
+            <p className="text-xs text-blue-600 mt-2">
+              Auto-refresh is disabled to prevent unnecessary page refreshes. Use the manual refresh button below to get fresh results.
+            </p>
+          )}
+          <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
+            <p className="text-xs text-yellow-700 flex items-center gap-1">
+              <AlertTriangle className="w-3 h-3" />
+              <strong>Browser refresh prevented:</strong> F5 and Ctrl+R are blocked to protect your results. Use "Clear Cache" button instead.
+            </p>
+          </div>
+        </div>
+      )} */}
+
+      {/* Results Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <h3 className="text-lg font-semibold text-primary">{t('resultsTitle')}</h3>
+          <span className="text-sm text-gray-500">({results.length} {t("results")})</span>
+        </div>
+        
+        {/* View Mode Toggle */}
+        <div className="flex items-center gap-2">
+          {/*  */}
+          <div className='flex items-center gap-1'>
+            <TimerIcon className='text-primary w-4 h-4'/>
+            <p className='text-sm text-primary font-semibold'>{t("lastUpdateTime")}: {formatLastUpdateTime()}</p>
+          </div>
+          {/* Manual Refresh Button */}
+          {/* <button
+            onClick={() => {
+              // Clear cache and trigger a refresh
+              dispatch(clearCache());
+              // You could also dispatch a refresh action here if needed
+              alert('Cache cleared! You can now perform a new search to get fresh results.');
+            }}
+            className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center gap-1"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {t("clearCache")}
+          </button> */}
+        </div>
+      </div>
+
       {/* Enhanced Filters */}
       <ResultsFiltersV2
         filters={filters}
@@ -453,10 +594,10 @@ export default function KeywordsResultsV2({ dataSource }: KeywordsResultsProps) 
         setGroupBy={setGroupBy}
         viewMode={viewMode}
         setViewMode={setViewMode}
-        showFilters={showFilters}
-        setShowFilters={setShowFilters}
-        showGrouping={showGrouping}
-        setShowGrouping={setShowGrouping}
+        // showFilters={showFilters}
+        // setShowFilters={setShowFilters}
+        // showGrouping={showGrouping}
+        // setShowGrouping={setShowGrouping}
         selectionMode={selectionMode}
         setSelectionMode={setSelectionMode}
         gridColumns={gridColumns}
@@ -565,6 +706,50 @@ export default function KeywordsResultsV2({ dataSource }: KeywordsResultsProps) 
           selectionMode={selectionMode}
           listDensity={listDensity}
         />
+      )}
+
+      {/* Browser Refresh Warning Modal */}
+      {showRefreshWarning && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-yellow-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Prevent Page Refresh</h3>
+                <p className="text-sm text-gray-600">You have search results that will be lost</p>
+              </div>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-gray-700 mb-3">
+                Refreshing the page will clear your current search results and filters. 
+                Are you sure you want to continue?
+              </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-700">
+                  💡 <strong>Tip:</strong> Use the "Clear Cache" button instead to get fresh results without losing your current view.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => handleRefreshWarning('cancel')}
+                className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleRefreshWarning('continue')}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Continue & Refresh
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

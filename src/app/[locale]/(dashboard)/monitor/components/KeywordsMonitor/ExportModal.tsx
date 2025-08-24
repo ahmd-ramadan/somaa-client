@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { IMonitorResult } from './types';
 import { FileText, FileSpreadsheet, X, Check, Download } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -14,32 +15,39 @@ interface ExportModalProps {
 interface ExportField {
   key: string;
   label: string;
-  labelAr: string;
   enabled: boolean;
 }
 
 export default function ExportModal({ isOpen, onClose, selectedResults, locale }: ExportModalProps) {
-  const isRTL = locale === 'ar';
-  const [exportFields, setExportFields] = useState<ExportField[]>([
-    { key: 'platform', label: 'Platform', labelAr: 'المنصة', enabled: true },
-    { key: 'authorName', label: 'Author Name', labelAr: 'اسم الكاتب', enabled: true },
-    { key: 'authorHandle', label: 'Author Handle', labelAr: 'معرف الكاتب', enabled: true },
-    { key: 'content', label: 'Content', labelAr: 'المحتوى', enabled: true },
-    { key: 'sentiment', label: 'Sentiment', labelAr: 'المشاعر', enabled: true },
-    { key: 'language', label: 'Language', labelAr: 'اللغة', enabled: true },
-    { key: 'likes', label: 'Likes', labelAr: 'الإعجابات', enabled: true },
-    { key: 'comments', label: 'Comments', labelAr: 'التعليقات', enabled: true },
-    { key: 'shares', label: 'Shares', labelAr: 'المشاركات', enabled: true },
-    { key: 'publishDate', label: 'Publish Date', labelAr: 'تاريخ النشر', enabled: true },
-    { key: 'url', label: 'URL', labelAr: 'الرابط', enabled: true },
-    { key: 'location', label: 'Location', labelAr: 'الموقع', enabled: true },
-    { key: 'authorAge', label: 'Author Age', labelAr: 'عمر الكاتب', enabled: false },
-    { key: 'authorGender', label: 'Author Gender', labelAr: 'جنس الكاتب', enabled: false },
-    { key: 'verified', label: 'Verified', labelAr: 'موثق', enabled: false },
-    { key: 'mediaCount', label: 'Media Count', labelAr: 'عدد الوسائط', enabled: false }
-  ]);
+  const t = useTranslations("Monitor.keywords.exports");
 
-  const t = (key: string, ar: string, en: string) => isRTL ? ar : en;
+  const [exportFields, setExportFields] = useState<ExportField[]>([
+    { key: 'platform',  label: t('platform'), enabled: true },
+    { key: 'authorName',  label: t('authorName'), enabled: true },
+    { key: 'authorHandle', label: t('authorHandle'), enabled: true },
+    { key: 'content',  label: t('content'), enabled: true },
+    { key: 'sentiment',  label: t('sentiment'), enabled: true },
+    { key: 'language',  label: t('language'), enabled: true },
+    { key: 'reactions',  label: t('reactions'), enabled: true },
+    { key: 'comments',  label: t('comments'), enabled: true },
+    { key: 'shares',  label: t('shares'), enabled: true },
+    { key: 'total',  label: t('total'), enabled: true },
+    { key: 'views',  label: t('views'), enabled: true },
+    { key: 'votes',  label: t('votes'), enabled: true },
+    { key: 'retweets',  label: t('retweets'), enabled: true },
+    { key: 'quotes',  label: t('quotes'), enabled: true },
+    { key: 'reposts',  label: t('reposts'), enabled: true },
+    { key: 'saves',  label: t('saves'), enabled: true },
+    { key: 'downloads',  label: t('downloads'), enabled: true },
+    { key: 'bookmarks',  label: t('bookmarks'), enabled: true },
+    { key: 'publishDate',  label: t('publishDate'), enabled: true },
+    { key: 'url', label: t('url'), enabled: true },
+    { key: 'location', label: t('location'), enabled: true },
+    { key: 'authorAge',  label: t('authorAge'), enabled: false },
+    { key: 'authorGender',  label: t('authorGender'), enabled: false },
+    { key: 'verified',  label: t('verified'), enabled: false },
+    { key: 'mediaCount',  label: t('mediaCount'), enabled: false }
+  ]);
 
   const toggleField = (key: string) => {
     setExportFields(prev => 
@@ -60,13 +68,11 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
   const exportToExcel = () => {
     const enabledFields = exportFields.filter(field => field.enabled);
     if (enabledFields.length === 0) {
-      alert(t('noFieldsSelected', 'لم يتم تحديد أي حقول', 'No fields selected'));
+      alert(t('noFieldsSelected'));
       return;
     }
 
-    const headers = enabledFields.map(field => 
-      isRTL ? field.labelAr : field.label
-    );
+    const headers = enabledFields.map(field => field.label);
 
     const csvContent = [
       headers.join(','),
@@ -76,37 +82,61 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
           let value = '';
           switch (field.key) {
             case 'platform':
-              value = result.platform;
+              value = t(result.platform);
               break;
             case 'authorName':
               value = `"${result.author.name}"`;
               break;
             case 'authorHandle':
-              value = `"${result.author.handle}"`;
+              value = `@"${result.author.handle}"`;
               break;
             case 'content':
               value = `"${result.content.text.replace(/"/g, '""')}"`;
               break;
             case 'sentiment':
-              value = isRTL ? 
-                (result.sentiment === 'positive' ? 'إيجابي' : 
-                 result.sentiment === 'negative' ? 'سلبي' : 'محايد') : 
-                result.sentiment;
+              value = t(result.sentiment);
               break;
             case 'language':
-              value = result.language || '';
+              value = t(result.language) || '';
               break;
-            case 'likes':
-              value = (result.interactions.reactions || 0).toString();
+            case 'reactions':
+              value = (result.interactions.reactions || 0).toLocaleString();
               break;
             case 'comments':
-              value = (result.interactions.comments || 0).toString();
+              value = (result.interactions.comments || 0).toLocaleString();
               break;
             case 'shares':
-              value = (result.interactions.shares || 0).toString();
+              value = (result.interactions.shares || 0).toLocaleString();
+              break;
+            case 'total':
+              value = ((result.interactions.reactions || 0) + (result.interactions.comments || 0) + (result.interactions.shares || 0)).toLocaleString();
+              break;
+            case 'retweets':
+              value = (result.interactions.retweets || 0).toLocaleString();
+              break;
+            case 'quotes':
+              value = (result.interactions.quotes || 0).toLocaleString();
+              break;
+            case 'reposts':
+              value = (result.interactions.reposts || 0).toLocaleString();
+              break;
+            case 'saves':
+              value = (result.interactions.saves || 0).toLocaleString();
+              break;
+            case 'votes':
+              value = (result.interactions.shares || 0).toLocaleString();
+              break;
+            case 'downloads':
+              value = (result.interactions.downloads || 0).toLocaleString();
+              break;
+            case 'bookmarks':
+              value = (result.interactions.bookmarks || 0).toLocaleString();
+              break;
+            case 'views':
+              value = (result.interactions.views || 0).toLocaleString();
               break;
             case 'publishDate':
-              value = new Date(result.publishAt).toLocaleDateString(isRTL ? 'ar-SA' : 'en-US');
+              value = new Date(result.publishAt).toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US');
               break;
             case 'url':
               value = result.url;
@@ -115,21 +145,16 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
               value = result.location?.address || '';
               break;
             case 'authorAge':
-              value = result.author.age?.toString() || '';
+              value = result.author?.age?.toString() || '';
               break;
             case 'authorGender':
-              value = isRTL ? 
-                (result.author.gender === 'male' ? 'ذكر' : 
-                 result.author.gender === 'female' ? 'أنثى' : 'غير محدد') : 
-                (result.author.gender || '');
+              value = result.author?.gender ? t(result.author.gender) : '';
               break;
             case 'verified':
-              value = isRTL ? 
-                (result.author.isVerified ? 'نعم' : 'لا') : 
-                (result.author.isVerified ? 'Yes' : 'No');
+              value = result.author?.isVerified ? (result.author.isVerified ? t('yes') : t('no') ) : '';
               break;
             case 'mediaCount':
-              value = ((result.content.images?.length || 0) + (result.content.videos?.length || 0)).toString();
+              value = ((result.content.images?.length || 0) + (result.content.videos?.length || 0)).toLocaleString();
               break;
           }
           row.push(value);
@@ -153,7 +178,7 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
   const exportToPDF = () => {
     const enabledFields = exportFields.filter(field => field.enabled);
     if (enabledFields.length === 0) {
-      alert(t('noFieldsSelected', 'لم يتم تحديد أي حقول', 'No fields selected'));
+      alert(t('noFieldsSelected'));
       return;
     }
 
@@ -162,12 +187,12 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
       
       // Add title
       doc.setFontSize(18);
-      doc.text(t('monitorResults', 'نتائج المراقبة', 'Monitor Results'), 20, 20);
+      doc.text(t('monitorResults'), 20, 20);
       
       // Add date and count
       doc.setFontSize(12);
-      doc.text(`${t('generated', 'تم إنشاؤه', 'Generated')}: ${new Date().toLocaleDateString(isRTL ? 'ar-SA' : 'en-US')}`, 20, 30);
-      doc.text(`${t('totalResults', 'إجمالي النتائج', 'Total Results')}: ${selectedResults.length}`, 20, 40);
+      doc.text(`${t('generated')}: ${new Date().toLocaleDateString(locale === "ar" ? 'ar-SA' : 'en-US')}`, 20, 30);
+      doc.text(`${t('totalResults')}: ${selectedResults.length}`, 20, 40);
       
       let yPosition = 60;
       
@@ -181,7 +206,7 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
         
         enabledFields.forEach(field => {
           let value = '';
-          let label = isRTL ? field.labelAr : field.label;
+          let label = field.label;
           
           switch (field.key) {
             case 'platform':
@@ -199,25 +224,49 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
                 : result.content.text;
               break;
             case 'sentiment':
-              value = isRTL ? 
-                (result.sentiment === 'positive' ? 'إيجابي' : 
-                 result.sentiment === 'negative' ? 'سلبي' : 'محايد') : 
-                result.sentiment;
+              value = t(result.sentiment);
               break;
             case 'language':
               value = result.language || 'Unknown';
               break;
-            case 'likes':
-              value = (result.interactions.reactions || 0).toString();
+            case 'reactions':
+              value = (result.interactions.reactions || 0).toLocaleString();
               break;
             case 'comments':
-              value = (result.interactions.comments || 0).toString();
+              value = (result.interactions.comments || 0).toLocaleString();
               break;
             case 'shares':
-              value = (result.interactions.shares || 0).toString();
+              value = (result.interactions.shares || 0).toLocaleString();
+              break;
+            case 'total':
+              value = ((result.interactions.reactions || 0) + (result.interactions.comments || 0) + (result.interactions.shares || 0)).toLocaleString();
+              break;
+            case 'retweets':
+              value = (result.interactions.retweets || 0).toLocaleString();
+              break;
+            case 'quotes':
+              value = (result.interactions.quotes || 0).toLocaleString();
+              break;
+            case 'reposts':
+              value = (result.interactions.reposts || 0).toLocaleString();
+              break;
+            case 'saves':
+              value = (result.interactions.saves || 0).toLocaleString();
+              break;
+            case 'votes':
+              value = (result.interactions.shares || 0).toLocaleString();
+              break;
+            case 'downloads':
+              value = (result.interactions.downloads || 0).toLocaleString();
+              break;
+            case 'bookmarks':
+              value = (result.interactions.bookmarks || 0).toLocaleString();
+              break;
+            case 'views':
+              value = (result.interactions.views || 0).toLocaleString();
               break;
             case 'publishDate':
-              value = new Date(result.publishAt).toLocaleDateString(isRTL ? 'ar-SA' : 'en-US');
+              value = new Date(result.publishAt).toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US');
               break;
             case 'url':
               value = result.url;
@@ -229,18 +278,13 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
               value = result.author.age?.toString() || 'Unknown';
               break;
             case 'authorGender':
-              value = isRTL ? 
-                (result.author.gender === 'male' ? 'ذكر' : 
-                 result.author.gender === 'female' ? 'أنثى' : 'غير محدد') : 
-                (result.author.gender || 'Unknown');
+              value = result?.author?.gender ? t(result.author.gender) : "";
               break;
             case 'verified':
-              value = isRTL ? 
-                (result.author.isVerified ? 'نعم' : 'لا') : 
-                (result.author.isVerified ? 'Yes' : 'No');
+              value = result?.author?.isVerified ? result?.author?.isVerified ? t('yes') : t('no') : ""
               break;
             case 'mediaCount':
-              value = ((result.content.images?.length || 0) + (result.content.videos?.length || 0)).toString();
+              value = ((result.content.images?.length || 0) + (result.content.videos?.length || 0)).toLocaleString();
               break;
           }
           
@@ -259,7 +303,7 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
       onClose();
     }).catch(error => {
       console.error('Error loading jsPDF:', error);
-      alert(t('pdfExportError', 'خطأ في تصدير PDF', 'Error exporting PDF'));
+      alert(t('pdfExportError'));
     });
   };
 
@@ -270,7 +314,7 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-semibold">
-            {t('exportOptions', 'خيارات التصدير', 'Export Options')}
+            {t('exportOptions')}
           </h2>
           <button
             onClick={onClose}
@@ -284,20 +328,20 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">
-                {t('selectFields', 'اختر الحقول', 'Select Fields')}:
+                {t('selectFields')}:
               </span>
               <div className="flex gap-2">
                 <button
                   onClick={selectAll}
                   className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                 >
-                  {t('selectAll', 'تحديد الكل', 'Select All')}
+                  {t('selectAll')}
                 </button>
                 <button
                   onClick={deselectAll}
                   className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
                 >
-                  {t('deselectAll', 'إلغاء تحديد الكل', 'Deselect All')}
+                  {t('clearSelection')}
                 </button>
               </div>
             </div>
@@ -315,7 +359,7 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
                     className="w-4 h-4 text-blue-600"
                   />
                   <span className="text-sm">
-                    {isRTL ? field.labelAr : field.label}
+                    {field.label}
                   </span>
                 </label>
               ))}
@@ -327,21 +371,21 @@ export default function ExportModal({ isOpen, onClose, selectedResults, locale }
               onClick={onClose}
               className="px-4 py-2 text-gray-600 hover:text-gray-800"
             >
-              {t('cancel', 'إلغاء', 'Cancel')}
+              {t('cancel')}
             </button>
             <button
               onClick={exportToExcel}
               className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
             >
               <FileSpreadsheet className="w-4 h-4" />
-              {t('exportExcel', 'تصدير Excel', 'Export Excel')}
+              {t('exportExcel')}
             </button>
             <button
               onClick={exportToPDF}
               className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
             >
               <FileText className="w-4 h-4" />
-              {t('exportPDF', 'تصدير PDF', 'Export PDF')}
+              {t('exportPDF')}
             </button>
           </div>
         </div>

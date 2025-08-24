@@ -16,7 +16,7 @@ import {
   MonitorLanguagesEnum
 } from './types';
 import { monitorByKeywords } from '@/lib/features/monitor/monitorThunks';
-import { setCurrentFilters, setCurrentKeywords } from '@/lib/features/monitor/monitorSlice';
+import { setCurrentFilters, setCurrentKeywords, toggleAutoRefresh } from '@/lib/features/monitor/monitorSlice';
 import { RootState, AppDispatch } from '@/lib/store';
 import FacebookIcon from '@/components/icons/SocialMedia/Facebook';
 import InstagramIcon from '@/components/icons/SocialMedia/Instagram';
@@ -42,7 +42,7 @@ export default function KeywordsFilters({
 }: KeywordsFiltersProps) {
   const t = useTranslations('Monitor.keywords');
   const dispatch = useDispatch<AppDispatch>();
-  const { monitorByKeywordsStatus } = useSelector((state: RootState) => state.monitor);
+  const { monitorByKeywordsStatus, autoRefreshEnabled } = useSelector((state: RootState) => state.monitor);
   const { loggedInUser: { token: accessToken } } = useSelector((state: RootState) => state.authUser);
   
   const [showSettings, setShowSettings] = useState(true);
@@ -68,24 +68,38 @@ export default function KeywordsFilters({
   const addKeyword = () => {
     if (!newKeywordText.trim()) return;
 
+    if(newKeywordText.length < 5)  {
+      setKeywordsError(t('errors.isTooSmall'));
+      return;
+    }
+
     const isKeywordExist = keywords.some(k => k.text === newKeywordText && k.type === newKeywordType);
     if(isKeywordExist) {
       setKeywordsError(t('errors.isExist'));
       return;
     }
     
+    if (newKeywordType === KeywordTypesEnum.HASHTAG && newKeywordText.startsWith('#')) {
+      setKeywordsError(t('errors.without#'));
+      return;
+    }
+    if (newKeywordType === KeywordTypesEnum.USER && newKeywordText.startsWith('@')) {
+      setKeywordsError(t('errors.without@'));
+      return;
+    }
+
     if(newKeywordType === KeywordTypesEnum.HASHTAG || newKeywordType === KeywordTypesEnum.USER) {
       if (newKeywordText.length < 3) {
         setKeywordsError(t('errors.tooShort'));
         return;
       }
       
-      if (newKeywordText.length > 20) {
+      if (newKeywordText.length > 200) {
         setKeywordsError(t('errors.tooLong'));
         return;
       }
   
-      const regex = /^(?=.{3,30}$)(?!.*[_.]{2})[a-zA-Z0-9](?:[a-zA-Z0-9._]*[a-zA-Z0-9])?$/;
+      const regex = /(?<=\s|^)([A-Za-z0-9_\u00C0-\uFFFF]+)/g;
       if(!regex.test(newKeywordText)) {
         setKeywordsError(t('errors.invalidHandle'));
         return;
@@ -114,13 +128,17 @@ export default function KeywordsFilters({
       setExcludedUserError(t('excludeUsers.errors.required'));
       return;
     }
+    if(username.length < 5)  {
+      setKeywordsError(t('errors.isTooSmall'));
+      return;
+    }
     
     if (username.length < 3) {
       setExcludedUserError(t('excludeUsers.errors.tooShort'));
       return;
     }
     
-    if (username.length > 50) {
+    if (username.length > 100) {
       setExcludedUserError(t('excludeUsers.errors.tooLong'));
       return;
     }
@@ -130,14 +148,14 @@ export default function KeywordsFilters({
       return;
     }
 
-    const regex = /^(?=.{3,30}$)(?!.*[_.]{2})[a-zA-Z0-9](?:[a-zA-Z0-9._]*[a-zA-Z0-9])?$/;
-    if(!regex.test(username)) {
-      setExcludedUserError(t('excludeUsers.errors.invalidHandle'));
+    if (username.startsWith('@')) {
+      setExcludedUserError(t('excludeUsers.errors.without@'));
       return;
     }
-    
-    if (username.includes('@')) {
-      setExcludedUserError(t('excludeUsers.errors.noAtSign'));
+
+    const regex = /(?<=\s|^)([A-Za-z0-9_\u00C0-\uFFFF]+)/g;
+    if(!regex.test(username)) {
+      setExcludedUserError(t('excludeUsers.errors.invalidHandle'));
       return;
     }
 
@@ -275,28 +293,50 @@ export default function KeywordsFilters({
           <Settings className="w-4 h-4 text-blue-600" />
           <h3 className="text-base font-semibold text-gray-900">{t('settingsTitle')}</h3>
         </div>
-        <button
-          onClick={() => setShowSettings(!showSettings)}
-          className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded"
-        >
-          {showSettings ? (
-            <>
-              <span>{t('hideSettings')}</span>
-              <ChevronUp className="w-3 h-3" />
-            </>
-          ) : (
-            <>
-              <span>{t('showSettings')}</span>
-              <ChevronDown className="w-3 h-3" />
-            </>
-          )}
-        </button>
+        <div className="flex items-center gap-3">
+          {/* Auto-refresh toggle */}
+          {/* <div className="flex items-center gap-2">
+              <label className="text-xs text-gray-600 font-medium">Auto-refresh:</label>
+              <button
+                onClick={() => dispatch(toggleAutoRefresh())}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                  !autoRefreshEnabled ? 'bg-gray-300' : 'bg-blue-600'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    !autoRefreshEnabled ? 'translate-x-1' : 'translate-x-5'
+                  }`}
+                />
+              </button>
+              <span className="text-xs text-gray-500">
+                {autoRefreshEnabled ? 'On' : 'Off'}
+              </span>
+          </div> */}
+          
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded"
+          >
+            {showSettings ? (
+              <>
+                <span>{t('hideSettings')}</span>
+                <ChevronUp className="w-3 h-3" />
+              </>
+            ) : (
+              <>
+                <span>{t('showSettings')}</span>
+                <ChevronDown className="w-3 h-3" />
+              </>
+            )}
+          </button>
+        </div>
       </div>
       
       {/* Settings Content - Conditionally Rendered */}
       {showSettings && (
         <div className="space-y-4">
-          <div className="w-full flex items-center gap-4">
+          <div className="w-full flex flex-col lg:flex-row items-center gap-4">
             {/* Keywords Management Section */}
             <div className="w-full p-3 bg-gray-50 rounded-lg">
               <h4 className="text-sm font-medium text-gray-900 mb-2">{t('keywordsManagement')}</h4>

@@ -7,16 +7,23 @@ import {
   MonitorByKeywordsRequest,
   MonitorByKeywordsResponse 
 } from '@/app/[locale]/(dashboard)/monitor/components/KeywordsMonitor/types';
+import { updateLastUpdateTime } from './monitorSlice';
 
 // Monitor by keywords
 export const monitorByKeywords = createAsyncThunk(
   'monitorSlice/monitorByKeywords',
-  async ({ token, data }: { token: string; data: MonitorByKeywordsRequest }) => {
+  async ({ token, data }: { token: string; data: MonitorByKeywordsRequest }, { dispatch }) => {
     const response = await postData<MonitorByKeywordsResponse>({
       endpoint: '/monitor/keywords',
       token,
       data
     });
+    
+    // Update the last update time when results are fetched
+    if (response?.success) {
+      dispatch(updateLastUpdateTime());
+    }
+    
     return response;
   }
 );

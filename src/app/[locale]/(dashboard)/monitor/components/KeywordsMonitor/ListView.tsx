@@ -14,7 +14,7 @@ interface ListViewProps {
 	hoveredPost: number | null;
 	allowedEmbededPlatforms: PlatformsNamesEnum[];
 	shuffle: (arr: IMonitorResult[]) => IMonitorResult[];
-	selectedResults: Set<string>;
+	selectedResults: string[];
 	onSelectResult: (resultId: string, selected: boolean) => void;
 	onSelectAllInGroup: (results: IMonitorResult[], selected: boolean) => void;
 	selectionMode: boolean;

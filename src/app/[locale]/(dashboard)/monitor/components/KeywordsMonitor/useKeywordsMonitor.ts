@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { 
   IMonitorResult,
@@ -61,6 +61,11 @@ export function useKeywordsMonitor() {
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<IKeywordsFilters>(DEFAULT_FILTERS);
   const [followedKeywords, setFollowedKeywords] = useState<FollowedKeyword[]>([]);
+  
+  // Add flags to prevent unnecessary refreshes
+  const [lastUpdateTime, setLastUpdateTime] = useState<Date | null>(null);
+  const [disableAutoRefresh, setDisableAutoRefresh] = useState(false);
+  const autoRefreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load followed keywords from localStorage on mount
   useEffect(() => {
@@ -84,8 +89,17 @@ export function useKeywordsMonitor() {
     localStorage.setItem('followedKeywords', JSON.stringify(followedKeywords));
   }, [followedKeywords]);
 
-  // Schedule updates for followed keywords
+  // Schedule updates for followed keywords - but only if auto-refresh is enabled
   useEffect(() => {
+    if (disableAutoRefresh) {
+      // Clear any existing timeouts
+      if (autoRefreshTimeoutRef.current) {
+        clearTimeout(autoRefreshTimeoutRef.current);
+        autoRefreshTimeoutRef.current = null;
+      }
+      return;
+    }
+
     const intervals = followedKeywords
       .filter(kw => kw.isActive)
       .map(kw => {
@@ -110,10 +124,44 @@ export function useKeywordsMonitor() {
         if (interval) clearTimeout(interval);
       });
     };
-  }, [followedKeywords]);
+  }, [followedKeywords, disableAutoRefresh]);
+
+  // Function to check if results are recent enough to skip refresh
+  const shouldSkipRefresh = useCallback(() => {
+    if (!lastUpdateTime || disableAutoRefresh) return true;
+    
+    const now = new Date();
+    const timeSinceLastUpdate = now.getTime() - lastUpdateTime.getTime();
+    const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
+    
+    return timeSinceLastUpdate < fiveMinutes;
+  }, [lastUpdateTime, disableAutoRefresh]);
+
+  // Function to enable/disable auto-refresh
+  const toggleAutoRefresh = useCallback((enabled: boolean) => {
+    setDisableAutoRefresh(!enabled);
+    
+    if (enabled) {
+      // Re-enable auto-refresh
+      console.log('Auto-refresh enabled');
+    } else {
+      // Disable auto-refresh and clear any pending timeouts
+      if (autoRefreshTimeoutRef.current) {
+        clearTimeout(autoRefreshTimeoutRef.current);
+        autoRefreshTimeoutRef.current = null;
+      }
+      console.log('Auto-refresh disabled');
+    }
+  }, []);
 
   const handleSearch = useCallback(async () => {
     if (!query.trim()) return;
+
+    // Check if we should skip the search due to recent results
+    if (shouldSkipRefresh() && results.length > 0) {
+      console.log('Skipping search - results are recent and available');
+      return;
+    }
 
     setLoading(true);
     setError('');
@@ -141,6 +189,7 @@ export function useKeywordsMonitor() {
       if (response.data.success) {
         setResults(response.data.data.results);
         setDataSource('multiple');
+        setLastUpdateTime(new Date()); // Update the last update time
         
         // Add to search history if not already present
         if (!searchHistory.includes(query.trim())) {
@@ -155,7 +204,7 @@ export function useKeywordsMonitor() {
     } finally {
       setLoading(false);
     }
-  }, [query, filters, searchHistory]);
+  }, [query, filters, searchHistory, results.length, shouldSkipRefresh]);
 
   const followKeyword = useCallback((interval: string) => {
     if (!query.trim()) return;
@@ -242,6 +291,9 @@ export function useKeywordsMonitor() {
     followKeyword,
     unfollowKeyword,
     handleSearch,
-    followIntervals: FOLLOW_INTERVALS
+    followIntervals: FOLLOW_INTERVALS,
+    disableAutoRefresh,
+    toggleAutoRefresh,
+    shouldSkipRefresh
   };
 } 

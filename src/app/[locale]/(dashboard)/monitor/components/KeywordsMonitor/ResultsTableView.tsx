@@ -29,13 +29,15 @@ import {
 import { getPlatformIcon, getProfileLink } from './utils';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import Modal from '@/components/ui/Modal';
+import ViewResult from './ViewResultModal';
 
 interface ResultsTableViewProps {
   results: IMonitorResult[];
   currentPage: number;
   itemsPerPage: number;
   locale: string;
-  selectedResults?: Set<string>;
+  selectedResults?: string[];
   onSelectResult?: (resultId: string, selected: boolean) => void;
   onSelectAllInPage?: (results: IMonitorResult[], selected: boolean) => void;
   selectionMode?: boolean;
@@ -48,7 +50,7 @@ export default function ResultsTableView({
   currentPage,
   itemsPerPage,
   locale,
-  selectedResults = new Set(),
+  selectedResults = [],
   onSelectResult,
   onSelectAllInPage,
   selectionMode = false,
@@ -58,6 +60,10 @@ export default function ResultsTableView({
 
   const t = useTranslations("Monitor.keywords.results")
 
+  const [selectedResult, setSelectedViewResult] = useState<IMonitorResult | null>(null)
+  const [isViewResultModalOpen, setIsViewResultModalOpen] = useState<boolean>(false)
+  const closeViewResultModal = () => { setIsViewResultModalOpen(false) }
+
   const [errorImages, setErrorImages] = useState<string[]>([])
   // Calculate pagination
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -66,8 +72,8 @@ export default function ResultsTableView({
 
   // Selection helpers
   const allSelectedInPage = paginatedResults.length > 0 && 
-    paginatedResults.every(result => selectedResults.has(result.url));
-  const someSelectedInPage = paginatedResults.some(result => selectedResults.has(result.url));
+    paginatedResults.every(result => selectedResults.includes(result.url));
+  const someSelectedInPage = paginatedResults.some(result => selectedResults.includes(result.url));
 
   const handleSelectAllInPage = () => {
     if (onSelectAllInPage) {
@@ -159,12 +165,15 @@ export default function ResultsTableView({
     : null;
 
 
+  // console.log("selectedResults: ", selectedResults.size, selectedResults, results.slice(0, 4))
+
   const renderTableRow = (results: IMonitorResult[], key: string) => {
-    return results.map((result, index) => (
+    return results.map((result, index) => {
+      return (
         <tr 
           key={`${key}-${index}`}
-          className={`text-xs hover:bg-primary/10 transition-colors ${
-            selectedResults.has(result.url) ? 'bg-blue-50 border-l-4 border-blue-500' : ''
+          className={`text-xs hover:bg-primary/10 transition-colors ${ ''
+            // selectedResults.has(result.url) ? `bg-blue-50 ${ locale === 'ar' ? 'border-l-4' : 'border-r-4' } border-secondary` : ''
           }`}
         >
           {selectionMode && onSelectResult && (
@@ -172,8 +181,11 @@ export default function ResultsTableView({
               <div className="flex items-center justify-center">
                 <input
                   type="checkbox"
-                  checked={selectedResults.has(result.url)}
-                  onChange={(e) => onSelectResult(result.url, e.target.checked)}
+                  onChange={(e) => {
+                    onSelectResult(result.url, e.target.checked);
+                    console.log(result.url, selectedResults, selectedResults.includes(result.url))
+                  }}
+                  checked={selectedResults.includes(result.url)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-colors"
                 />
               </div>
@@ -259,73 +271,73 @@ export default function ResultsTableView({
               {result?.interactions?.reactions !== undefined && 
                 <div className="flex items-center gap-1" title={t("reactions")}>
                   <Heart className="h-4 w-4 text-secondary" />
-                  <span>{result.interactions.reactions || 0}</span>
+                  <span>{(result.interactions.reactions || 0).toLocaleString()}</span>
                 </div>
               }
               { result.interactions.comments !== undefined && 
                 <div className="flex items-center gap-1" title={t("comments")}>
                   <MessageSquare className="h-4 w-4 text-secondary" />
-                  <span>{result.interactions.comments || 0}</span>
+                  <span>{(result.interactions.comments || 0).toLocaleString()}</span>
                 </div>
               }
               { result.interactions.shares !== undefined && 
                 <div className="flex items-center gap-1" title={t("shares")}>
                   <Share2 className="h-4 w-4 text-secondary" />
-                  <span>{result.interactions.shares || 0}</span>
+                  <span>{(result.interactions.shares || 0).toLocaleString()}</span>
                 </div>
               }
               { result.interactions.views !== undefined && 
                 <div className="flex items-center gap-1" title={t("views")}>
                   <Eye className="h-4 w-4 text-secondary" />
-                  <span>{result.interactions.views || 0}</span>
+                  <span>{(result.interactions.views || 0).toLocaleString()}</span>
                 </div>
               }
               { result.interactions.bookmarks !== undefined && 
                 <div className="flex items-center gap-1" title={t("bookmarks")}>
                   <Bookmark className="h-4 w-4 text-secondary" />
-                  <span>{result.interactions.bookmarks || 0}</span>
+                  <span>{(result.interactions.bookmarks || 0).toLocaleString()}</span>
                 </div>
               }
               { result.interactions.downloads !== undefined && 
                 <div className="flex items-center gap-1" title={t("downloads")}>
                   <DownloadIcon className="h-4 w-4 text-secondary" />
-                  <span>{result.interactions.downloads || 0}</span>
+                  <span>{(result.interactions.downloads || 0).toLocaleString()}</span>
                 </div>
               }
               { result.interactions.retweets !== undefined && 
                 <div className="flex items-center gap-1" title={t("retweets")}>
                   <Share className="h-4 w-4 text-secondary" />
-                  <span>{result.interactions.retweets || 0}</span>
+                  <span>{(result.interactions.retweets || 0).toLocaleString()}</span>
                 </div>
               }
               { result.interactions.quotes !== undefined && 
                 <div className="flex items-center gap-1" title={t("quotes")}>
                   <Quote className="h-4 w-4 text-secondary" />
-                  <span>{result.interactions.quotes || 0}</span>
+                  <span>{(result.interactions.quotes || 0).toLocaleString()}</span>
                 </div>
               }
               { result.interactions.remixes !== undefined && 
                 <div className="flex items-center gap-1" title={t("remixes")}>
                   <RectangleVertical className="h-4 w-4 text-secondary" />
-                  <span>{result.interactions.remixes || 0}</span>
+                  <span>{(result.interactions.remixes || 0).toLocaleString()}</span>
                 </div>
               }
               { result.interactions.reposts !== undefined && 
                 <div className="flex items-center gap-1" title={t("shares")}>
                   <Share className="h-4 w-4 text-secondary" />
-                  <span>{result.interactions.reposts || 0}</span>
+                  <span>{(result.interactions.reposts || 0).toLocaleString()}</span>
                 </div>
               }
               { result.interactions.votes !== undefined && 
                 <div className="flex items-center gap-1" title={t("votes")}>
                   <ArrowBigUpIcon className="h-4 w-4 text-secondary" />
-                  <span>{result.interactions.votes || 0}</span>
+                  <span>{(result.interactions.votes || 0).toLocaleString()}</span>
                 </div>
               }
               { result.interactions.saves !== undefined && 
                 <div className="flex items-center gap-1" title={t("saves")}>
                   <Save className="h-4 w-4 text-secondary" />
-                  <span>{result.interactions.saves || 0}</span>
+                  <span>{(result.interactions.saves || 0).toLocaleString()}</span>
                 </div>
               }
             </div>
@@ -338,7 +350,7 @@ export default function ResultsTableView({
           </td>
           <td className="px-2 py-2 whitespace-nowrap text-sm font-medium">
             <div className="flex items-center justify-end space-x-2 ">
-              <a
+              <Link
                 href={result.url}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -346,22 +358,27 @@ export default function ResultsTableView({
                 title={t('viewOriginal')}
               >
                 <ExternalLink className="h-4 w-4 text-secondary" />
-              </a>
+              </Link>
               {result.location?.address && (
                 <div className="text-primary p-1 rounded hover:bg-green-50" title={result.location.address}>
                   <MapPin className="h-4 w-4 text-secondary" />
                 </div>
               )}
-              <button
+              {/* <button
+                onClick={() => { 
+                  setSelectedViewResult(result)
+                  setIsViewResultModalOpen(true)
+                }}
                 className="text-primary hover:text-primary/90 p-1 rounded hover:bg-gray-50"
                 title={t('viewDetails')}
               >
                 <Eye className="h-4 w-4 text-secondary" />
-              </button>
+              </button> */}
             </div>
           </td>
         </tr>
-    )) 
+      )
+    }) 
   }
   
   return (
@@ -415,7 +432,7 @@ export default function ResultsTableView({
           <tbody className="bg-white divide-y divide-gray-200">
             {groupedMap
               ? Object.entries(groupedMap).map(([key, group]) => {
-                  const selectedInGroup = group.filter(r => selectedResults.has(r.url)).length;
+                  const selectedInGroup = group.filter(r => selectedResults.includes(r.url)).length;
                   const isAllSelected = selectedInGroup === group.length && group.length > 0;
                   const isPartiallySelected = selectedInGroup > 0 && selectedInGroup < group.length;
                   return (
@@ -465,6 +482,14 @@ export default function ResultsTableView({
           </div>
         </div>
       )}
+
+      <Modal
+        isOpen={isViewResultModalOpen}
+        closeModal={closeViewResultModal}
+        title={t("viewResultModalTitle")}
+      >
+          { selectedResult && <ViewResult result={selectedResult} /> }
+      </Modal>
     </div>
   );
 } 

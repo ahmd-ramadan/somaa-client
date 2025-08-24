@@ -19,6 +19,11 @@ interface IMonitorState {
   monitorByKeywordsStatus: IResponseStatus;
   monitorByProfileStatus: IResponseStatus;
   monitorByUrlStatus: IResponseStatus;
+  
+  // Refresh control
+  autoRefreshEnabled: boolean;
+  lastUpdateTime: string | null;
+  isResultsCached: boolean;
 }
 
 const initialState: IMonitorState = {
@@ -33,6 +38,11 @@ const initialState: IMonitorState = {
   monitorByKeywordsStatus: 'idle',
   monitorByProfileStatus: 'idle',
   monitorByUrlStatus: 'idle',
+  
+  // Refresh control
+  autoRefreshEnabled: true,
+  lastUpdateTime: null,
+  isResultsCached: false,
 };
 
 const monitorSlice = createSlice({
@@ -71,6 +81,25 @@ const monitorSlice = createSlice({
       state.monitorByKeywordsStatus = 'idle';
       state.monitorByProfileStatus = 'idle';
       state.monitorByUrlStatus = 'idle';
+    },
+    
+    // Refresh control actions
+    toggleAutoRefresh: (state) => {
+      state.autoRefreshEnabled = !state.autoRefreshEnabled;
+    },
+    
+    setAutoRefresh: (state, action: PayloadAction<boolean>) => {
+      state.autoRefreshEnabled = action.payload;
+    },
+    
+    updateLastUpdateTime: (state) => {
+      state.lastUpdateTime = new Date().toISOString();
+      state.isResultsCached = true;
+    },
+    
+    clearCache: (state) => {
+      state.isResultsCached = false;
+      state.lastUpdateTime = null;
     }
   },
   extraReducers: (builder) => {
@@ -140,7 +169,11 @@ export const {
   clearResults,
   setCurrentFilters,
   setCurrentKeywords,
-  clearError
+  clearError,
+  toggleAutoRefresh,
+  setAutoRefresh,
+  updateLastUpdateTime,
+  clearCache
 } = monitorSlice.actions;
 
 export default monitorSlice.reducer; 

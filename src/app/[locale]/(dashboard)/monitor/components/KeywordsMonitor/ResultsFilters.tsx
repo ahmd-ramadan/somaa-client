@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 import { 
   Filter, 
@@ -18,7 +18,8 @@ import {
   X,
   Plus,
   CheckSquare,
-  Layers
+  Layers,
+  AudioLines
 } from 'lucide-react';
 
 import { 
@@ -56,10 +57,10 @@ interface ResultsFiltersProps {
   setGroupBy: (groupBy: string[]) => void;
   viewMode: 'grid' | 'list' | 'table';
   setViewMode: (mode: 'grid' | 'list' | 'table') => void;
-  showFilters: boolean;
-  setShowFilters: (show: boolean) => void;
-  showGrouping: boolean;
-  setShowGrouping: (show: boolean) => void;
+  // showFilters: boolean;
+  // setShowFilters: (show: boolean) => void;
+  // showGrouping: boolean;
+  // setShowGrouping: (show: boolean) => void;
   selectionMode: boolean;
   setSelectionMode: (mode: boolean) => void;
   gridColumns: number;
@@ -82,10 +83,10 @@ export default function ResultsFiltersV2({
   setGroupBy,
   viewMode,
   setViewMode,
-  showFilters,
-  setShowFilters,
-  showGrouping,
-  setShowGrouping,
+  // showFilters,
+  // setShowFilters,
+  // showGrouping,
+  // setShowGrouping,
   selectionMode,
   setSelectionMode,
   gridColumns,
@@ -101,10 +102,93 @@ export default function ResultsFiltersV2({
   locale
 }: ResultsFiltersProps) {
 
+  // Add new state for dropdowns
+  const [activeFilterType, setActiveFilterType] = useState<string | null>(null);
+  const [showGroupingDropdown, setShowGroupingDropdown] = useState(false);
+  const [showFiltersDropdown, setShowFiltersDropdown] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<Array<{key: string, value: any, label: string}>>([]);
+
+  // Refs for click outside detection
+  const filterDropdownRef = useRef<HTMLDivElement>(null);
+  const groupingDropdownRef = useRef<HTMLDivElement>(null);
+  const filtersDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Click outside handlers
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterDropdownRef.current && !filterDropdownRef.current.contains(event.target as Node)) {
+        setActiveFilterType(null);
+      }
+      if (groupingDropdownRef.current && !groupingDropdownRef.current.contains(event.target as Node)) {
+        setShowGroupingDropdown(false);
+      }
+      if (filtersDropdownRef.current && !filtersDropdownRef.current.contains(event.target as Node)) {
+        setShowFiltersDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+
+  useEffect(() => {
+    const newactiveFilters: Array<{key: string, value: any, label: string}> = [];
+          
+    // Check platforms
+    if (filters.platforms.length > 0) {
+      filters.platforms.forEach(platform => {
+        newactiveFilters.push({ key: 'platforms', value: platform, label: t('platform') });
+      });
+    }
+    
+    // Check languages
+    if (filters.languages.length > 0) {
+      filters.languages.forEach(lang => {
+        newactiveFilters.push({ key: 'languages', value: lang, label: t('language') });
+      });
+    }
+    
+    // Check sentiments
+    if (filters.sentiments.length > 0) {
+      filters.sentiments.forEach(sentiment => {
+        newactiveFilters.push({ key: 'sentiments', value: sentiment, label: t('sentiment') });
+      });
+    }
+    
+    // Check genders
+    if (filters.genders.length > 0) {
+      filters.genders.forEach(gender => {
+        newactiveFilters.push({ key: 'genders', value: gender, label: t('gender') });
+      });
+    }
+    
+    // Check age ranges
+    if (filters.ageRanges.length > 0) {
+      filters.ageRanges.forEach(age => {
+        newactiveFilters.push({ key: 'ageRanges', value: age, label: t('ageRange') });
+      });
+    }
+    
+    // Check other filters
+    if (filters.hasLocation) {
+      newactiveFilters.push({ key: 'hasLocation', value: true, label: t('hasLocation') });
+    }
+    if (filters.hasMedia) {
+      newactiveFilters.push({ key: 'hasMedia', value: true, label: t('hasMedia') });
+    }
+    if (filters.verifiedOnly) {
+      newactiveFilters.push({ key: 'verifiedOnly', value: true, label: t('verifiedOnly') });
+    }
+
+    setActiveFilters(newactiveFilters);
+
+  }, [filters])
+  
   const groupByOptions: GroupByOption[] = [
     { value: 'platform', icon: Globe },
     { value: 'language', icon: MessageSquare },
-    { value: 'sentiment', icon: Heart },
+    { value: 'sentiment', icon: AudioLines },
     { value: 'gender', icon: User },
     { value: 'age', icon: Calendar },
     { value: 'location', icon: MapPin },
@@ -146,58 +230,208 @@ export default function ResultsFiltersV2({
 
   const t = useTranslations("Monitor.keywords.results");
 
+  // Define filter types for the new UI
+  const filterTypes = [
+    { key: 'platforms', label: t('platform'), icon: Globe, options: Object.values(PlatformsNamesEnum) },
+    { key: 'languages', label: t('language'), icon: MessageSquare, options: Object.values(MonitorLanguagesEnum) },
+    { key: 'sentiments', label: t('sentiment'), icon: Heart, options: Object.values(MonitorSentimentsEnum) },
+    { key: 'genders', label: t('gender'), icon: User, options: Object.values(GenderTypesEnum) },
+    { key: 'ageRanges', label: t('ageRange'), icon: Calendar, options: ['13 - 17', '18 - 24', '25 - 34', '35 - 44', '45+'] },
+    { key: 'other', label: t('otherFilters'), icon: Filter, options: ['hasLocation', 'hasMedia', 'verifiedOnly'] }
+  ];
+
   const totalPages = Math.ceil(filteredResults / itemsPerPage);
+
+  // Render filter options based on filter type
+  const renderFilterOptions = (filterTypeParam: any) => {
+    const filterType = filterTypes.find(f => f.key === filterTypeParam);
+
+    if(filterType === undefined) return null;
+
+
+    if (filterType.key === 'other') {
+      return (
+        <div className="space-y-2">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={filters.hasLocation}
+              onChange={(e) => updateFilter('hasLocation', e.target.checked)}
+              className="mr-2"
+            />
+            <span className="text-sm">{t('hasLocation')}</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={filters.hasMedia}
+              onChange={(e) => updateFilter('hasMedia', e.target.checked)}
+              className="mr-2"
+            />
+            <span className="text-sm">{t('hasMedia')}</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={filters.verifiedOnly}
+              onChange={(e) => updateFilter('verifiedOnly', e.target.checked)}
+              className="mr-2"
+            />
+            <span className="text-sm">{t('verifiedOnly')}</span>
+          </label>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-1 max-h-48 overflow-y-auto">
+        {filterType.options.map((option: any) => (
+          <label key={option} className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={(filters[filterType.key as keyof FilterState] as any[])?.includes(option)}
+              onChange={() => toggleArrayFilter(filterType.key as keyof FilterState, option)}
+              className="mr-2"
+            />
+            <span className="text-sm">{ filterTypeParam === 'ageRanges' ? option : t(option)}</span>
+          </label>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-4">
       {/* Top Controls Bar */}
-      <div className="bg-white rounded-lg shadow-sm p-4">
+      <div className="">
         <div className="flex items-center justify-between flex-wrap gap-4">
           {/* Left Side - Filter and Grouping Buttons */}
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                setShowFilters(!showFilters);
-                if (showFilters) setShowGrouping(false);
-              }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                showFilters 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <Filter className="w-4 h-4" />
-              {t('filters')}
-              {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </button>
+            
+            {/* Filters Btn */}
+            <div className='w-48 relative'>
+              <button
+                onClick={() => setShowFiltersDropdown(!showFiltersDropdown) }
+                className={`w-full flex items-center justify-between gap-2 px-2 py-2 rounded-lg transition-colors ${
+                  activeFilters.length > 0 
+                    ? 'bg-gray-200 text-secondary' 
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                <div className='flex items-center gap-1'>
+                  <Filter className="w-4 h-4" />
+                  {t('filters')}
+                </div>
+                <div className='flex gap-1 items-center'>
+                  {showFiltersDropdown ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  { activeFilters.length > 0 && <span className='flex p-1 rounded-full items-center justify-center bg-white text-xs text-secondary'>{activeFilters.length}</span>}
+                </div>
+              </button>
+                
+              {showFiltersDropdown && (
+                    <div 
+                      ref={filtersDropdownRef} 
+                      className="w-full absolute top-full start-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-200 z-10"
+                    >
+                        <div className="p-4 space-y-4">
+                            {/* Filter Type Selector */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    {t("fiterByType")}
+                                </label>
+                                <select
+                                    value={activeFilterType || ''}
+                                    onChange={(e) => {
+                                      setActiveFilterType(e.target.value);
+                                    }}
+                                    className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none bg-gray-50"
+                                >
+                                    <option value="">{t("selectFilterTy")}</option>
+                                    {filterTypes.map((f) => ( <option value={f.key}>{f.label}</option>) )}
+                                </select>
+                            </div>
 
-            <button
-              onClick={() => {
-                setShowGrouping(!showGrouping);
-                if (showGrouping) setShowFilters(false);
-              }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                showGrouping 
-                  ? 'bg-green-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <Layers className="w-4 h-4" />
-              {t('grouping')}
-              {showGrouping ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </button>
+                            {/* Date Range Filter */}
+                            { activeFilterType ? 
+                              renderFilterOptions(activeFilterType)
+                            : (
+                                <div className="text-sm text-gray-500 text-center py-3 bg-gray-50 rounded-lg">
+                                    {t("selectFilterTypeToStart")}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+              )}
+            </div>
 
-            <button
-              onClick={() => setSelectionMode(!selectionMode)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                selectionMode 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <CheckSquare className="w-4 h-4" />
-              {t('selection')}
-            </button>
+            {/* Grouping Btn */}
+            <div className='relative w-48'>
+              <button
+                onClick={() => {
+                  setShowGroupingDropdown(!showGroupingDropdown);
+                }}
+                className={`w-full flex items-center justify-between gap-2 px-2 py-2 rounded-lg transition-colors ${
+                  groupBy.length > 0 
+                    ? 'bg-gray-200 text-secondary' 
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                <div className='flex items-center gap-1'>
+                  <Layers className="w-4 h-4" />
+                  {t('grouping')}
+                </div>
+                
+                <div className='flex items-center gap-1'>
+                  {showGroupingDropdown ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  { groupBy.length > 0 && <span className='flex p-1 rounded-full items-center justify-center bg-white text-xs text-secondary'>{groupBy.length}</span>}
+                </div>
+              </button>
+
+              {showGroupingDropdown && (
+                <div 
+                  ref={groupingDropdownRef} 
+                  className="w-full absolute top-full start-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
+                >
+                  <div className="">
+                    {groupByOptions.map(option => {
+                      const Icon = option.icon;
+                      const isSelected = groupBy.includes(option.value);
+                      return (
+                        <button
+                          key={option.value}
+                          onClick={() => toggleGroupBy(option.value)}
+                          className={`w-full flex items-center justify-between gap-3 p-2 rounded-md transition-colors ${
+                            isSelected
+                              ? 'text-secondary'
+                              : 'hover:bg-gray-50'
+                          }`}
+                        >
+                          <div className='flex items-center gap-1'>
+                            <Icon className="w-4 h-4" />
+                            <span className="text-sm">{t(option.value)}</span>
+                          </div>
+                          {isSelected && <CheckSquare className="w-4 h-4" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          
+            <div className='relative'>
+              <button
+                onClick={() => setSelectionMode(!selectionMode)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  selectionMode 
+                    ? 'bg-gray-200 text-secondary' 
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                <CheckSquare className="w-4 h-4" />
+                {t('selection')}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -212,14 +446,14 @@ export default function ResultsFiltersV2({
               return (
                 <div
                   key={value}
-                  className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded-md text-sm"
+                  className="flex items-center justify-between gap-x-3 p-1 bg-gray-100 text-primary rounded-md text-sm"
                 >
                   <span>{t(option?.value)}</span>
                   <button
                     onClick={() => removeGroupBy(value)}
-                    className="ml-1 hover:bg-green-200 rounded-full p-0.5"
+                    className="hover:bg-red-200 hover:text-red-500 rounded-full p-0.5"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-3 h-3 " />
                   </button>
                 </div>
               );
@@ -227,247 +461,41 @@ export default function ResultsFiltersV2({
           </div>
         )}
 
+        {/* Active filters */}
+        {(() => {
+          
+          if (activeFilters.length === 0) return null;
+          
+          return (
+            <div className="mt-3 flex items-center gap-2 flex-wrap">
+              <span className="text-sm text-gray-600">
+                {t('filteredBy')}:
+              </span>
+              {activeFilters.map((filter, index) => (
+                <div
+                  key={`${filter.key}-${filter.value}-${index}`}
+                  className="flex items-center gap-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm"
+                >
+                  <span className="text-xs text-blue-600 font-medium">{filter.label}:</span>
+                  <span>{filter.key === 'ageRanges' ? filter.value : t(filter.value)}</span>
+                  <button
+                    onClick={() => {
+                      if (filter.key === 'hasLocation' || filter.key === 'hasMedia' || filter.key === 'verifiedOnly') {
+                        updateFilter(filter.key, false);
+                      } else {
+                        toggleArrayFilter(filter.key as keyof FilterState, filter.value);
+                      }
+                    }}
+                    className="hover:bg-blue-200 hover:text-blue-900 rounded-full p-0.5 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
       </div>
-
-      {/* Filters Panel */}
-      {showFilters && (
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <Filter className="w-5 h-5" />
-              {t('filters')}
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Platform Filter */}
-            <div>
-              <label className="block text-sm font-medium mb-2 text-primary">
-                {t('platform')}
-              </label>
-              <div className="space-y-1">
-                {Object.values(PlatformsNamesEnum).map(platform => (
-                  <label key={platform} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={filters.platforms.includes(platform)}
-                      onChange={() => toggleArrayFilter('platforms', platform)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">{t(platform)}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Language Filter */}
-            <div>
-              <label className="block text-sm font-medium mb-2 text-primary">
-                {t('language')}
-              </label>
-              <div className="space-y-1">
-                {Object.values(MonitorLanguagesEnum).map(lang => (
-                  <label key={lang} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={filters.languages.includes(lang)}
-                      onChange={() => toggleArrayFilter('languages', lang)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">{t(lang)}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Sentiment Filter */}
-            <div>
-              <label className="block text-sm font-medium mb-2 text-primary">
-                {t('sentiment')}
-              </label>
-              <div className="space-y-1">
-                {Object.values(MonitorSentimentsEnum).map(sentiment => (
-                  <label key={sentiment} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={filters.sentiments.includes(sentiment)}
-                      onChange={() => toggleArrayFilter('sentiments', sentiment)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">{t(sentiment)}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Gender Filter */}
-            <div>
-              <label className="block text-sm font-medium mb-2 text-primary">
-                {t('gender')}
-              </label>
-              <div className="space-y-1">
-                {Object.values(GenderTypesEnum).map(gender => (
-                  <label key={gender} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={filters.genders.includes(gender)}
-                      onChange={() => toggleArrayFilter('genders', gender)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">{t(gender)}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Age Filter */}
-            <div>
-              <label className="block text-sm font-medium mb-2 text-primary">
-                {t('ageRange')}
-              </label>
-              <div className="space-y-1">
-                {['13-17', '18-24', '25-34', '35-44', '45+'].map(age => (
-                  <label key={age} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={filters.ageRanges.includes(age)}
-                      onChange={() => toggleArrayFilter('ageRanges', age)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">{age}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Other Filters */}
-            <div>
-              <label className="block text-sm font-medium mb-2 text-primary">
-                {t('otherFilters')}
-              </label>
-              <div className="space-y-2">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={filters.hasLocation}
-                    onChange={(e) => updateFilter('hasLocation', e.target.checked)}
-                    className="mr-2"
-                  />
-                  <span className="text-sm">{t('hasLocation')}</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={filters.hasMedia}
-                    onChange={(e) => updateFilter('hasMedia', e.target.checked)}
-                    className="mr-2"
-                  />
-                  <span className="text-sm">{t('hasMedia')}</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={filters.verifiedOnly}
-                    onChange={(e) => updateFilter('verifiedOnly', e.target.checked)}
-                    className="mr-2"
-                  />
-                  <span className="text-sm">{t('verifiedOnly')}</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Grouping Panel */}
-      {showGrouping && (
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <Layers className="w-5 h-5" />
-              {t('groupingOptions')}
-            </h3>
-          </div>
-
-          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> */}
-          <div className="flex flex-wrap items-center gap-4">
-            {groupByOptions.map(option => {
-              const Icon = option.icon;
-              const isSelected = groupBy.includes(option.value);
-              return (
-                <button
-                  key={option.value}
-                  onClick={() => toggleGroupBy(option.value)}
-                  className={`w-fit flex items-center gap-2 p-2 rounded-lg border-2 transition-colors ${
-                    isSelected
-                      ? 'border-green-500 bg-green-50 text-green-700'
-                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="text-sm font-medium">
-                    {t(option.value)}
-                  </span>
-                  {isSelected && <Plus className="w-4 h-4 rotate-45" />}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* {groupBy.length > 0 && (
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-              <h4 className="text-sm font-medium mb-2 text-primary">
-                {t('groupingOrder')}:
-              </h4>
-              <div className="flex items-center gap-2 flex-wrap">
-                {groupBy.map((value, index) => {
-                  const option = groupByOptions.find(opt => opt.value === value);
-                  return (
-                    <div
-                      key={value}
-                      className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm"
-                    >
-                      <span className="font-medium">{index + 1}.</span>
-                      <span>{t(option?.value)}</span>
-                      <button
-                        onClick={() => removeGroupBy(value)}
-                        className="ml-1 hover:bg-blue-200 rounded-full p-0.5"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-              
-              
-              <div className="mt-3 flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    // This will be handled by the parent component
-                    if (typeof window !== 'undefined') {
-                      window.dispatchEvent(new CustomEvent('expandAllGroups'));
-                    }
-                  }}
-                  className="px-3 py-1 text-xs bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-                >
-                  {t('expandAll')}
-                </button>
-                <button
-                  onClick={() => {
-                    if (typeof window !== 'undefined') {
-                      window.dispatchEvent(new CustomEvent('collapseAllGroups'));
-                    }
-                  }}
-                  className="px-3 py-1 text-xs bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
-                >
-                  {t('collapseAll')}
-                </button>
-              </div>
-            </div>
-          )} */}
-        </div>
-      )}
 
       {/* View Setting */}
       <div className="flex items-center justify-between flex-wrap gap-4">
@@ -521,7 +549,7 @@ export default function ResultsFiltersV2({
           )}
 
           {/* List Density Control */}
-          {viewMode === 'list' && (
+          {/* {viewMode === 'list' && (
             <div className="flex items-center gap-2 ml-4">
               <span className="text-sm text-gray-600">
                 {t('density')}:
@@ -545,13 +573,13 @@ export default function ResultsFiltersV2({
                 ))}
               </div>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Right Side - Results Count and Pagination */}
         <div className="flex items-center gap-4">
           {/* <div className="text-sm text-gray-600">
-            {t('showing', 'عرض', 'Showing')} {filteredResults} {t('of', 'من', 'of')} {totalResults} {t('results', 'نتيجة', 'results')}
+            {t('showing', 'عرض', 'Showing')} {filteredResults} {t('of', 'من', 'of')} {totalResults} {t('نتيجة', 'results')}
           </div> */}
 
           {/* Items per page */}
