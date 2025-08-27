@@ -90,7 +90,7 @@ export default function BrowserRefreshDemo() {
           How to Test
         </h3>
         <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-          <li>Click "Simulate Data Load" to enable protection</li>
+          <li>Click &quot;Simulate Data Load&quot; to enable protection</li>
           <li>Try pressing <kbd className="px-2 py-1 bg-blue-100 rounded text-xs">F5</kbd> or <kbd className="px-2 py-1 bg-blue-100 rounded text-xs">Ctrl+R</kbd></li>
           <li>Notice the refresh is blocked and warning appears</li>
           <li>Use "Clear Data" to disable protection</li>
@@ -136,9 +136,10 @@ export default function BrowserRefreshDemo() {
                 Are you sure you want to continue?
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-sm text-blue-700">
-                  💡 <strong>Tip:</strong> Use the "Clear Data" button instead to safely reset.
-                </p>
+              <p className="text-sm text-blue-700">
+                💡 <strong>Tip:</strong> Use the &quot;Clear Data&quot; button instead to safely reset.
+              </p>
+
               </div>
             </div>
 
