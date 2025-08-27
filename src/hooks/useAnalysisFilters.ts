@@ -34,7 +34,7 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
     const [groupBy, setGroupBy] = useState<GroupByState>({ field: null });
     const [showFilters, setShowFilters] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(50);
+    const [itemsPerPage, setItemsPerPage] = useState(20);
     const [groupingOrder, setGroupingOrder] = useState<string[]>([]);
 
     // Filter the analysis data
@@ -180,7 +180,7 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
         setGroupBy,
         showFilters,
         setShowFilters,
-        filteredAnalysis: paginatedAnalysis,
+        filteredAnalysis,
         groupedAnalysis,
         pagination: {
             currentPage,
