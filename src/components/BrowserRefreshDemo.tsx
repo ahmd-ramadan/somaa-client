@@ -93,7 +93,7 @@ export default function BrowserRefreshDemo() {
           <li>Click &quot;Simulate Data Load&quot; to enable protection</li>
           <li>Try pressing <kbd className="px-2 py-1 bg-blue-100 rounded text-xs">F5</kbd> or <kbd className="px-2 py-1 bg-blue-100 rounded text-xs">Ctrl+R</kbd></li>
           <li>Notice the refresh is blocked and warning appears</li>
-          <li>Use "Clear Data" to disable protection</li>
+          <li>Use &quot;Clear Data&quot; to disable protection</li>
         </ol>
       </div>
 
