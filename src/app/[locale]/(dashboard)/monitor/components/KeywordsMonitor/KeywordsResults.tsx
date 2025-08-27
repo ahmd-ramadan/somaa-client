@@ -54,6 +54,7 @@ interface FilterState {
 }
 
 export default function KeywordsResultsV2({ dataSource }: KeywordsResultsProps) {
+  const locale = useLocale();
   const t = useTranslations('Monitor.keywords.results');
   const { 
     results, 
@@ -521,9 +522,6 @@ export default function KeywordsResultsV2({ dataSource }: KeywordsResultsProps) 
 
   const totalFilteredResults = Object.values(filteredAndGroupedResults).reduce((acc, group) => acc + group.length, 0);
 
-  // Get current locale
-  const locale = useLocale();
-
   return (
     <div className="space-y-4">
       {/* Cache Status Indicator */}
@@ -729,7 +727,7 @@ export default function KeywordsResultsV2({ dataSource }: KeywordsResultsProps) 
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <p className="text-sm text-blue-700">
-                  💡 <strong>Tip:</strong> Use the "Clear Cache" button instead to get fresh results without losing your current view.
+                  💡 <strong>Tip:</strong> Use the &quot;Clear Cache&quot; button instead to get fresh results without losing your current view.
                 </p>
               </div>
             </div>
