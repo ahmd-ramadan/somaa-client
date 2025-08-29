@@ -13,7 +13,7 @@ export type KeyName = keyof ILoggedInUser;
 const DashboardPage = () => {
     const dispatch = useAppDispatch();
     const t = useTranslations("SettingsPage");
-    const [activeTab, setActiveTab] = useState<'analytics' | 'sectors'>('analytics');
+    const [activeTab, setActiveTab] = useState<'analytics' | 'sectors'>('sectors');
 
     useEffect(() => {
         dispatch(setPageTitle(t("settingsPageTitle")));

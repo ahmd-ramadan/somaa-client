@@ -84,7 +84,7 @@ const Sidebar = () => {
                     onClick={() => handleLinkClick(link)}
                     title={t(name)}
                     className={`
-                        group flex items-center gap-x-4 py-3 cursor-pointer
+                        group flex items-center py-3 cursor-pointer
                         transition-all duration-300
                         ${isCompact ? 'justify-center' : 'px-6 justify-start'}
                         ${SideBarLink === link
@@ -112,7 +112,7 @@ const Sidebar = () => {
             className={`
                 flex h-screen flex-col bg-adminPrimary shadow-xl
                 transition-all duration-300 ease-in-out
-                ${isCompact ? 'w-20' : 'w-64'}
+                ${isCompact ? 'w-12 md:w-20' : 'w-64'}
             `}
         >
             <div className="flex h-full flex-col">
@@ -143,7 +143,7 @@ const Sidebar = () => {
                     {renderDataList(SideBarLinks)}
                 </nav>
 
-                <div className="mt-auto p-4 flex flex-col items-center gap-y-3">
+                <div className="mt-auto mx-1 md:mx-3 mb-4 justify-center flex flex-col items-center gap-y-2">
                     <button
                         onClick={ () => router.push(`/${locale}/profile`)}
                         title={t('profile')}

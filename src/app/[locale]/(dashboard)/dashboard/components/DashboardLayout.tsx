@@ -175,32 +175,36 @@ const DashboardLayout = () => {
                         initial="hidden"
                         animate="visible"
                     >
-                        <div className="grid grid-cols-4 gap-2 h-full">
+                        <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-2">
                             {/* Side #1 */}
                             <motion.div
                                 variants={itemVariants}
-                                className="flex flex-col gap-1 h-full"
+                                className="flex flex-col gap-1 min-h-svh w-full"
                             >
                                 {/* Date Input */}
-                                <div className="flex items-center gap-1 mb-1">
-                                    <label className="text-[10px] text-gray-400 flex items-center gap-0.5 whitespace-nowrap">
-                                        {t("from")}
-                                    </label>
-                                    <input
-                                        type="datetime-local"
-                                        value={startDate}
-                                        onChange={e => setStartDate(e.target.value.slice(0, 16))}
-                                        className="bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition outline-none w-32 text-xs"
-                                    />
-                                    <label className="text-[10px] text-gray-400 flex items-center gap-0.5 whitespace-nowrap">
-                                        {t("to")}
-                                    </label>
-                                    <input
-                                        type="datetime-local"
-                                        value={endDate}
-                                        onChange={e => setEndDate(e.target.value.slice(0, 16))}
-                                        className="bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-green-500 focus:border-green-500 transition outline-none w-32 text-xs"
-                                    />
+                                <div className="flex items-center gap-1 mb-1 w-full mx-1">
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[10px] text-secondary flex items-center gap-0.5 whitespace-nowrap">
+                                            {t("from")}
+                                        </label>
+                                        <input
+                                            type="datetime-local"
+                                            value={startDate}
+                                            onChange={e => setStartDate(e.target.value.slice(0, 16))}
+                                            className="text-[10px] bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition outline-none w-32 text-xs"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[10px] text-secondary flex items-center gap-0.5 whitespace-nowrap">
+                                            {t("to")}
+                                        </label>
+                                        <input
+                                            type="datetime-local"
+                                            value={endDate}
+                                            onChange={e => setEndDate(e.target.value.slice(0, 16))}
+                                            className="text-[10px] bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-green-500 focus:border-green-500 transition outline-none w-32 text-xs"
+                                        />
+                                    </div>
                                     <button
                                         onClick={() => {
                                             if (socket && isConnected && startDate && endDate) {
@@ -208,7 +212,7 @@ const DashboardLayout = () => {
                                                 socket.emit('getAllNews', { startDate: new Date(startDate), endDate: new Date(endDate) });
                                             }
                                         }}
-                                        className="flex-1 bg-gradient-to-r from-primary to-secondary text-white px-2 py-0.5 rounded shadow hover:from-secondary hover:to-primary transition font-semibold text-xs whitespace-nowrap"
+                                        className="h-full flex-1 bg-gradient-to-r from-primary to-secondary text-white px-2 py-0.5 rounded shadow hover:from-secondary hover:to-primary transition font-semibold text-xs whitespace-nowrap"
                                         // className="flex-1 bg-gray-700 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
                                     >
                                         {t("updateTime")}
@@ -225,10 +229,10 @@ const DashboardLayout = () => {
                             {/* Side #2 */}
                             <motion.div
                                 variants={itemVariants}
-                                className="col-span-2 flex flex-col gap-2 h-full"
+                                className="lg:col-span-2 flex flex-col gap-2 min-h-svh"
                             >
                                 {/* Section 2.1 Map and News/Social */}
-                                <div className="flex flex-row gap-1 flex-1">
+                                <div className="flex flex-col lg:flex-row gap-1 flex-1">
                                     {/* Map Track */}
                                     <MapSection allAnalysis={allAnalysis} />
 
