@@ -16,8 +16,6 @@ const AddSectorModal = ({ isOpen, onClose, onSave, isLoading = false }: AddSecto
     
     const [sectorName, setSectorName] = useState<string>('')
 
-    
-    
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (sectorName.trim()) {

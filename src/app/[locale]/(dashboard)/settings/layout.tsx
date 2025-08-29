@@ -11,7 +11,7 @@ export const generateMetadata = async( { params: { locale } } : ILocaleParams): 
 
 const UsersLayout = ( { children }: { children: ReactNode }) => {
     return (
-        <main>
+        <main className="w-full">
             { children }
         </main>
     );

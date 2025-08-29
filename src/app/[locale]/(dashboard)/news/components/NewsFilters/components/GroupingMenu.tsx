@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { Layers, ChevronDown } from 'lucide-react';
-import { useLocale } from 'next-intl';
 import { GroupingMenuProps } from '../types';
 
 const GroupingMenu: React.FC<GroupingMenuProps> = ({
@@ -8,7 +7,6 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
     toggleGrouping,
     t
 }) => {
-    const locale = useLocale();
     const [showGroupingMenu, setShowGroupingMenu] = React.useState(false);
 
     const menueRef = useRef<HTMLDivElement>(null)
@@ -46,7 +44,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                         <div className="space-y-1">
                             <button
                                 onClick={() => toggleGrouping('sector')}
-                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
+                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
                                     groupings.sector?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                 }`}
                             >
@@ -54,7 +52,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             </button>
                             <button
                                 onClick={() => toggleGrouping('classify')}
-                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
+                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
                                     groupings.classify?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                 }`}
                             >
@@ -62,7 +60,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             </button>
                             <button
                                 onClick={() => toggleGrouping('adType')}
-                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
+                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
                                     groupings.adType?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                 }`}
                             >
@@ -70,7 +68,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             </button>
                             <button
                                 onClick={() => toggleGrouping('pressType')}
-                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
+                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
                                     groupings.pressType?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                 }`}
                             >
@@ -78,7 +76,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             </button>
                             <button
                                 onClick={() => toggleGrouping('geoClassify')}
-                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
+                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
                                     groupings.geoClassify?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                 }`}
                             >
@@ -86,7 +84,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             </button>
                             <button
                                 onClick={() => toggleGrouping('addedBy')}
-                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
+                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
                                     groupings.addedBy?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                 }`}
                             >
@@ -94,7 +92,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             </button>
                             <button
                                 onClick={() => toggleGrouping('newspaper')}
-                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
+                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
                                     groupings.newspaper?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                 }`}
                             >
@@ -102,11 +100,19 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             </button>
                             {/* <button
                                 onClick={() => toggleGrouping('url')}
-                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
+                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
                                     groupings.url?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
                                 }`}
                             >
                                 {t("url")}
+                            </button> */}
+                            {/* <button
+                                onClick={() => toggleGrouping('date')}
+                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
+                                    groupings.date?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                }`}
+                            >
+                                {t("date")}
                             </button> */}
                         </div>
                     </div>

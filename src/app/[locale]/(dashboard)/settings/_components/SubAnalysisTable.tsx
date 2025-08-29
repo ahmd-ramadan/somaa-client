@@ -21,7 +21,7 @@ const SubAnalysisTable = () => {
   const [editingAnalysis, setEditingAnalysis] = useState<ISubAnalysis | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const itemsPerPage = 10;
 
   useEffect(() => {
     if(allSubAnalysisStatus !== 'succeeded') dispatch(fetchAllSubAnalysis());
@@ -74,10 +74,10 @@ const SubAnalysisTable = () => {
   };
 
   return (
-    <>
+    <div className='h-full'>
       <div className="flex justify-between items-center mb-4 px-2">
-        <h2 className="text-xl font-semibold text-secondary">
-         {t("totalShowedSubAnalysis")}: <strong className='text-secondary'>{allSubAnalysis.length}</strong>
+        <h2 className="text-xl font-semibold text-primary">
+         {t("totalShowedSubAnalysis")}: <strong className=''>{allSubAnalysis.length}</strong>
         </h2>
         <button
           onClick={() => setIsAddModalOpen(true)}
@@ -120,7 +120,7 @@ const SubAnalysisTable = () => {
       }
 
       { currentSubAnalysis && currentSubAnalysis.length > 0 && 
-        <table className={`${locale === 'en' ? 'text-left' : 'text-right'} w-full text-xs`}>
+        <table className={`${locale === 'en' ? 'text-left' : 'text-right'} w-full h-full text-xs`}>
           <thead className="text-xs text-primary uppercase bg-primary/20">
             <tr>
               <th scope="col" className="px-3 py-2">{t("subAnalysisBody")}</th>
@@ -146,9 +146,9 @@ const SubAnalysisTable = () => {
                   <td className="px-3 py-2">
                     <button 
                       onClick={() => handleEdit(subAnalysis)}
-                      className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+                      className="inline-flex items-center justify-center gap-1 text-secondary hover:text-primary transition-colors"
                     >
-                      <Edit size={16} />
+                      <Edit size={15} />
                       <span className="sr-only">تعديل</span>
                     </button>
                   </td>
@@ -209,7 +209,7 @@ const SubAnalysisTable = () => {
         onSave={handleAddSubAnalysis}
         isLoading={addSubAnalysisStatus === 'loading'}
       />
-    </>
+    </div>
   )
 };
 

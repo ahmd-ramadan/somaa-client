@@ -23,22 +23,23 @@ const DashboardPage = () => {
     }, [dispatch]);
 
     return (
-        <div className='bg-white'>
+        <div className='bg-white min-h-screen'>
             <div className="flex border-b mb-4">
                 <button
-                    className={`px-4 py-2 focus:outline-none ${activeTab === 'analytics' ? 'border-b-2 border-primary text-primary font-bold' : 'text-gray-500'}`}
-                    onClick={() => setActiveTab('analytics')}
-                >
-                    {t('subAnalysisTab')}
-                </button>
-                <button
-                    className={`px-4 py-2 focus:outline-none ${activeTab === 'sectors' ? 'border-b-2 border-primary text-primary font-bold' : 'text-gray-500'}`}
+                    className={`px-4 py-2 focus:outline-none ${activeTab === 'sectors' ? 'border-b-2 border-secondary text-secondary font-bold' : 'text-gray-500'}`}
                     onClick={() => setActiveTab('sectors')}
                 >
                     {t('sectorsTab')}
                 </button>
+                <button
+                    className={`px-4 py-2 focus:outline-none ${activeTab === 'analytics' ? 'border-b-2 border-secondary text-secondary font-bold' : 'text-gray-500'}`}
+                    onClick={() => setActiveTab('analytics')}
+                >
+                    {t('subAnalysisTab')}
+                </button>
+               
             </div>
-            <div>
+            <div className='h-full overflow-auto'>
                 {activeTab === 'analytics' && (
                     <SubAnalysisTable />
                 )}

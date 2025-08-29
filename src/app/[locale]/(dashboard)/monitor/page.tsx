@@ -47,6 +47,11 @@ export default function MonitorPage() {
     }
   };
 
+  const nodeEnv = process.env.NODE_ENV;
+  if(nodeEnv !== 'development') {
+    return null
+  } 
+
   return (
     <div className="min-h-screen bg-gray-50 px-1 py-3">
       <div className="md:mx-2">

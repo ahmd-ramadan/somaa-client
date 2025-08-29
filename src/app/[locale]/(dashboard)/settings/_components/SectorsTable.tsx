@@ -21,7 +21,7 @@ const SectorsTable = () => {
   const [editingSector, setEditingSector] = useState<ISector | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
+  const itemsPerPage = 10;
 
   useEffect(() => {
     if(allSectorsStatus !== 'succeeded') dispatch(fetchAllSectors());
@@ -77,8 +77,8 @@ const SectorsTable = () => {
   return (
     <>
       <div className="flex justify-between items-center mb-4 px-2">
-        <h2 className="text-xl font-semibold text-secondary">
-         {t("totalShowedSectors")}: <strong className='text-secondary'>{allSectors.length}</strong>
+        <h2 className="text-xl font-semibold text-primary">
+         {t("totalShowedSectors")}: <strong className=''>{allSectors.length}</strong>
         </h2>
         <button
           onClick={() => setIsAddModalOpen(true)}
@@ -153,9 +153,9 @@ const SectorsTable = () => {
                 <td className="px-3 py-2">
                   <button 
                     onClick={() => setEditingSector(sector)}
-                    className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+                    className="inline-flex items-center gap-1 text-secondary hover:text-primary transition-colors"
                   >
-                    <Edit size={16} />
+                    <Edit size={15} />
                     <span className="sr-only">تعديل</span>
                   </button>
                 </td>

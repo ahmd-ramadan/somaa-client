@@ -1,11 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
-import { INews, NewsAdTypesEnum, NewsClassifyEnum, NewsGeographicalClassifyEnum, NewsPressTypesEnum } from "@/interfaces/news.types";
+import { INews, NewsClassifyEnum } from "@/interfaces/news.types";
 import { fetchAllNews, deleteNews } from '@/lib/features/news/newsthunks';
 import { 
-    resetAddNewsStatus,
-    resetAllNewsStatus 
+    resetAddNewsStatus 
 } from '@/lib/features/news/newsSlice';
 import { ApiResponse } from '@/utils/apiService';
 import toast from "react-hot-toast";

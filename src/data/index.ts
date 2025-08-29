@@ -223,18 +223,17 @@ export const InputsAddressForm: IInputAddressForm[] = [
     },
 ]
 
-
 export const SideBarLinks: ISideBarLinks[] = [
     {
         name: "dashboard",
         link: "dashboard",
         permission: "forAll",
     },
-    {
-        name: "liveMonitoring",
-        link: "monitor",
-        permission: "forAll",
-    },
+    // {
+    //     name: "liveMonitoring",
+    //     link: "monitor",
+    //     permission: "forAll",
+    // },
     {
         name: 'socialmedia',
         link: "social-media",
