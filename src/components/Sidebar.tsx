@@ -84,7 +84,7 @@ const Sidebar = () => {
                     onClick={() => handleLinkClick(link)}
                     title={t(name)}
                     className={`
-                        group flex items-center py-3 cursor-pointer
+                        group flex items-center gap-1 py-3 cursor-pointer
                         transition-all duration-300
                         ${isCompact ? 'justify-center' : 'px-6 justify-start'}
                         ${SideBarLink === link
@@ -96,7 +96,7 @@ const Sidebar = () => {
                     <div className="flex-shrink-0">{SideBarIcons[name] || null}</div>
                     <span
                         className={`
-                            text-lg font-semibold whitespace-nowrap transition-all duration-300
+                            text-lg whitespace-nowrap transition-all duration-300
                             ${isCompact ? 'w-0 opacity-0 overflow-hidden' : 'w-auto opacity-100'}
                         `}
                     >

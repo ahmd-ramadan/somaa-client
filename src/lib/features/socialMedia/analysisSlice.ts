@@ -57,7 +57,7 @@ const analysisSlice = createSlice({
                 state.allAnalysisStatus = 'succeeded';
                 const { success, data } = action.payload as any;
                 if (success) {
-                    state.allAnalysis = data;
+                    state.allAnalysis = data; // data.map((a: any) => ({ ... a, publisher: a?.publisher || a.publisherData }));
                 }
             })
             .addCase(fetchAllAnalysis.rejected, (state) => {

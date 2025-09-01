@@ -75,13 +75,13 @@ const SubAnalysisTable = () => {
 
   return (
     <div className='h-full'>
-      <div className="flex justify-between items-center mb-4 px-2">
-        <h2 className="text-xl font-semibold text-primary">
-         {t("totalShowedSubAnalysis")}: <strong className=''>{allSubAnalysis.length}</strong>
+      <div className="flex gap-1 justify-between items-center mb-4 px-2">
+        <h2 className="text-base lg:text-xl font-semibold text-primary">
+         {t("totalShowedSubAnalysis")}: <strong className='text-secondary'>{allSubAnalysis.length}</strong>
         </h2>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-white rounded-md hover:bg-primary/90 transition-colors"
+          className="text-base inline-flex items-center gap-1 px-1 lg:px-4 py-2 bg-secondary text-white rounded-md hover:bg-primary/90 transition-colors"
         >
           <Plus size={16} />
           { t("addSubAnalysis") }

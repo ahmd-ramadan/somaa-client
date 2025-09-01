@@ -175,18 +175,18 @@ const DashboardLayout = () => {
                         initial="hidden"
                         animate="visible"
                     >
-                        <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-2">
+                        <div className="grid lg:grid-cols-4 grid-cols-1 gap-2">
                             {/* Side #1 */}
                             <motion.div
                                 variants={itemVariants}
-                                className="flex flex-col gap-1 min-h-svh w-full"
+                                className="flex flex-col gap-3 lg:gap-1 min-h-svh w-full"
                             >
                                 {/* Date Input */}
                                 <div className="flex items-center gap-1 mb-1 w-full mx-1">
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-[10px] text-secondary flex items-center gap-0.5 whitespace-nowrap">
+                                    <div className="relative flex flex-col gap-1">
+                                        {/* <label className="absolute top-0 start-0 text-[10px] text-secondary flex items-center gap-0.5 whitespace-nowrap">
                                             {t("from")}
-                                        </label>
+                                        </label> */}
                                         <input
                                             type="datetime-local"
                                             value={startDate}
@@ -194,10 +194,10 @@ const DashboardLayout = () => {
                                             className="text-[10px] bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition outline-none w-32 text-xs"
                                         />
                                     </div>
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-[10px] text-secondary flex items-center gap-0.5 whitespace-nowrap">
+                                    <div className="relative flex flex-col gap-1">
+                                        {/* <label className="absolute top-0 start-0 text-[10px] text-secondary flex items-center gap-0.5 whitespace-nowrap">
                                             {t("to")}
-                                        </label>
+                                        </label> */}
                                         <input
                                             type="datetime-local"
                                             value={endDate}
@@ -229,7 +229,7 @@ const DashboardLayout = () => {
                             {/* Side #2 */}
                             <motion.div
                                 variants={itemVariants}
-                                className="lg:col-span-2 flex flex-col gap-2 min-h-svh"
+                                className="lg:col-span-2 flex flex-col gap-3 lg:gap-2 min-h-svh"
                             >
                                 {/* Section 2.1 Map and News/Social */}
                                 <div className="flex flex-col lg:flex-row gap-1 flex-1">
@@ -251,7 +251,7 @@ const DashboardLayout = () => {
                             {/* Side #3 */}
                             <motion.div
                                 variants={itemVariants}
-                                className="flex flex-col gap-2 h-full"
+                                className="flex flex-col gap-3 lg:gap-2 h-full"
                             >
                                 <ClassificationSection allAnalysis={allAnalysis} allNews={allNews} />
                                 
