@@ -17,6 +17,7 @@ import { Maximize2, Minimize2 } from "lucide-react";
 import SubAnalysisAndSectorsSection from "./sections/SubAnalysisAndSectorsSection";
 import { toZonedTime, format } from 'date-fns-tz'
 import { useTranslations } from "next-intl";
+import DateSection from "./sections/DateSection";
 
 // Register Chart.js components
 ChartJS.register(
@@ -182,42 +183,18 @@ const DashboardLayout = () => {
                                 className="flex flex-col gap-3 lg:gap-1 min-h-svh w-full"
                             >
                                 {/* Date Input */}
-                                <div className="flex items-center gap-1 mb-1 w-full mx-1">
-                                    <div className="relative flex flex-col gap-1">
-                                        {/* <label className="absolute top-0 start-0 text-[10px] text-secondary flex items-center gap-0.5 whitespace-nowrap">
-                                            {t("from")}
-                                        </label> */}
-                                        <input
-                                            type="datetime-local"
-                                            value={startDate}
-                                            onChange={e => setStartDate(e.target.value.slice(0, 16))}
-                                            className="text-[10px] bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition outline-none w-32 text-xs"
-                                        />
-                                    </div>
-                                    <div className="relative flex flex-col gap-1">
-                                        {/* <label className="absolute top-0 start-0 text-[10px] text-secondary flex items-center gap-0.5 whitespace-nowrap">
-                                            {t("to")}
-                                        </label> */}
-                                        <input
-                                            type="datetime-local"
-                                            value={endDate}
-                                            onChange={e => setEndDate(e.target.value.slice(0, 16))}
-                                            className="text-[10px] bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-green-500 focus:border-green-500 transition outline-none w-32 text-xs"
-                                        />
-                                    </div>
-                                    <button
-                                        onClick={() => {
-                                            if (socket && isConnected && startDate && endDate) {
-                                                socket.emit('getAllAnalysis', { startDate: new Date(startDate), endDate: new Date(endDate) });
-                                                socket.emit('getAllNews', { startDate: new Date(startDate), endDate: new Date(endDate) });
-                                            }
-                                        }}
-                                        className="h-full flex-1 bg-gradient-to-r from-primary to-secondary text-white px-2 py-0.5 rounded shadow hover:from-secondary hover:to-primary transition font-semibold text-xs whitespace-nowrap"
-                                        // className="flex-1 bg-gray-700 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
-                                    >
-                                        {t("updateTime")}
-                                    </button>
-                                </div>
+                                <DateSection 
+                                    startDate={startDate}
+                                    endDate={endDate}
+                                    setStartDate={setStartDate}
+                                    setEndDate={setEndDate}
+                                    callData={() => {
+                                        if (socket && isConnected && startDate && endDate) {
+                                            socket.emit('getAllAnalysis', { startDate: new Date(startDate), endDate: new Date(endDate) });
+                                            socket.emit('getAllNews', { startDate: new Date(startDate), endDate: new Date(endDate) });
+                                        }
+                                    }}
+                                />
 
                                 {/* Section 1.2 Important Analysis Section */}
                                 <ImportantAnalysisSection allAnalysis={allAnalysis}/>
