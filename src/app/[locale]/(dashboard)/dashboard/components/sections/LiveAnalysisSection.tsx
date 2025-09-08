@@ -63,7 +63,7 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
                 <motion.div
                     ref={liveTickerRef}
                     className="absolute inset-0"
-                    variants={createTickerVariants(liveTickerPosition)}
+                    variants={createTickerVariants(liveTickerPosition, allAnalysis.length)}
                     animate={!isLiveAnalysisAnimating ? "pause" : "animate"}
                 >
                     <div className="space-y-2">

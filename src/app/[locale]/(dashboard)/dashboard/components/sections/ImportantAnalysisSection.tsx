@@ -78,7 +78,7 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
                 <motion.div
                     ref={importantTickerRef}
                     className="absolute inset-0"
-                    variants={createTickerVariants(importantTickerPosition)}
+                    variants={createTickerVariants(importantTickerPosition, importantAnalysis.length)}
                     animate={!isImportantAnalysisAnimating ? "pause" : "animate"}
                 >
                     <div className="space-y-2">
