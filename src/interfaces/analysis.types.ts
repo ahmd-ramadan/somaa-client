@@ -88,6 +88,7 @@ export interface IAnalysis extends IAnalysisModel {
         name: string;
         avatar: ICloudinaryIMage
     }
+    publisherData?: IPublisherData
     sectorData: IAnalysisSector
     subAnalysisData:ISubAnalysisData
 }

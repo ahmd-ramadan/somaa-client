@@ -196,9 +196,9 @@ export default function ResultsFiltersV2({
   ];
 
   const viewModeOptions = [
-    { value: 'grid', label: 'Grid', labelAr: 'شبكة', icon: Grid3X3 },
     { value: 'list', label: 'List', labelAr: 'قائمة', icon: List },
-    { value: 'table', label: 'Table', labelAr: 'جدول', icon: Table }
+    { value: 'table', label: 'Table', labelAr: 'جدول', icon: Table },
+    { value: 'grid', label: 'Grid', labelAr: 'شبكة', icon: Grid3X3 }
   ];
 
   const itemsPerPageOptions = [10, 20, 50, 100];
@@ -419,7 +419,7 @@ export default function ResultsFiltersV2({
               )}
             </div>
           
-            <div className='relative'>
+            {/* <div className='relative'>
               <button
                 onClick={() => setSelectionMode(!selectionMode)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
@@ -431,7 +431,8 @@ export default function ResultsFiltersV2({
                 <CheckSquare className="w-4 h-4" />
                 {t('selection')}
               </button>
-            </div>
+            </div> */}
+            
           </div>
         </div>
 
@@ -510,7 +511,7 @@ export default function ResultsFiltersV2({
               return (
                 <button
                   key={option.value}
-                  onClick={() => setViewMode(option.value as 'grid' | 'list' | 'table')}
+                  onClick={() => setViewMode(option.value as 'list' | 'table' | 'grid')}
                   className={`flex items-center gap-1 px-3 py-1 rounded-md transition-colors ${
                     viewMode === option.value 
                       ? 'bg-white text-secondary shadow-sm' 

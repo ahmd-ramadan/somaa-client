@@ -2,7 +2,7 @@
 
 import { IAnalysis } from "@/interfaces/analysis.types"
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface IMapSectionProps {
     allAnalysis: IAnalysis[]
@@ -26,9 +26,10 @@ const SAUDI_CENTER: [number, number] = [23.8859, 45.0792];
 const MapSection = ({ allAnalysis }: IMapSectionProps) => {
     const [isMounted, setIsMounted] = useState(false);
     // Get last 5 analyses with valid locations
-    const last5Analyses = allAnalysis
+    const last5Analyses = useMemo(() => allAnalysis
         .filter(a => a.location && typeof a.location.lat === 'number' && typeof a.location.lng === 'number')
         // .slice(0, 10);
+    , [allAnalysis]);
 
     useEffect(() => {
         setIsMounted(true);

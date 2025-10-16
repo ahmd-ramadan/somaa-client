@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -26,6 +25,7 @@ import {
     User,
     Settings,
     Timer,
+    Plus,
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -40,13 +40,14 @@ const Sidebar = () => {
     const [isCompact, setIsCompact] = useState(true);
 
     const SideBarIcons: { [key: string]: ReactNode } = {
-        news: <Newspaper size={24} />,
-        dashboard: <LayoutDashboard size={24} />,
-        admins: <UserCog size={24} />,
-        users: <Users size={24} />,
-        socialmedia: <Share2 size={24} />,
-        settings: <Settings size={24} />,
-        liveMonitoring: <Timer size={24} />
+        news: <Newspaper size={16} />,
+        dashboard: <LayoutDashboard size={16} />,
+        admins: <UserCog size={16} />,
+        users: <Users size={16} />,
+        socialmedia: <Share2 size={16} />,
+        settings: <Settings size={16} />,
+        liveMonitoring: <Timer size={16} />,
+        addMonitor: <Plus size={16} />
     };
 
     const changeLanguage = () => {
@@ -96,7 +97,7 @@ const Sidebar = () => {
                     <div className="flex-shrink-0">{SideBarIcons[name] || null}</div>
                     <span
                         className={`
-                            text-lg whitespace-nowrap transition-all duration-300
+                            text-medium whitespace-nowrap transition-all duration-300
                             ${isCompact ? 'w-0 opacity-0 overflow-hidden' : 'w-auto opacity-100'}
                         `}
                     >
@@ -147,9 +148,9 @@ const Sidebar = () => {
                     <button
                         onClick={ () => router.push(`/${locale}/profile`)}
                         title={t('profile')}
-                        className="w-full flex items-center gap-x-3 rounded-lg px-3 py-2 justify-center text-white bg-secondary hover:bg-opacity-80 transition-colors duration-300"
+                        className="w-full flex items-center gap-x-3 rounded-lg px-3 py-1 justify-center text-white bg-secondary hover:bg-opacity-80 transition-colors duration-300 text-medium"
                     >
-                        <User size={20} />
+                        <User size={16} />
                         <span className={`${isCompact ? 'hidden' : 'inline'}`}>
                             {t("profile")}
                         </span>
@@ -157,9 +158,9 @@ const Sidebar = () => {
                     <button
                         onClick={changeLanguage}
                         title={locale === 'en' ? 'العربية' : 'English'}
-                        className="w-full flex items-center gap-x-3 rounded-lg px-3 py-2 justify-center text-white bg-secondary hover:bg-opacity-80 transition-colors duration-300"
+                        className="w-full flex items-center gap-x-3 rounded-lg px-3 py-1 justify-center text-white bg-secondary hover:bg-opacity-80 transition-colors duration-300 text-medium"
                     >
-                        <Languages size={20} />
+                        <Languages size={16} />
                         <span className={`${isCompact ? 'hidden' : 'inline'}`}>
                             {locale === 'en' ? 'العربية' : 'English'}
                         </span>
@@ -167,9 +168,9 @@ const Sidebar = () => {
                     <button
                         onClick={handleLogout}
                         title={t("logoutBtn")}
-                        className="w-full flex items-center gap-x-3 rounded-lg px-3 py-2 justify-center text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300"
-                    >
-                        <LogOut size={20} />
+                        className="w-full flex items-center gap-x-3 rounded-lg px-3 py-1 justify-center text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 text-medium"
+                     >
+                        <LogOut size={16} />
                         <span className={`${isCompact ? 'hidden' : 'inline'}`}>
                             {t("logoutBtn")}
                         </span>

@@ -44,6 +44,7 @@ export interface Translations {
     dashboard: string;
     settings: string;
     liveMonitoring: string;
+    addMonitor: string;
 }
 
 export interface TranslationsMap {
@@ -96,7 +97,8 @@ const translations: TranslationsMap = {
         news: "News",
         dashboard: "Dashboard",
         settings: "Settings",
-        liveMonitoring: "Live Monitoring"
+        liveMonitoring: "Live Monitoring",
+        addMonitor: "Add Monitor"
     },
     ar: {
         default: 'OSUS Solutions',
@@ -142,7 +144,8 @@ const translations: TranslationsMap = {
         news: "الأخبار",
         dashboard: "لوحة التحكم",
         settings: "الإعدادات",
-        liveMonitoring: "الرصد المياشر"
+        liveMonitoring: "الرصد المياشر",
+        addMonitor: "إضافة رصد"
     }
 };
 

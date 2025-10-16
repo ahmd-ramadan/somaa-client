@@ -2,7 +2,7 @@
 
 import { AnalysisClassifyEnum, IAnalysis } from "@/interfaces/analysis.types"
 import { motion, useAnimation } from "framer-motion"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { IDashboardSubAnalysis } from "./types"
 import { INews, NewsClassifyEnum } from "@/interfaces/news.types"
 import { ISectorEngagement } from "./SectorsSection"
@@ -22,175 +22,177 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
     const controls = useAnimation(); // Hook for controlling the animation
 
     // Derives and counts sub-analysis data
-    const deriveSubAnalysis = (analysisData: IAnalysis[]): IDashboardSubAnalysis[] => {
-        const analysisMap = new Map<string, { count: number, classifications: Map<AnalysisClassifyEnum, number>, totalEngagement: number }>();
+    const deriveSubAnalysis = useCallback(
+        (analysisData: IAnalysis[]): IDashboardSubAnalysis[] => {
+            const analysisMap = new Map<string, { count: number, classifications: Map<AnalysisClassifyEnum, number>, totalEngagement: number }>();
+            
+            analysisData.forEach(analysis => {
+                const name = analysis?.subAnalysisData?.body;
+                if (!name) return;
+                
+                if (!analysisMap.has(name)) {
+                    analysisMap.set(name, {
+                        count: 0,
+                        classifications: new Map<AnalysisClassifyEnum, number>(),
+                        totalEngagement: 0
+                    });
+                }
+                
+                const current = analysisMap.get(name)!;
+                current.count++;
+                
+                // Calculate total engagement from statistics
+                const engagement = analysis.statistics.reactions + analysis.statistics.comments + analysis.statistics.shares;
+                current.totalEngagement += engagement;
+                
+                // Update classifications count
+                if (analysis.classify) {
+                    const currentCount = current.classifications.get(analysis.classify) || 0;
+                    current.classifications.set(analysis.classify, currentCount + 1);
+                }
+            })
         
-        analysisData.forEach(analysis => {
-            const name = analysis?.subAnalysisData?.body;
-            if (!name) return;
+            const response = Array.from(analysisMap.entries()).map(([name, data]) => ({
+                name,
+                count: data.count,
+                totalEngagement: data.totalEngagement,
+                classifications: Array.from(data.classifications.entries()).map(([type, count]) => ({
+                    type,
+                    count
+                }))
+            }));
+            return response.sort((a, b) => b.count - a.count).slice(0, Math.min(response.length, 5))
+    }, [allAnalysis]);
+
+    const deriveTopSectorsByEngagement = useCallback(
+        (analysisData: IAnalysis[], newsData: INews[]): ISectorEngagement[] => {
+            const sectorsMap = new Map<string, ISectorEngagement>();
+
+            // Process analysis data
+            for (const analysis of analysisData) {
+                const sectorName = analysis.sectorData.name;
+                const classification = analysis.classify;
+                const statistics = analysis.statistics;
+                const platform = analysis.platform.toLowerCase();
+
+                if (!sectorsMap.has(sectorName)) {
+                    sectorsMap.set(sectorName, {
+                        name: sectorName,
+                        total: 0,
+                        reactions: 0,
+                        comments: 0,
+                        shares: 0,
+                        views: 0,
+                        appearances: 0,
+                        totalMonitoringFromAnalysis: 0,
+                        totalMonitoringFromNews: 0,
+                        platforms: {
+                            x: 0,
+                            facebook: 0,
+                            instagram: 0,
+                            tiktok: 0,
+                            youtube: 0,
+                            linkedin: 0
+                        },
+                        classifications: [
+                            { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
+                            { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
+                            { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
+                        ],
+                    });
+                }
+
+                const sectorData = sectorsMap.get(sectorName)!;
+                sectorData.appearances++;
+                sectorData.totalMonitoringFromAnalysis++;
+                
+                // Update platform count
+                if (platform in sectorData.platforms) {
+                    sectorData.platforms[platform as keyof typeof sectorData.platforms]++;
+                }
+                
+                // Use real statistics from analysis
+                sectorData.reactions += statistics.reactions || 0;
+                sectorData.comments += statistics.comments || 0;
+                sectorData.shares += statistics.shares || 0;
+                sectorData.views += statistics.views || 0;
+                sectorData.total = sectorData.reactions + sectorData.comments + sectorData.shares;
+
+                const classificationEntry = sectorData.classifications.find(
+                    (cls) => cls.type === classification
+                );
+
+                if (classificationEntry) {
+                    classificationEntry.count++;
+                }
+            }
+
+            // Process news data
+            for (const news of newsData) {
+                const sectorName = news.sectorData.name;
+
+                if (!sectorsMap.has(sectorName)) {
+                    sectorsMap.set(sectorName, {
+                        name: sectorName,
+                        total: 0,
+                        reactions: 0,
+                        comments: 0,
+                        shares: 0,
+                        views: 0,
+                        appearances: 0,
+                        totalMonitoringFromAnalysis: 0,
+                        totalMonitoringFromNews: 0,
+                        platforms: {
+                            x: 0,
+                            facebook: 0,
+                            instagram: 0,
+                            tiktok: 0,
+                            youtube: 0,
+                            linkedin: 0
+                        },
+                        classifications: [
+                            { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
+                            { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
+                            { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
+                        ],
+                    });
+                }
+
+                const sectorData = sectorsMap.get(sectorName)!;
+                sectorData.appearances++;
+                sectorData.totalMonitoringFromNews++;
+
+                // Map NewsClassifyEnum to AnalysisClassifyEnum
+                let mappedClassification: AnalysisClassifyEnum;
+                switch (news.classify) {
+                    case NewsClassifyEnum.POSITIVE:
+                        mappedClassification = AnalysisClassifyEnum.POSITIVE;
+                        break;
+                    case NewsClassifyEnum.NEGATIVE:
+                        mappedClassification = AnalysisClassifyEnum.NEGATIVE;
+                        break;
+                    case NewsClassifyEnum.NEUTRAL:
+                    default:
+                        mappedClassification = AnalysisClassifyEnum.NEUTRAL;
+                        break;
+                }
+
+                const classificationEntry = sectorData.classifications.find(
+                    (cls) => cls.type === mappedClassification
+                );
+
+                if (classificationEntry) {
+                    classificationEntry.count++;
+                }
+            }
+
             
-            if (!analysisMap.has(name)) {
-                analysisMap.set(name, {
-                    count: 0,
-                    classifications: new Map<AnalysisClassifyEnum, number>(),
-                    totalEngagement: 0
-                });
-            }
-            
-            const current = analysisMap.get(name)!;
-            current.count++;
-            
-            // Calculate total engagement from statistics
-            const engagement = analysis.statistics.reactions + analysis.statistics.comments + analysis.statistics.shares;
-            current.totalEngagement += engagement;
-            
-            // Update classifications count
-            if (analysis.classify) {
-                const currentCount = current.classifications.get(analysis.classify) || 0;
-                current.classifications.set(analysis.classify, currentCount + 1);
-            }
-        });
-        
-        const response = Array.from(analysisMap.entries()).map(([name, data]) => ({
-            name,
-            count: data.count,
-            totalEngagement: data.totalEngagement,
-            classifications: Array.from(data.classifications.entries()).map(([type, count]) => ({
-                type,
-                count
-            }))
-        }));
-        return response.sort((a, b) => b.count - a.count).slice(0, Math.min(response.length, 5))
-    };
+            const result = Array.from(sectorsMap.values())
+                .sort((a, b) => b.total - a.total)
 
-    const deriveTopSectorsByEngagement = (analysisData: IAnalysis[], newsData: INews[]): ISectorEngagement[] => {
-        const sectorsMap = new Map<string, ISectorEngagement>();
+            return result.slice(0, Math.min(5, result.length));
+    }, [allAnalysis, allNews]);
 
-        // Process analysis data
-        for (const analysis of analysisData) {
-            const sectorName = analysis.sectorData.name;
-            const classification = analysis.classify;
-            const statistics = analysis.statistics;
-            const platform = analysis.platform.toLowerCase();
-
-            if (!sectorsMap.has(sectorName)) {
-                sectorsMap.set(sectorName, {
-                    name: sectorName,
-                    total: 0,
-                    reactions: 0,
-                    comments: 0,
-                    shares: 0,
-                    views: 0,
-                    appearances: 0,
-                    totalMonitoringFromAnalysis: 0,
-                    totalMonitoringFromNews: 0,
-                    platforms: {
-                        x: 0,
-                        facebook: 0,
-                        instagram: 0,
-                        tiktok: 0,
-                        youtube: 0,
-                        linkedin: 0
-                    },
-                    classifications: [
-                        { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
-                        { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
-                        { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
-                    ],
-                });
-            }
-
-            const sectorData = sectorsMap.get(sectorName)!;
-            sectorData.appearances++;
-            sectorData.totalMonitoringFromAnalysis++;
-            
-            // Update platform count
-            if (platform in sectorData.platforms) {
-                sectorData.platforms[platform as keyof typeof sectorData.platforms]++;
-            }
-            
-            // Use real statistics from analysis
-            sectorData.reactions += statistics.reactions || 0;
-            sectorData.comments += statistics.comments || 0;
-            sectorData.shares += statistics.shares || 0;
-            sectorData.views += statistics.views || 0;
-            sectorData.total = sectorData.reactions + sectorData.comments + sectorData.shares;
-
-            const classificationEntry = sectorData.classifications.find(
-                (cls) => cls.type === classification
-            );
-
-            if (classificationEntry) {
-                classificationEntry.count++;
-            }
-        }
-
-        // Process news data
-        for (const news of newsData) {
-            const sectorName = news.sectorData.name;
-
-            if (!sectorsMap.has(sectorName)) {
-                sectorsMap.set(sectorName, {
-                    name: sectorName,
-                    total: 0,
-                    reactions: 0,
-                    comments: 0,
-                    shares: 0,
-                    views: 0,
-                    appearances: 0,
-                    totalMonitoringFromAnalysis: 0,
-                    totalMonitoringFromNews: 0,
-                    platforms: {
-                        x: 0,
-                        facebook: 0,
-                        instagram: 0,
-                        tiktok: 0,
-                        youtube: 0,
-                        linkedin: 0
-                    },
-                    classifications: [
-                        { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
-                        { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
-                        { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
-                    ],
-                });
-            }
-
-            const sectorData = sectorsMap.get(sectorName)!;
-            sectorData.appearances++;
-            sectorData.totalMonitoringFromNews++;
-
-            // Map NewsClassifyEnum to AnalysisClassifyEnum
-            let mappedClassification: AnalysisClassifyEnum;
-            switch (news.classify) {
-                case NewsClassifyEnum.POSITIVE:
-                    mappedClassification = AnalysisClassifyEnum.POSITIVE;
-                    break;
-                case NewsClassifyEnum.NEGATIVE:
-                    mappedClassification = AnalysisClassifyEnum.NEGATIVE;
-                    break;
-                case NewsClassifyEnum.NEUTRAL:
-                default:
-                    mappedClassification = AnalysisClassifyEnum.NEUTRAL;
-                    break;
-            }
-
-            const classificationEntry = sectorData.classifications.find(
-                (cls) => cls.type === mappedClassification
-            );
-
-            if (classificationEntry) {
-                classificationEntry.count++;
-            }
-        }
-
-        
-        const result = Array.from(sectorsMap.values())
-            .sort((a, b) => b.total - a.total)
-
-        return result.slice(0, Math.min(5, result.length));
-    };
-    
     // Update data when the allAnalysis prop changes
     useEffect(() => {
         if(allAnalysis) {

@@ -1,9 +1,9 @@
+import Spinner from "@/components/ui/Spinner";
 import { IAnalysis } from "@/interfaces/analysis.types";
 import React, { useRef } from "react";
 import {
   FacebookEmbed,
   YouTubeEmbed,
-  TikTokEmbed,
   LinkedInEmbed,
   InstagramEmbed
 } from 'react-social-media-embed';
@@ -16,7 +16,8 @@ interface PublisherEmbedProps {
 
 const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
   const { platform, url } = analysis;
-  const containerRef = useRef<HTMLDivElement>(null);
+
+  // const containerRef = useRef<HTMLDivElement>(null);
 
 
   if (platform === 'x') {
@@ -32,7 +33,7 @@ const PublisherEmbed: React.FC<PublisherEmbedProps> = ({ analysis }) => {
   if (platform === 'facebook') {
     return (
       <div className="w-full overflow-auto custom-scrollbar text-white">
-          <FacebookEmbed url={url} className="w-full h-full overflow-auto custom-scrollbar" />
+          <FacebookEmbed url={url}  placeholderSpinner={<Spinner />} className="w-full h-full overflow-auto custom-scrollbar tetxt-white" />
       </div>
     );
   }

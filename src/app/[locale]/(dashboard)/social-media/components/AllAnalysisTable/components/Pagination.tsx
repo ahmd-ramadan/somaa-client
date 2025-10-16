@@ -7,6 +7,7 @@ interface PaginationProps {
     setItemsPerPage: (items: number) => void;
     filteredAnalysis: any[];
     activeGroupings: string[];
+    selectedItems: Set<string>;
     t: (key: string) => string;
 }
 
@@ -17,14 +18,31 @@ const Pagination: React.FC<PaginationProps> = ({
     setItemsPerPage,
     filteredAnalysis,
     activeGroupings,
+    selectedItems,
     t
 }) => {
-    if (activeGroupings.length > 0) {
-        return null; // Don't show pagination when grouping is active
+    // Calculate the data to paginate
+    const dataToPaginate = selectedItems.size > 0 
+        ? filteredAnalysis.filter(analysis => selectedItems.has(analysis._id))
+        : filteredAnalysis;
+    
+    const totalPages = Math.ceil(dataToPaginate.length / itemsPerPage);
+    const isShowingSelected = selectedItems.size > 0;
+
+    if (activeGroupings.length > 0 && !isShowingSelected) {
+        return null; // Don't show pagination when grouping is active (unless showing selected)
     }
 
     return (
         <div className="flex justify-center items-center gap-2 mt-4">
+            {/* <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">
+                    {isShowingSelected 
+                        ? `Showing ${selectedItems.size} selected items` 
+                        : `Showing ${filteredAnalysis.length} total items`
+                    }
+                </span>
+            </div> */}
             <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
@@ -32,10 +50,10 @@ const Pagination: React.FC<PaginationProps> = ({
             >
                 {t('prev')}
             </button>
-            <span className='text-primary'>{t('page')} {currentPage}</span>
+            <span className='text-primary'>{t('page')} {currentPage} {t("of")} {totalPages}</span>
             <button
                 onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage >= Math.ceil(filteredAnalysis.length / itemsPerPage)}
+                disabled={currentPage >= totalPages}
                 className="px-3 py-1 rounded bg-gray-200 text-primary disabled:opacity-50"
             >
                 {t('next')}

@@ -127,7 +127,8 @@
         "socialmedia": "Social Media",
         "profile": "Profile",
         "settings": "Settings",
-        "liveMonitoring": "Live Monitoring"
+        "liveMonitoring": "Live Monitoring",
+        "addMonitor": "Add Monitor"
     },
     "UploadImage": {
         "uploadImage": "Upload Image",
@@ -195,12 +196,15 @@
         "socialMedia": "Socialmedia",
         "news": "News",
         "showBtn": "Show",
-        "cancelBtn": "Cancel"
+        "cancelBtn": "Cancel",
+        "showMore": "Show More"
         
     },
     "SocialMediaPage": {
         "socialMediaPageTitle": "Social Media",
         "AllAnalysisTable": {
+            "showMore": "Show More",
+            "of": "of",
             "copied": "Copied",
             "noResultsFound": "",
             "loadingData": "",
@@ -338,6 +342,7 @@
             "sortAsc": "Sort Ascending"
         },
         "AddAnalysis": {
+            "addAnalysis": "Add Analysis",
             "url": "Source",
             "publisher": "Publisher",
             "statistics": "Interaction",
@@ -594,6 +599,7 @@
             "selectOrAddNewspaper": "Select newspaper"
         },
         "AddNews": {
+            "addNews": "Add News",
             "url": "Source",
             "title": "Title",
             "newspaper": "Newspaper",
@@ -1205,5 +1211,11 @@
         "error": {
             "fetchFailed": "Failed to fetch posts. Please try again."
         }
+    },
+    "AddMonitorPage": {
+        "addMonitorPageTitle": "Add Monitor",
+        "addSocialMediaMonitor": "Add Social Media Monitor",
+        "addNewsMonitor": "Add News Monitor",
+        "addEMideaMonitor": "Add EMidea Monitor"
     }
 }

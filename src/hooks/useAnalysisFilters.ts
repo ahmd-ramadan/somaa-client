@@ -1,5 +1,6 @@
 import { AnalysisClassifyEnum, IAnalysis, PlatformsEnum, ContentTypesEnum } from "@/interfaces/analysis.types";
-import { useState } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { useDebounce } from "@/utils/debounce";
 
 type StatisticType = 'reactions' | 'comments' | 'shares' | 'views' | 'appearance';
 
@@ -36,96 +37,133 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(20);
     const [groupingOrder, setGroupingOrder] = useState<string[]>([]);
+    
+    // Debounced filters for better performance
+    const [debouncedFilters, setDebouncedFilters] = useState<FilterState>({});
+    
+    // Debounce filter updates - reduced delay for better responsiveness
+    const debouncedSetFilters = useDebounce((newFilters: FilterState) => {
+        setDebouncedFilters(newFilters);
+    }, 150); // Reduced from 300ms to 150ms for better responsiveness
+    
+    // Update debounced filters when filters change
+    useEffect(() => {
+        debouncedSetFilters(filters);
+    }, [filters, debouncedSetFilters]);
 
-    // Filter the analysis data
-    const filteredAnalysis = allAnalysis.filter(analysis => {
-        if (!filters.platform?.length && !filters.classify?.length && !filters.contentType?.length && !filters.sector?.length && 
-            !filters.dateRange && !filters.statistics && !filters.subAnalysis?.length && !filters.addedBy?.length && !filters.url?.length && !filters.publisher?.length && !filters.tweetType?.length) {
+    // Optimized filter function with early returns - uses debounced filters
+    const filterAnalysis = useCallback((analysis: IAnalysis): boolean => {
+        // Early return if no filters are applied
+        if (!debouncedFilters.platform?.length && !debouncedFilters.classify?.length && !debouncedFilters.contentType?.length && 
+            !debouncedFilters.sector?.length && !debouncedFilters.dateRange && !debouncedFilters.statistics && 
+            !debouncedFilters.subAnalysis?.length && !debouncedFilters.addedBy?.length && !debouncedFilters.url?.length && 
+            !debouncedFilters.publisher?.length && !debouncedFilters.tweetType?.length) {
             return true;
         }
 
-        let matches = true;
-
-        if (filters.platform?.length && !filters.platform.includes(analysis.platform)) {
-            matches = false;
+        // Platform filter - early return
+        if (debouncedFilters.platform?.length && !debouncedFilters.platform.includes(analysis.platform)) {
+            return false;
         }
 
-        if (filters.classify?.length && !filters.classify.includes(analysis.classify)) {
-            matches = false;
+        // Classify filter - early return
+        if (debouncedFilters.classify?.length && !debouncedFilters.classify.includes(analysis.classify)) {
+            return false;
         }
 
-        if (filters.contentType?.length && !filters.contentType.includes(analysis.content.type)) {
-            matches = false;
+        // Content type filter - early return
+        if (debouncedFilters.contentType?.length && !debouncedFilters.contentType.includes(analysis.content.type)) {
+            return false;
         }
 
-        if (filters.sector?.length) {
-            const sectorMatches = filters.sector.some(filterSector => 
-                analysis.sectorData.name.toLowerCase().includes(filterSector.toLowerCase())
-            );
-            if (!sectorMatches) matches = false;
+        // Tweet type filter - early return
+        if (debouncedFilters.tweetType?.length && !debouncedFilters.tweetType.includes(analysis.tweetType)) {
+            return false;
         }
 
-        if (filters.subAnalysis?.length) {
-            const subAnalysisMatches = filters.subAnalysis.some(filterSubAnalysis => 
-                analysis.subAnalysisData.body.toLowerCase().includes(filterSubAnalysis.toLowerCase())
-            );
-            if (!subAnalysisMatches) matches = false;
+        // Added by filter - early return
+        if (debouncedFilters.addedBy?.length && !debouncedFilters.addedBy.includes(analysis.addedByData?.name || '')) {
+            return false;
         }
 
-        if (filters.publisher?.length) {
-            const publisherMatches = filters.publisher.some(filterPublisher => {
-                const name = analysis.publisher.name.toLowerCase();
-                const handle = analysis.publisher.handle?.toLowerCase() || '';
+        // URL filter - early return
+        if (debouncedFilters.url?.length && !debouncedFilters.url.some(url => analysis.url.includes(url))) {
+            return false;
+        }
+
+        // Sector filter - optimized with early return
+        if (debouncedFilters.sector?.length) {
+            const sectorName = analysis.sectorData.name.toLowerCase();
+            if (!debouncedFilters.sector.some(filterSector => 
+                sectorName.includes(filterSector.toLowerCase())
+            )) {
+                return false;
+            }
+        }
+
+        // Sub analysis filter - optimized with early return
+        if (debouncedFilters.subAnalysis?.length) {
+            const subAnalysisBody = analysis.subAnalysisData.body.toLowerCase();
+            if (!debouncedFilters.subAnalysis.some(filterSubAnalysis => 
+                subAnalysisBody.includes(filterSubAnalysis.toLowerCase())
+            )) {
+                return false;
+            }
+        }
+
+        // Publisher filter - optimized with early return
+        if (debouncedFilters.publisher?.length) {
+            const name = analysis.publisher.name.toLowerCase();
+            const handle = analysis.publisher.handle?.toLowerCase() || '';
+            if (!debouncedFilters.publisher.some(filterPublisher => {
                 const searchValue = filterPublisher.toLowerCase();
                 return name.includes(searchValue) || handle.includes(searchValue);
-            });
-            if (!publisherMatches) matches = false;
+            })) {
+                return false;
+            }
         }
 
-        if (filters.tweetType?.length && !filters.tweetType.includes(analysis.tweetType)) {
-            matches = false;
-        }
-
-        if (filters.addedBy?.length && !filters.addedBy.includes(analysis.addedByData?.name || '')) {
-            matches = false;
-        }
-
-        if (filters.url?.length && !filters.url.some(url => analysis.url.includes(url))) {
-            matches = false;
-        }
-
-        if (filters.dateRange) {
+        // Date range filter - optimized with early return
+        if (debouncedFilters.dateRange) {
             const analysisDate = new Date(analysis.createdAt);
-            if (filters.dateRange.start && analysisDate < filters.dateRange.start) {
-                matches = false;
+            if (debouncedFilters.dateRange.start && analysisDate < debouncedFilters.dateRange.start) {
+                return false;
             }
-            if (filters.dateRange.end && analysisDate > filters.dateRange.end) {
-                matches = false;
+            if (debouncedFilters.dateRange.end && analysisDate > debouncedFilters.dateRange.end) {
+                return false;
             }
         }
 
-        if (filters.statistics) {
-            const { reactions, comments, shares, views } = filters.statistics;
+        // Statistics filter - optimized with early returns
+        if (debouncedFilters.statistics) {
+            const { reactions, comments, shares, views } = debouncedFilters.statistics;
+            const stats = analysis.statistics;
+            
             if (reactions) {
-                if (reactions.min && analysis.statistics.reactions < reactions.min) matches = false;
-                if (reactions.max && analysis.statistics.reactions > reactions.max) matches = false;
+                if (reactions.min && stats.reactions < reactions.min) return false;
+                if (reactions.max && stats.reactions > reactions.max) return false;
             }
             if (comments) {
-                if (comments.min && analysis.statistics.comments < comments.min) matches = false;
-                if (comments.max && analysis.statistics.comments > comments.max) matches = false;
+                if (comments.min && stats.comments < comments.min) return false;
+                if (comments.max && stats.comments > comments.max) return false;
             }
             if (shares) {
-                if (shares.min && analysis.statistics.shares < shares.min) matches = false;
-                if (shares.max && analysis.statistics.shares > shares.max) matches = false;
+                if (shares.min && stats.shares < shares.min) return false;
+                if (shares.max && stats.shares > shares.max) return false;
             }
             if (views) {
-                if (views.min && analysis.statistics.views < views.min) matches = false;
-                if (views.max && analysis.statistics.views > views.max) matches = false;
+                if (views.min && stats.views < views.min) return false;
+                if (views.max && stats.views > views.max) return false;
             }
         }
 
-        return matches;
-    });
+        return true;
+    }, [debouncedFilters]);
+
+    // Memoized filtered analysis
+    const filteredAnalysis = useMemo(() => {
+        return allAnalysis.filter(filterAnalysis);
+    }, [allAnalysis, filterAnalysis]);
 
     // Calculate pagination
     const totalItems = filteredAnalysis.length;

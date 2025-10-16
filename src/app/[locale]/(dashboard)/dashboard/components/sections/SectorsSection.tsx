@@ -2,7 +2,7 @@
 
 import { AnalysisClassifyEnum, IAnalysis } from "@/interfaces/analysis.types"
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IDashboardClassify, IDashboardSector } from "./types";
 import {  
     MessageCircle, 
@@ -87,176 +87,181 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
         }
     }, [selectedSector])
 
-    const deriveSectors = (analysisData: IAnalysis[]): IDashboardSector[] => {
-        const sectorsMap = new Map<string, { total: number; classifications: IDashboardClassify[] }>();
+    const deriveSectors = useCallback(
+        (analysisData: IAnalysis[]): IDashboardSector[] => {
+            const sectorsMap = new Map<string, { total: number; classifications: IDashboardClassify[] }>();
 
-        for (const analysis of analysisData) {
-            const sectorName = analysis.sectorData.name;
-            const classification = analysis.classify;
+            for (const analysis of analysisData) {
+                const sectorName = analysis.sectorData.name;
+                const classification = analysis.classify;
 
-            if (!sectorsMap.has(sectorName)) {
-                sectorsMap.set(sectorName, {
-                    total: 0,
-                    classifications: [
-                        { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
-                        { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
-                        { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
-                    ],
-                });
+                if (!sectorsMap.has(sectorName)) {
+                    sectorsMap.set(sectorName, {
+                        total: 0,
+                        classifications: [
+                            { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
+                            { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
+                            { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
+                        ],
+                    });
+                }
+
+                const sectorData = sectorsMap.get(sectorName)!;
+                sectorData.total++;
+
+                const classificationEntry = sectorData.classifications.find(
+                    (cls) => cls.type === classification
+                );
+
+                if (classificationEntry) {
+                    classificationEntry.count++;
+                }
             }
 
-            const sectorData = sectorsMap.get(sectorName)!;
-            sectorData.total++;
+            return Array.from(sectorsMap.entries()).map(([name, data]) => ({
+                name,
+                total: data.total,
+                classifications: data.classifications,
+            }));
+        }, 
+        [allAnalysis]);
 
-            const classificationEntry = sectorData.classifications.find(
-                (cls) => cls.type === classification
-            );
+    const deriveTopSectorsByEngagement = useCallback(
+        (analysisData: IAnalysis[], newsData: INews[]): ISectorEngagement[] => {
+            const sectorsMap = new Map<string, ISectorEngagement>();
 
-            if (classificationEntry) {
-                classificationEntry.count++;
+            // Process analysis data
+            for (const analysis of analysisData) {
+                const sectorName = analysis.sectorData.name;
+                const classification = analysis.classify;
+                const statistics = analysis.statistics;
+                const platform = analysis.platform.toLowerCase();
+
+                if (!sectorsMap.has(sectorName)) {
+                    sectorsMap.set(sectorName, {
+                        name: sectorName,
+                        total: 0,
+                        reactions: 0,
+                        comments: 0,
+                        shares: 0,
+                        views: 0,
+                        appearances: 0,
+                        totalMonitoringFromAnalysis: 0,
+                        totalMonitoringFromNews: 0,
+                        platforms: {
+                            x: 0,
+                            facebook: 0,
+                            instagram: 0,
+                            tiktok: 0,
+                            youtube: 0,
+                            linkedin: 0
+                        },
+                        classifications: [
+                            { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
+                            { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
+                            { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
+                        ],
+                    });
+                }
+
+                const sectorData = sectorsMap.get(sectorName)!;
+                sectorData.appearances++;
+                sectorData.totalMonitoringFromAnalysis++;
+                
+                // Update platform count
+                if (platform in sectorData.platforms) {
+                    sectorData.platforms[platform as keyof typeof sectorData.platforms]++;
+                }
+                
+                // Use real statistics from analysis
+                sectorData.reactions += statistics.reactions || 0;
+                sectorData.comments += statistics.comments || 0;
+                sectorData.shares += statistics.shares || 0;
+                sectorData.views += statistics.views || 0;
+                sectorData.total = sectorData.reactions + sectorData.comments + sectorData.shares;
+
+                const classificationEntry = sectorData.classifications.find(
+                    (cls) => cls.type === classification
+                );
+
+                if (classificationEntry) {
+                    classificationEntry.count++;
+                }
             }
-        }
 
-        return Array.from(sectorsMap.entries()).map(([name, data]) => ({
-            name,
-            total: data.total,
-            classifications: data.classifications,
-        }));
-    };
+            // Process news data
+            for (const news of newsData) {
+                const sectorName = news.sectorData.name;
 
-    const deriveTopSectorsByEngagement = (analysisData: IAnalysis[], newsData: INews[]): ISectorEngagement[] => {
-        const sectorsMap = new Map<string, ISectorEngagement>();
+                if (!sectorsMap.has(sectorName)) {
+                    sectorsMap.set(sectorName, {
+                        name: sectorName,
+                        total: 0,
+                        reactions: 0,
+                        comments: 0,
+                        shares: 0,
+                        views: 0,
+                        appearances: 0,
+                        totalMonitoringFromAnalysis: 0,
+                        totalMonitoringFromNews: 0,
+                        platforms: {
+                            x: 0,
+                            facebook: 0,
+                            instagram: 0,
+                            tiktok: 0,
+                            youtube: 0,
+                            linkedin: 0
+                        },
+                        classifications: [
+                            { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
+                            { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
+                            { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
+                        ],
+                    });
+                }
 
-        // Process analysis data
-        for (const analysis of analysisData) {
-            const sectorName = analysis.sectorData.name;
-            const classification = analysis.classify;
-            const statistics = analysis.statistics;
-            const platform = analysis.platform.toLowerCase();
+                const sectorData = sectorsMap.get(sectorName)!;
+                sectorData.appearances++;
+                sectorData.totalMonitoringFromNews++;
 
-            if (!sectorsMap.has(sectorName)) {
-                sectorsMap.set(sectorName, {
-                    name: sectorName,
-                    total: 0,
-                    reactions: 0,
-                    comments: 0,
-                    shares: 0,
-                    views: 0,
-                    appearances: 0,
-                    totalMonitoringFromAnalysis: 0,
-                    totalMonitoringFromNews: 0,
-                    platforms: {
-                        x: 0,
-                        facebook: 0,
-                        instagram: 0,
-                        tiktok: 0,
-                        youtube: 0,
-                        linkedin: 0
-                    },
-                    classifications: [
-                        { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
-                        { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
-                        { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
-                    ],
-                });
+                // Map NewsClassifyEnum to AnalysisClassifyEnum
+                let mappedClassification: AnalysisClassifyEnum;
+                switch (news.classify) {
+                    case NewsClassifyEnum.POSITIVE:
+                        mappedClassification = AnalysisClassifyEnum.POSITIVE;
+                        break;
+                    case NewsClassifyEnum.NEGATIVE:
+                        mappedClassification = AnalysisClassifyEnum.NEGATIVE;
+                        break;
+                    case NewsClassifyEnum.NEUTRAL:
+                    default:
+                        mappedClassification = AnalysisClassifyEnum.NEUTRAL;
+                        break;
+                }
+
+                const classificationEntry = sectorData.classifications.find(
+                    (cls) => cls.type === mappedClassification
+                );
+
+                if (classificationEntry) {
+                    classificationEntry.count++;
+                }
             }
 
-            const sectorData = sectorsMap.get(sectorName)!;
-            sectorData.appearances++;
-            sectorData.totalMonitoringFromAnalysis++;
             
-            // Update platform count
-            if (platform in sectorData.platforms) {
-                sectorData.platforms[platform as keyof typeof sectorData.platforms]++;
-            }
-            
-            // Use real statistics from analysis
-            sectorData.reactions += statistics.reactions || 0;
-            sectorData.comments += statistics.comments || 0;
-            sectorData.shares += statistics.shares || 0;
-            sectorData.views += statistics.views || 0;
-            sectorData.total = sectorData.reactions + sectorData.comments + sectorData.shares;
+            const result = Array.from(sectorsMap.values())
+                .sort((a, b) => b.total - a.total)
 
-            const classificationEntry = sectorData.classifications.find(
-                (cls) => cls.type === classification
-            );
+            setTop3Sectors(result.slice(0, Math.min(result.length, 3)))
 
-            if (classificationEntry) {
-                classificationEntry.count++;
-            }
-        }
+            return result;
+        },
+        [allAnalysis, allNews]
+    );
 
-        // Process news data
-        for (const news of newsData) {
-            const sectorName = news.sectorData.name;
-
-            if (!sectorsMap.has(sectorName)) {
-                sectorsMap.set(sectorName, {
-                    name: sectorName,
-                    total: 0,
-                    reactions: 0,
-                    comments: 0,
-                    shares: 0,
-                    views: 0,
-                    appearances: 0,
-                    totalMonitoringFromAnalysis: 0,
-                    totalMonitoringFromNews: 0,
-                    platforms: {
-                        x: 0,
-                        facebook: 0,
-                        instagram: 0,
-                        tiktok: 0,
-                        youtube: 0,
-                        linkedin: 0
-                    },
-                    classifications: [
-                        { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
-                        { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
-                        { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
-                    ],
-                });
-            }
-
-            const sectorData = sectorsMap.get(sectorName)!;
-            sectorData.appearances++;
-            sectorData.totalMonitoringFromNews++;
-
-            // Map NewsClassifyEnum to AnalysisClassifyEnum
-            let mappedClassification: AnalysisClassifyEnum;
-            switch (news.classify) {
-                case NewsClassifyEnum.POSITIVE:
-                    mappedClassification = AnalysisClassifyEnum.POSITIVE;
-                    break;
-                case NewsClassifyEnum.NEGATIVE:
-                    mappedClassification = AnalysisClassifyEnum.NEGATIVE;
-                    break;
-                case NewsClassifyEnum.NEUTRAL:
-                default:
-                    mappedClassification = AnalysisClassifyEnum.NEUTRAL;
-                    break;
-            }
-
-            const classificationEntry = sectorData.classifications.find(
-                (cls) => cls.type === mappedClassification
-            );
-
-            if (classificationEntry) {
-                classificationEntry.count++;
-            }
-        }
-
-        
-        const result = Array.from(sectorsMap.values())
-            .sort((a, b) => b.total - a.total)
-
-        setTop3Sectors(result.slice(0, Math.min(result.length, 3)))
-
-        return result;
-    };
-
-    const getPlatformCount = (platform: string) => {
+    const getPlatformCount = useCallback((platform: string) => {
         return allAnalysis.filter(analysis => analysis.platform === platform).length;
-    };
+    }, [allAnalysis]);
 
     const scrollVariants = {
         hidden: { opacity: 0, y: 20 },

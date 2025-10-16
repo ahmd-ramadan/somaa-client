@@ -4,10 +4,18 @@ import { IResponseStatus } from '@/types';
 import { IAnalysis } from '@/interfaces/analysis.types';
 import { addAnalysis, deleteAnalysis, fetchAllAnalysis, updateAnalysis, updateGroupOfAnalysis } from './analysisThunks';
 import { ApiResponse } from '@/utils/apiService';
+import { IPagenationResponse } from '@/interfaces/general.interface';
 
 interface IAnalysisState {
    allAnalysis: IAnalysis[],
+   allAnalysisForDashboard: IAnalysis[],
    analysis: IAnalysis,
+   pagenation: IPagenationResponse,
+   dashboardPagenation: IPagenationResponse,
+   datequery: {
+    startDate: Date | undefined,
+    endDate: Date | undefined,
+   },
    allAnalysisStatus: IResponseStatus,
    anslysisStatus: IResponseStatus,
    addAnalysisStatus: IResponseStatus,
@@ -18,8 +26,15 @@ interface IAnalysisState {
 
 const initialState: IAnalysisState = {
     allAnalysis: [],
+    allAnalysisForDashboard: [],
     analysis: {} as IAnalysis,
+    pagenation: {} as IPagenationResponse,
+    dashboardPagenation: {} as IPagenationResponse,
     allAnalysisStatus: 'idle',
+    datequery: {
+        startDate: undefined,
+        endDate: undefined,
+    },
     anslysisStatus: 'idle',
     addAnalysisStatus: 'idle',
     updateAnalysisStatus: 'idle',
@@ -55,9 +70,24 @@ const analysisSlice = createSlice({
             })
             .addCase(fetchAllAnalysis.fulfilled, (state, action) => {
                 state.allAnalysisStatus = 'succeeded';
-                const { success, data } = action.payload as any;
+                const { success, data: { data, pagenation } } = action.payload as any;
                 if (success) {
-                    state.allAnalysis = data; // data.map((a: any) => ({ ... a, publisher: a?.publisher || a.publisherData }));
+                    state.datequery = {
+                        startDate: action.meta.arg.startDate || undefined,
+                        endDate: action.meta.arg.endDate || undefined,
+                    };
+                    if(action.meta.arg.forDashboard) {
+                        state.allAnalysisForDashboard = data;
+                        state.dashboardPagenation = pagenation;
+                    } else {
+                        state.pagenation = pagenation;
+                        if(pagenation.page > 1) {
+                            state.allAnalysis = [...state.allAnalysis, ...data];
+                        } else {
+                            state.allAnalysis = data; // data.map((a: any) => ({ ... a, publisher: a?.publisher || a.publisherData }));
+                        }
+                    }
+                    
                 }
             })
             .addCase(fetchAllAnalysis.rejected, (state) => {
@@ -75,8 +105,9 @@ const analysisSlice = createSlice({
                 state.addAnalysisStatus = 'succeeded';
                 const { success, data } = action.payload as any;
                 if (success && data) {
-                    state.allAnalysis.unshift(data);
-                    state.analysis = data;
+                    const newData = { ...data, publisher:   data?.publisher || data?.publisherData }
+                    state.allAnalysis.unshift(newData);
+                    state.analysis = newData;
                 }
             })
             .addCase(addAnalysis.rejected, (state) => {
@@ -89,13 +120,14 @@ const analysisSlice = createSlice({
                 state.updateAnalysisStatus = 'loading';
             })
             .addCase(updateAnalysis.fulfilled, (state, action) => {
-                const { success, data: analysis } = action.payload as ApiResponse<IAnalysis>;
+                const { success, data: analysis } = action.payload as any;
                 if (success && analysis) {
                     state.updateAnalysisStatus = 'succeeded'
+                    const newAnalysis = { ... analysis, publisher: analysis?.publisher || analysis?.publisherData }
                     state.allAnalysis = state.allAnalysis.map(
-                        a => a._id.toString() === analysis._id.toString() ? analysis : a
+                        a => a._id.toString() === newAnalysis._id.toString() ? newAnalysis : a
                     );
-                    state.analysis = analysis;
+                    state.analysis = newAnalysis;
                 } else {
                     state.updateAnalysisStatus = 'failed'
                 }
@@ -114,9 +146,10 @@ const analysisSlice = createSlice({
                 if (success && groupOfAnalysis) {
                     state.updateGroupOfAnalysisStatus = 'succeeded'
                     for(const analysis of groupOfAnalysis) {
+                        const newAnalysis = { ... analysis, publisher: analysis?.publisherData }
                         state.allAnalysis = state.allAnalysis.map(
-                            a => a._id.toString() === analysis._id.toString() ? analysis : a
-                        );
+                            a => a._id.toString() === newAnalysis._id.toString() ? newAnalysis : a
+                        ) as any;
                     }
                 } else {
                     state.updateGroupOfAnalysisStatus = 'failed'

@@ -2,8 +2,8 @@
 
 import { IAnalysis, PlatformsEnum } from "@/interfaces/analysis.types";
 import { IDashboardPlatform } from "./types";
-import { useEffect, useState } from "react";
-import { Globe, Pause, Play } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Pause, Play } from "lucide-react";
 import { motion, useAnimation } from "framer-motion"; // Import useAnimation
 import { getPlatformIcon, getPlatformName } from "../utils";
 
@@ -18,7 +18,7 @@ const PlatformsSections = ({ allAnalysis }: IPlatformsSectionProps) => {
     const controls = useAnimation(); // Hook for controlling the animation
 
     // Derives and counts platforms from the analysis data
-    const derivePlatforms = (analysisData: IAnalysis[]): IDashboardPlatform[] => {
+    const derivePlatforms = useCallback((analysisData: IAnalysis[]): IDashboardPlatform[] => {
         const analysisMap = new Map<PlatformsEnum, { total: number }>();
         for (const { platform } of analysisData) {
             if (analysisMap.has(platform)) {
@@ -29,7 +29,7 @@ const PlatformsSections = ({ allAnalysis }: IPlatformsSectionProps) => {
             }
         }
         return Array.from(analysisMap.entries()).map(([platform, { total }]) => ({ platform, total }));
-    };
+    }, [allAnalysis]);
 
     // Update platforms when allAnalysis prop changes
     useEffect(() => {
@@ -62,7 +62,7 @@ const PlatformsSections = ({ allAnalysis }: IPlatformsSectionProps) => {
     };
 
     // A reusable component for a single platform item to keep the JSX clean
-    const PlatformItem = ({ platform, total, ...props }: IDashboardPlatform & { [key: string]: any }) => (
+    const PlatformItem = useCallback(({ platform, total, ...props }: IDashboardPlatform & { [key: string]: any }) => (
         <motion.div
             className="flex items-center justify-between gap-1 p-1 rounded-lg bg-gray-700/50"
             whileHover={{ scale: 1.02, backgroundColor: "rgba(55, 65, 81, 0.8)" }} // Example: darken on hover
@@ -74,7 +74,7 @@ const PlatformsSections = ({ allAnalysis }: IPlatformsSectionProps) => {
             </div>
             <span className="text-sm text-blue-500 font-semibold">{total}</span>
         </motion.div>
-    );
+    ), []);
 
     return (
         <div className="w-1/2 h-full p-1 overflow-hidden bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 hover:shadow-xl transition-all duration-300">

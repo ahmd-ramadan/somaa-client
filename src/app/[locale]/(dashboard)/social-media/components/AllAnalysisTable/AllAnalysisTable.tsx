@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { 
     SearchX,
     FilterX,
@@ -11,7 +10,7 @@ import {
     X,
     Filter,
     ChevronDown,
-    ChevronUp
+    ChevronUp,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
@@ -32,12 +31,11 @@ import { AllAnalysisTableProps } from './types';
 const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
     const t = useTranslations("SocialMediaPage.AllAnalysisTable");
     const t2 = useTranslations("DeleteModal");
-    const locale = useLocale();
-    const router = useRouter();
     const dispatch = useAppDispatch();
 
-    const { allSectors, allSectorsStatus } = useAppSelector((state: RootState) => state.sectors);
-    const { allSubAnalysis, allSubAnalysisStatus } = useAppSelector((state: RootState) => state.subAnalysis);
+    const { allSectorsStatus } = useAppSelector((state: RootState) => state.sectors);
+    const { allSubAnalysisStatus } = useAppSelector((state: RootState) => state.subAnalysis);
+    const { pagenation } = useAppSelector((state: RootState) => state.analysis);
 
     // Use our custom hook for all table logic
     const {
@@ -101,6 +99,8 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
         closeViewModal,
         closeUpdateGroupOfAnalysisModal,
         handleUpdateGroupOfAnalysis,
+        isGroupingLoading,
+        handleShowMore,
     } = useAnalysisTable();
 
     // State for image hover functionality
@@ -141,21 +141,25 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
         }
     }, [dispatch, allSubAnalysisStatus]);
 
-    // Get grouped analysis data
+    // Get grouped analysis data - memoized for performance
     const groupedAnalysis = React.useMemo(() => getSortedAndGroupedAnalysis, [getSortedAndGroupedAnalysis]);
+    
+    // Memoize expensive calculations
+    const totalItems = React.useMemo(() => filteredAnalysis.length, [filteredAnalysis.length]);
+    const hasData = React.useMemo(() => totalItems > 0, [totalItems]);
 
     // Image hover handlers
-    const handleImageHover = (e: React.MouseEvent<HTMLDivElement>, imageSrc: string, name: string) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        setHoveredImage({
-            src: imageSrc,
-            name,
-            position: {
-                x: rect.left + window.scrollX,
-                y: rect.top + window.scrollY
-            }
-        });
-    };
+    // const handleImageHover = (e: React.MouseEvent<HTMLDivElement>, imageSrc: string, name: string) => {
+    //     const rect = e.currentTarget.getBoundingClientRect();
+    //     setHoveredImage({
+    //         src: imageSrc,
+    //         name,
+    //         position: {
+    //             x: rect.left + window.scrollX,
+    //             y: rect.top + window.scrollY
+    //         }
+    //     });
+    // };
 
     const handleImageLeave = () => {
         setHoveredImage(null);
@@ -181,14 +185,47 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
 
     return (
         <div className="space-y-0 min-h-svh">
+            {/* Performance Monitor */}
+            {/* <PerformanceMonitor 
+                dataSize={filteredAnalysis.length} 
+                componentName="AllAnalysisTable"
+                enabled={true}
+            /> */}
+            
             {/* Fixed Filters Section at Top */}
             <div ref={pageHeader} className="sticky top-0 z-40 bg-transparent border-b border-gray-200 shadow-sm">
                 {/* Filters Toggle Button */}
                 <div className="px-4 py-1 border-b border-gray-200">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-700">{t("showAllAnalysis")}: </span>
-                            <span className="font-semibold text-secondary">{filteredAnalysis.length}</span>
+                            <span className="text-sm font-medium text-gray-700">
+                                {t("showAllAnalysis")}: 
+                            </span>
+                            <span className="font-semibold text-secondary">
+                                {totalItems}
+                            </span>
+                            { 
+                                pagenation.totalPages > pagenation.page && (
+                                    <button
+                                        onClick={handleShowMore}
+                                        className='flex items-center gap-2 px-2 py-1 bg-primary hover:bg-secondary text-white rounded-lg hover:bg-primary/90 transition-colors text-xs'
+                                    >
+                                        <span>{t("showMore")}</span>
+                                    </button> 
+                                )
+                            }
+                            {/* {selectedItems.size > 0 && (
+                                <button
+                                    onClick={() => {
+                                        setSelectedItems(new Set());
+                                        setSelectedGroups(new Set());
+                                        setCurrentPage(1);
+                                    }}
+                                    className="ml-2 px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors"
+                                >
+                                    {t("showAll")}
+                                </button>
+                            )} */}
                         </div>
                         <div className="flex items-center gap-2">
                             <button
@@ -242,7 +279,7 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
             </div>
 
             {/* No Data State */}
-            {filteredAnalysis.length === 0 && (
+            {!hasData && (
                 <div 
                     className="flex flex-col items-center justify-center py-16 text-gray-500 rounded-lg" 
                     style={{ minHeight: `calc(100vh - ${headerHeight}px - 120px)` }}
@@ -259,8 +296,19 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
             )}
 
             {/* Table Container */}
-            {filteredAnalysis.length > 0 && (
+            {hasData && (
                 <div className="shadow-sm relative">
+                    {/* Grouping Loading Indicator */}
+                    {isGroupingLoading && (
+                        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
+                            <div className="flex items-center gap-2 text-primary">
+                                <Spinner size="20px" />
+                                <span className="text-sm font-medium">{t("groupingData")}</span>
+                            </div>
+                        </div>
+                    )}
+                    
+                    
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200 text-xs">
                             <TableHeader
@@ -384,6 +432,7 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
                 setItemsPerPage={setItemsPerPage}
                 filteredAnalysis={filteredAnalysis}
                 activeGroupings={activeGroupingKeys}
+                selectedItems={selectedItems}
                 t={t}
             />
         </div>

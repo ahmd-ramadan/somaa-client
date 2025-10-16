@@ -1,5 +1,5 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
 import { DashboardClassificationsDefault, IDashboardClassify } from "./types";
 import { AnalysisClassifyEnum, IAnalysis } from "@/interfaces/analysis.types";
 import { INews, NewsClassifyEnum } from "@/interfaces/news.types";
@@ -20,7 +20,7 @@ const ClassificationSection = ({ allAnalysis, allNews }: ClassificationSectionPr
         }
     }, [allAnalysis, allNews])
 
-    const deriveClassifications = (analysisData: IAnalysis[], newsData: INews[]): IDashboardClassify[] => {
+    const deriveClassifications = useCallback((analysisData: IAnalysis[], newsData: INews[]): IDashboardClassify[] => {
         const positiveAnalysis = analysisData.filter(a => a.classify === AnalysisClassifyEnum.POSITIVE).length
         const nuetralAnalysis = analysisData.filter(a => a.classify === AnalysisClassifyEnum.NEUTRAL).length
         const negativeAnalysis = analysisData.filter(a => a.classify === AnalysisClassifyEnum.NEGATIVE).length
@@ -34,9 +34,9 @@ const ClassificationSection = ({ allAnalysis, allNews }: ClassificationSectionPr
             { type: AnalysisClassifyEnum.NEUTRAL, count: nuetralAnalysis + nuetralNews },
             { type: AnalysisClassifyEnum.NEGATIVE, count: negativeAnalysis + negativeNews},
         ]
-    }
+    }, [allAnalysis, allNews]);
 
-    const getClassificationIcon = (type: AnalysisClassifyEnum) => {
+    const getClassificationIcon = useCallback((type: AnalysisClassifyEnum) => {
         switch (type) {
             case AnalysisClassifyEnum.POSITIVE:
                 // return <span className="text-4xl animate-bounce">😊</span>;
@@ -48,7 +48,7 @@ const ClassificationSection = ({ allAnalysis, allNews }: ClassificationSectionPr
                 // return <span className="text-4xl animate-ping">😠</span>;
                 return <Frown className="text-red-400 w-16 h-16"/>
         }
-    };
+    }, []);
 
     return (
         <div className="w-full">

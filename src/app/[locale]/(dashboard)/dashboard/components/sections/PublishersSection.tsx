@@ -107,7 +107,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
         }
     }, [twitterReady, topFivePublishers, activeIndex]);
 
-    const deriveTopFivePublishers = (analysisData: IAnalysis[]): ITopFivePublishers[] => {
+    const deriveTopFivePublishers = React.useCallback((analysisData: IAnalysis[]): ITopFivePublishers[] => {
         let topRecation = null, topComments = null, topShares = null, topViews = null, topAppearence = null, topFollowers = null;
 
         for (const item of analysisData) {
@@ -129,13 +129,13 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
             { ...topAppearence as IAnalysis, type: 'appearance' },
             { ...topFollowers as IAnalysis, type: 'followers' },
         ];
-    };
+    }, [allAnalysis]);
 
-    const getTypeMessage = (type: ITopFivePublishersTypes): string => {
+    const getTypeMessage = React.useCallback((type: ITopFivePublishersTypes): string => {
         return TOP_FIVE_PUBLISHERS_TYPES.includes(type) ? t(`${type}Top`) : t("topReactions");
-    }
+    }, [t]);
 
-    const TopFivePublishers = topFivePublishers.map((analysis, index) => {
+    const TopFivePublishers = React.useMemo(() => topFivePublishers.map((analysis, index) => {
         return (
             <div key={index} className="w-[98%] px-2 flex justify-end flex-col mx-auto gap-1 max-h-[350px] overflow-auto custom-scrollbar">
                 <div className="flex items-center gap-1 justify-end">
@@ -154,7 +154,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                 <PublisherEmbed analysis={analysis} />
             </div>
         )
-    });
+    }), [topFivePublishers]); 
 
     const handleSlideChange = (e: any) => {
         setActiveIndex(e.slide);

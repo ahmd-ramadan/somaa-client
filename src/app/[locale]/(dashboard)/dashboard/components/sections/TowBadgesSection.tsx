@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 
 interface ITwoBadgesSectionProps {
     allAnalysisCount: number;
@@ -6,19 +7,44 @@ interface ITwoBadgesSectionProps {
 
 const TwoBadgesSection = ({ allAnalysisCount, allNewsCount }: ITwoBadgesSectionProps) => {
 
-    const totalAllNews = allNewsCount
-    const totalAllAnalysis = allAnalysisCount
-    const totalContent = totalAllAnalysis + totalAllNews
     
-    const radius = 55
-    const circumference = 2 * Math.PI * radius
-    
-    const newsPercentage = totalAllNews / totalContent
-    const analysisPercentage = totalAllAnalysis / totalContent
-    
-    const newsStrokeDashoffset = circumference * (1 - newsPercentage)
-    const analysisStrokeDashoffset = circumference * (1 - analysisPercentage)
-
+    const {
+        totalAllNews,
+        totalAllAnalysis,
+        totalContent,
+        radius,
+        circumference,
+        newsPercentage,
+        analysisPercentage,
+        newsStrokeDashoffset,
+        analysisStrokeDashoffset
+      } = useMemo(() => {
+        const totalAllNews = allNewsCount;
+        const totalAllAnalysis = allAnalysisCount;
+        const totalContent = totalAllAnalysis + totalAllNews;
+      
+        const radius = 55;
+        const circumference = 2 * Math.PI * radius;
+      
+        const newsPercentage = totalContent ? totalAllNews / totalContent : 0;
+        const analysisPercentage = totalContent ? totalAllAnalysis / totalContent : 0;
+      
+        const newsStrokeDashoffset = circumference * (1 - newsPercentage);
+        const analysisStrokeDashoffset = circumference * (1 - analysisPercentage);
+      
+        return {
+          totalAllNews,
+          totalAllAnalysis,
+          totalContent,
+          radius,
+          circumference,
+          newsPercentage,
+          analysisPercentage,
+          newsStrokeDashoffset,
+          analysisStrokeDashoffset,
+        };
+      }, [allNewsCount, allAnalysisCount]);
+      
     return (
         <div className="w-1/5">
             <div className="flex flex-col gap-1 items-center justify-center p-1 bg-gray-800/50 rounded-lg">                        

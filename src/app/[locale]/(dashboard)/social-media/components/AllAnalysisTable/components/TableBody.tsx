@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { IAnalysis } from "@/interfaces/analysis.types";
 import { GroupedAnalysisData } from '../types';
 import TableRow from './TableRow';
@@ -42,59 +42,63 @@ const TableBody: React.FC<TableBodyProps> = ({
     userId,
     t
 }) => {
-    const renderNestedGroups = (groups: GroupedAnalysisData[], level: number = 0): React.ReactNode[] => {
-        return groups.map(group => {
-            const isCollapsed = collapsedGroups[group.key];
-            const hasChildren = group.children.length > 0;
-            const hasItems = group.items.length > 0;
-            const isNoGrouping = group.key === 'all-data';
-            
-            return (
-                <React.Fragment key={group.key}>
-                    {/* Group Header Row - Only show if not "all-data" or if it has children */}
-                    {(!isNoGrouping || hasChildren) && (
-                        <GroupHeader
-                            group={group}
-                            level={level}
-                            collapsedGroups={collapsedGroups}
-                            selectedItems={selectedItems}
-                            selectedGroups={selectedGroups}
-                            handleGroupSelect={handleGroupSelect}
-                            isGroupFullySelected={isGroupFullySelected}
-                            isGroupPartiallySelected={isGroupPartiallySelected}
-                            toggleGroup={toggleGroup}
-                            t={t}
-                        />
-                    )}
-                    
-                    {/* If group is expanded or it's "all-data", show children or items */}
-                    {(!isCollapsed || isNoGrouping) && (
-                        <>
-                            {/* Show direct items if this group has them */}
-                            {hasItems && group.items.map((analysis) => (
-                                <TableRow
-                                    key={analysis._id}
-                                    analysis={analysis}
-                                    selectedItems={selectedItems}
-                                    handleItemSelect={handleItemSelect}
-                                    openDetailsModal={openDetailsModal}
-                                    openDeleteModal={openDeleteModal}
-                                    openViewModal={openViewModal}
-                                    role={role}
-                                    permissions={permissions}
-                                    userId={userId}
-                                    t={t}
-                                />
-                            ))}
-                            
-                            {/* Recursively render children groups */}
-                            {hasChildren && renderNestedGroups(group.children, level + 1)}
-                        </>
-                    )}
-                </React.Fragment>
-            );
-        });
-    };
+    // Memoized render function for better performance
+    const renderNestedGroups = useMemo(() => {
+        const renderGroups = (groups: GroupedAnalysisData[], level: number = 0): React.ReactNode[] => {
+            return groups.map(group => {
+                const isCollapsed = collapsedGroups[group.key];
+                const hasChildren = group.children.length > 0;
+                const hasItems = group.items.length > 0;
+                const isNoGrouping = group.key === 'all-data';
+                
+                return (
+                    <React.Fragment key={group.key}>
+                        {/* Group Header Row - Only show if not "all-data" or if it has children */}
+                        {(!isNoGrouping || hasChildren) && (
+                            <GroupHeader
+                                group={group}
+                                level={level}
+                                collapsedGroups={collapsedGroups}
+                                selectedItems={selectedItems}
+                                selectedGroups={selectedGroups}
+                                handleGroupSelect={handleGroupSelect}
+                                isGroupFullySelected={isGroupFullySelected}
+                                isGroupPartiallySelected={isGroupPartiallySelected}
+                                toggleGroup={toggleGroup}
+                                t={t}
+                            />
+                        )}
+                        
+                        {/* If group is expanded or it's "all-data", show children or items */}
+                        {(!isCollapsed || isNoGrouping) && (
+                            <>
+                                {/* Show direct items if this group has them */}
+                                {hasItems && group.items.map((analysis) => (
+                                    <TableRow
+                                        key={analysis._id}
+                                        analysis={analysis}
+                                        selectedItems={selectedItems}
+                                        handleItemSelect={handleItemSelect}
+                                        openDetailsModal={openDetailsModal}
+                                        openDeleteModal={openDeleteModal}
+                                        openViewModal={openViewModal}
+                                        role={role}
+                                        permissions={permissions}
+                                        userId={userId}
+                                        t={t}
+                                    />
+                                ))}
+                                
+                                {/* Recursively render children groups */}
+                                {hasChildren && renderGroups(group.children, level + 1)}
+                            </>
+                        )}
+                    </React.Fragment>
+                );
+            });
+        };
+        return renderGroups;
+    }, [groupedAnalysis, collapsedGroups, selectedItems, selectedGroups, handleGroupSelect, isGroupFullySelected, isGroupPartiallySelected, toggleGroup, openDetailsModal, openDeleteModal, openViewModal, role, permissions, userId, t]);
 
     return (
         <tbody className="bg-white divide-y divide-gray-200 text-xs">

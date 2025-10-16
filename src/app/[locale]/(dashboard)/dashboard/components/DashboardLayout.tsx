@@ -18,6 +18,9 @@ import SubAnalysisAndSectorsSection from "./sections/SubAnalysisAndSectorsSectio
 import { toZonedTime, format } from 'date-fns-tz'
 import { useTranslations } from "next-intl";
 import DateSection from "./sections/DateSection";
+import { fetchAllAnalysis } from "@/lib/features/socialMedia/analysisThunks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { RootState } from "@/lib/store";
 
 // Register Chart.js components
 ChartJS.register(
@@ -47,8 +50,10 @@ const DashboardLayout = () => {
     const [isMounted, setIsMounted] = useState(false);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [pagenation, setPagenation] = useState<{ page: number, size: number }>({ page: 1, size: 500 });
     const [isFullscreen, setIsFullscreen] = useState(false);
     const dashboardRef = useRef<HTMLDivElement>(null);
+    const { allAnalysisForDashboard } = useAppSelector((state: RootState) => state.analysis);
   
     useEffect(() => {
         setIsMounted(true);
@@ -110,6 +115,10 @@ const DashboardLayout = () => {
             socket.off('allNews');
         };
     }, [socket, isConnected])
+
+    useEffect(() => {
+        setAllAnalysis([ ...allAnalysis, ...allAnalysisForDashboard ]);
+    }, [allAnalysisForDashboard]);
     
     useEffect(() => {
         return () => {
@@ -151,6 +160,16 @@ const DashboardLayout = () => {
         }
     };
 
+    const dispatch = useAppDispatch();
+    const handleShowMore = () => {
+        dispatch(fetchAllAnalysis({
+            startDate: new Date(startDate),
+            endDate: new Date(endDate),
+            pagenationQuery: { page: pagenation?.page + 1 },
+            forDashboard: true
+        }));
+    };
+
     // console.log("Date ", startDate, endDate)
     
     return (
@@ -188,6 +207,7 @@ const DashboardLayout = () => {
                                     endDate={endDate}
                                     setStartDate={setStartDate}
                                     setEndDate={setEndDate}
+                                    handleShowMore={handleShowMore}
                                     callData={() => {
                                         if (socket && isConnected && startDate && endDate) {
                                             socket.emit('getAllAnalysis', { startDate: new Date(startDate), endDate: new Date(endDate) });

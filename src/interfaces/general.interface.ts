@@ -10,3 +10,10 @@ export interface ICloudinaryIMage {
     secure_url: string;
     public_id: string;
 }
+
+export interface IPagenationResponse {
+    page: number;
+    size: number;
+    totalItems: number;
+    totalPages: number;
+}

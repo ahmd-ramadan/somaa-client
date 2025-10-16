@@ -184,17 +184,27 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
         const startDate = new Date(dateRange.from);
         const endDate = new Date(dateRange.to);
 
+        const startInKSA = toZonedTime(startDate, timeZone);
+        const endInKSA = toZonedTime(endDate, timeZone);
+        
+        const formatDate = (date: Date) => format(date, 'yyyy-MM-dd\'T\'HH:mm', { timeZone });
+        setDateRange({
+            from: formatDate(startDate),
+            to: formatDate(endDate)
+        });
+        
         // Validate date range
         if (startDate > endDate) {
             alert(t("invalidDateRange"));
             return;
         }
 
+
         const newFilters = {
             ...filters,
             dateRange: {
-                start: startDate,
-                end: endDate
+                start: startInKSA,
+                end: endInKSA
             }
         };
         setFilters(newFilters);
@@ -208,8 +218,8 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
             currentStart.getTime() !== startDate.getTime() || 
             currentEnd.getTime() !== endDate.getTime()) {
             dispatch(fetchAllAnalysis({
-                startDate,
-                endDate
+                startDate: startInKSA,
+                endDate: endInKSA
             }));
         }
     };

@@ -71,7 +71,7 @@ export default function KeywordsResultsV2({ dataSource }: KeywordsResultsProps) 
   // const [showFilters, setShowFilters] = useState(false);
   // const [showGrouping, setShowGrouping] = useState(false);
   const [groupBy, setGroupBy] = useState<string[]>([]);
-  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'table'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'table'>('list');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [selectedResults, setSelectedResults] = useState<string[]>([]);

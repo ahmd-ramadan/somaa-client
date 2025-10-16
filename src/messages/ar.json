@@ -127,7 +127,8 @@
         "socialmedia": "التواصل الإجتماعي",
         "profile": "الملف الشخصي",
         "settings": "الإعدادات",
-        "liveMonitoring": "الرصد المباشر"
+        "liveMonitoring": "الرصد المباشر",
+        "addMonitor": "إضافة رصد"
     },
     "UploadImage": {
         "uploadImage": "تحميل الصورة",
@@ -195,11 +196,14 @@
         "socialMedia": "التواصل الإجتماعي",
         "news": "الأخبار",
         "showBtn": "عرض",
-        "cancelBtn": "إلغاء"
+        "cancelBtn": "إلغاء",
+        "showMore": "عرض المزيد"
     },
     "SocialMediaPage": {
         "socialMediaPageTitle": "التواصل الإجتماعي",
         "AllAnalysisTable": {
+            "showMore": "عرض المزيد",
+            "of": "من",
             "copied": "تم النسخ",
             "noResultsFoundFilters": "لا يتوافق مع أي نتائج",
             "noResultsFound": "",
@@ -231,7 +235,7 @@
             "text": "نص",
             "video": "فيديو",
             "image": "صورة",
-            "others": "أخري",
+            "others": "إخري",
             "urlText": "الرابط",
             "addedBy": "الراصد",
             "filters": "التصفية",
@@ -338,6 +342,7 @@
             "sortAsc": "ترتيب تصاعدي"
         },
         "AddAnalysis": {
+            "addAnalysis": "إضافة رصد جديد",
             "url": "المصدر",
             "publisher": "صاحب المنشور",
             "statistics": "التفاعل",
@@ -373,7 +378,7 @@
             "text": "نص",
             "video": "فيديو",
             "image": "صورة",
-            "others": "أخري",
+            "others": "إخري",
             "selectContentType": "تحديد نوع المحتوي",
             "selectSector": "تحديد القطاع",
             "location": "الموقع",
@@ -439,7 +444,7 @@
             "text": "نص",
             "image": "صورة",
             "video": "فيديو",
-            "other": "أخري",
+            "other": "إخري",
             "positive": "إيجابي",
             "negative": "سلبي",
             "neutral": "محايد",
@@ -484,7 +489,7 @@
             "print": "مطبوع",
             "social_media_platforms": "منصات التواصل الإجتماعي",
             "youtube": "يوتيوب",
-            "other": "أخري",
+            "other": "إخري",
             "pressType": "نوع المادة الصحفية",
             "articles": "مقالات",
             "reports": "تقارير",
@@ -628,7 +633,7 @@
             "print": "مطبوع",
             "social_media_platforms": "منصات التواصل الإجتماعي",
             "youtube": "يوتيوب",
-            "other": "أخري",
+            "other": "إخري",
             "selectPressType": "اختر نوع المادة الصحفية",
             "news": "أخبار",
             "pressType": "نوع المادة الصحفية",
@@ -647,7 +652,7 @@
             "text": "نص",
             "video": "فيديو",
             "image": "صورة",
-            "others": "أخري",
+            "others": "إخري",
             "selectContentType": "تحديد نوع المحتوي",
             "selectSector": "تحديد القطاع",
             "location": "الموقع",
@@ -671,7 +676,8 @@
             "newsPaperPlaceholder": "اسم الصحيفة",
             "newspaperNameRequired": "إسم الصحيفة مطلوب",
             "addNewNewspaper": "إضافة صحيفة جديدة",
-            "selectOrAddNewspaper": "أضف الصحيفة"
+            "selectOrAddNewspaper": "أضف الصحيفة",
+            "addNews": "إضافة رصد جديد"
         },
         "ExportModal": {
             "title": "العنوان",
@@ -694,7 +700,7 @@
             "print": "مطبوع",
             "social_media_platforms": "منصات التواصل الإجتماعي",
             "youtube": "يوتيوب",
-            "other": "أخري",
+            "other": "إخري",
             "positive": "إيجابي",
             "negative": "سلبي",
             "neutral": "محايد",
@@ -1018,7 +1024,7 @@
                 "gender": "الجنس",
                 "location": "الموقع",
                 "author": "صاحب المنشور",
-                "otherFilters": "أخري",
+                "otherFilters": "إخري",
                 "hasLocation": "له موقع",
                 "hasMedia":"تحتوي على وسائط",
                 "verifiedOnly": "موثق فقط",
@@ -1210,5 +1216,11 @@
         "error": {
             "fetchFailed": "فشل في جلب المنشورات. يرجى المحاولة مرة أخرى."
         }
+    },
+    "AddMonitorPage": {
+        "addMonitorPageTitle": "إضافة رصد",
+        "addSocialMediaMonitor": "إضافة رصد تواصل اجتماعي",
+        "addNewsMonitor": "إضافة رصد أخبار",
+        "addEMideaMonitor": "إضافة رصد إعلامي"
     }
 }

@@ -9,7 +9,7 @@ export const generateMetadata = async( { params: { locale } } : ILocaleParams): 
     } 
 }
 
-const NewsLayout = ( { children }: { children: ReactNode }) => {
+const SocilMediaLayout = ( { children }: { children: ReactNode }) => {
     return (
         <main className="w-full">
             { children }
@@ -17,4 +17,4 @@ const NewsLayout = ( { children }: { children: ReactNode }) => {
     );
 }
 
-export default NewsLayout;
+export default SocilMediaLayout;

@@ -3,7 +3,6 @@ import { X, AlertCircle } from 'lucide-react';
 import { AnalysisClassifyEnum, ContentTypesEnum, TweetTypesEnum, PlatformsEnum } from "@/interfaces/analysis.types";
 import { fetchAllAnalysis } from "@/lib/features/socialMedia/analysisThunks";
 import { ActiveFiltersDisplayProps } from '../types';
-import NewsFilters from '@/app/[locale]/(dashboard)/news/components/NewsFilters';
 
 const ActiveFiltersDisplay: React.FC<ActiveFiltersDisplayProps> = ({
     filters,

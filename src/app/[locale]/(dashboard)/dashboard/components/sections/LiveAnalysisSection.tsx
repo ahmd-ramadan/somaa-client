@@ -67,7 +67,7 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
                     animate={!isLiveAnalysisAnimating ? "pause" : "animate"}
                 >
                     <div className="space-y-2">
-                    {allAnalysis.map((analysis, index) => (
+                    {allAnalysis.slice(0, 40).map((analysis, index) => (
                             <motion.div 
                                 key={index} 
                                 className="bg-gray-700/50 p-2 rounded-lg"

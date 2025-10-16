@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
-import { IAnalysis, PlatformsEnum, TweetTypesEnum, ContentTypesEnum, AnalysisClassifyEnum } from "@/interfaces/analysis.types";
+import { IAnalysis, PlatformsEnum, AnalysisClassifyEnum } from "@/interfaces/analysis.types";
 import { fetchAllAnalysis, deleteAnalysis, updateGroupOfAnalysis } from '@/lib/features/socialMedia/analysisThunks';
 import { 
     resetAddAnalysisStatus,
@@ -23,7 +23,7 @@ const groupingPossibleValues: Record<string, string[]> = {
 
 export const useAnalysisTable = () => {
     const dispatch = useAppDispatch();
-    const { allAnalysis, allAnalysisStatus, addAnalysisStatus, updateGroupOfAnalysisStatus } = useAppSelector((state: RootState) => state.analysis);
+    const { allAnalysis, allAnalysisStatus, addAnalysisStatus, updateGroupOfAnalysisStatus, pagenation, datequery } = useAppSelector((state: RootState) => state.analysis);
     const { loggedInUser: { role, permissions, token, userId } } = useAppSelector((state: RootState) => state.authUser);
 
     const [selectedAllAnalysis, setSelectedAllAnalysis] = useState<IAnalysis[]>([]);
@@ -43,9 +43,10 @@ export const useAnalysisTable = () => {
     const [isUpdateGroupOfAnalysisModalOpen, setIsUpdateGroupOfAnalysisModalOpen] = useState(false);
     const [sortOrder, setSortOrder] = useState<'none' | 'asc' | 'desc'>('none');
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(20);
+    const [itemsPerPage, setItemsPerPage] = useState(50); // Increased default page size for better performance
     const [groupings, setGroupings] = useState<GroupingState>({});
     const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
+    const [isGroupingLoading, setIsGroupingLoading] = useState(false);
 
     const { isConnected, socket } = useSocket();
     const [error, setError] = useState<string | null>(null);
@@ -65,7 +66,7 @@ export const useAnalysisTable = () => {
             const end = new Date();
             start.setHours(0, 0, 0, 0);
             end.setHours(23, 59, 59, 999);
-
+            
             dispatch(fetchAllAnalysis({
                 startDate: start,
                 endDate: end
@@ -120,6 +121,7 @@ export const useAnalysisTable = () => {
     }, [socket, isConnected]);
 
     const toggleGrouping = (key: string) => {
+        setIsGroupingLoading(true);
         setGroupings(prev => {
             const isActive = prev[key]?.active;
             if (isActive) {
@@ -135,6 +137,11 @@ export const useAnalysisTable = () => {
                 };
             }
         });
+        
+        // Reset loading after a short delay to allow grouping to complete
+        setTimeout(() => {
+            setIsGroupingLoading(false);
+        }, 300);
     };
 
     const activeGroupingKeys = Object.entries(groupings)
@@ -144,35 +151,40 @@ export const useAnalysisTable = () => {
 
     const activeGroupingsMap = activeGroupingKeys.map(key => groupingOrderMap[key as keyof typeof groupingOrderMap]);
 
-    // Use useMemo to prevent infinite re-renders and optimize performance
-    const getSortedAndGroupedAnalysis = React.useMemo((): GroupedAnalysisData[] => {
-        const sorted = [...filteredAnalysis].sort((a, b) => {
+    // Optimized sorting function with memoization
+    const getSortedAnalysis = React.useMemo((): IAnalysis[] => {
+        if (sortOrder === 'none') {
+            return filteredAnalysis;
+        }
+
+        return [...filteredAnalysis].sort((a, b) => {
             const totalA = a.statistics.reactions + a.statistics.comments + a.statistics.shares;
             const totalB = b.statistics.reactions + b.statistics.comments + b.statistics.shares;
             
-            if (sortOrder === 'asc') {
-                return totalA - totalB;
-            } else if (sortOrder === 'desc') {
-                return totalB - totalA;
-            }
-            return 0;
+            return sortOrder === 'asc' ? totalA - totalB : totalB - totalA;
         });
+    }, [filteredAnalysis, sortOrder]);
+
+    // Optimized grouping function with better performance
+    const getSortedAndGroupedAnalysis = React.useMemo((): GroupedAnalysisData[] => {
+        const sorted = getSortedAnalysis;
 
         if (activeGroupingKeys.length === 0) {
-            const totalItems = sorted.length;
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = startIndex + itemsPerPage;
-            const paginated = sorted.slice(startIndex, endIndex);
+            const paginatedSelected = sorted.slice(startIndex, endIndex);
+
             return [{
                 key: 'all-data',
-                label: 'All Analysis',
-                items: paginated,
+                label: `All Analysis (${sorted.length})`,
+                items: paginatedSelected,
                 children: [],
                 level: 0,
                 isCollapsed: false
             }];
         }
 
+        // Optimized grouping with Map for better performance
         const createNestedGroups = (items: IAnalysis[], level: number, parentPath = ''): GroupedAnalysisData[] => {
             if (level >= activeGroupingsMap.length) {
                 return [];
@@ -181,38 +193,47 @@ export const useAnalysisTable = () => {
             const currentGrouping = activeGroupingsMap[level];
             const groupKeyName = activeGroupingKeys[level];
             const allPossibleValues = groupingPossibleValues[groupKeyName] || [];
-            const groups: Record<string, IAnalysis[]> = {};
+            
+            // Use Map for better performance than object
+            const groups = new Map<string, IAnalysis[]>();
 
             // Initialize all possible groups
             allPossibleValues.forEach(value => {
-                groups[value] = [];
+                groups.set(value, []);
             });
 
-            // Fill with actual items
-            items.forEach(item => {
+            // Fill with actual items - optimized loop
+            for (const item of items) {
                 const value = currentGrouping.getValue(item);
-                if (!(value in groups)) {
-                    groups[value] = [];
+                if (!groups.has(value)) {
+                    groups.set(value, []);
                 }
-                groups[value].push(item);
-            });
+                groups.get(value)!.push(item);
+            }
 
-            return Object.entries(groups).map(([value, groupItems]) => {
+            // Convert to array and create groups - show all items
+            const result: GroupedAnalysisData[] = [];
+            
+            for (const [value, groupItems] of Array.from(groups.entries())) {
                 const groupKey = `${parentPath ? parentPath + '/' : ''}${currentGrouping.key}-${value}`;
+                
                 const children = createNestedGroups(groupItems, level + 1, groupKey);
-                return {
+                
+                result.push({
                     key: groupKey,
-                    label: value,
+                    label: `${value} (${groupItems.length})`,
                     items: children.length === 0 ? groupItems : [],
                     children: children,
                     level: level,
                     isCollapsed: false
-                };
-            });
+                });
+            }
+
+            return result;
         };
 
         return createNestedGroups(sorted, 0, '');
-    }, [filteredAnalysis, sortOrder, activeGroupingKeys, activeGroupingsMap, currentPage, itemsPerPage]);
+    }, [getSortedAnalysis, activeGroupingKeys, activeGroupingsMap, currentPage, itemsPerPage, selectedItems]);
 
     // Update collapsedGroups when groupedAnalysis changes
     useEffect(() => {
@@ -373,7 +394,7 @@ export const useAnalysisTable = () => {
         setIsUpdateGroupOfAnalysisModalOpen(false);
     };
 
-    const handleUpdateGroupOfAnalysis = async () => {
+    const handleUpdateGroupOfAnalysis = useCallback(async () => {
         if(selectedItems.size === 0) return;
 
         try {
@@ -407,7 +428,7 @@ export const useAnalysisTable = () => {
             console.error('Error updating group of analysis:', error);
             toast.error("Failed to update group of analysis");
         }
-    };
+    }, [selectedItems, allAnalysis, dispatch, token]);
 
     // Reset update group status
     useEffect(() => {
@@ -418,6 +439,15 @@ export const useAnalysisTable = () => {
             return () => clearTimeout(timer);
         }
     }, [updateGroupOfAnalysisStatus, dispatch]);
+
+    const handleShowMore = () => {
+        console.log(pagenation);
+        dispatch(fetchAllAnalysis({
+            startDate: datequery.startDate,
+            endDate: datequery.endDate,
+            pagenationQuery: { page: pagenation?.page + 1 }
+       }));
+    };
 
     return {
         // State
@@ -489,5 +519,7 @@ export const useAnalysisTable = () => {
         closeViewModal,
         closeUpdateGroupOfAnalysisModal,
         handleUpdateGroupOfAnalysis,
+        isGroupingLoading,
+        handleShowMore,
     };
 }; 

@@ -42,12 +42,18 @@ const LogInForm = () => {
     const onSubmit = async (data: IFormInputs) => {
         try {
             const action = await dispatch(login(data));
-            const { success, message }  = action.payload as any;
+            const { success, message, data: { role } }  = action.payload as any;
             // console.log(action.payload)
             if (success) {
                 toast.success(message || "!مرحبا بعودتك");
-                let path = 'dashboard';
-                router.push(`/${locale}/${path}`);
+                if(role === 'user') {
+                    router.push(`/${locale}/`);
+                } else if(role === 'admin') {
+                    router.push(`/${locale}/social-media`);
+                } else if(role === 'super_admin') {
+                    router.push(`/${locale}/dashboard`);
+                }
+                
             } else {
                 toast.error(message || "فشل في تسجيل الدخول");
             }

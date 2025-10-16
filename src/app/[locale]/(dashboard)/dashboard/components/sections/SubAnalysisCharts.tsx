@@ -2,9 +2,9 @@
 
 import { AnalysisClassifyEnum, IAnalysis } from "@/interfaces/analysis.types";
 import { motion } from "framer-motion";
-import { BarChart as BarChartIcon, LineChart, TrendingUp, Smile, Meh, Frown } from "lucide-react";
+import { BarChart as BarChartIcon, TrendingUp, Smile } from "lucide-react";
 import { IDashboardSubAnalysis } from "./types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, LabelList
 } from 'recharts';
@@ -30,7 +30,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
         }
     }, [allAnalysis])
 
-    const deriveClassifications = (analysisData: IAnalysis[]): AnalysisClassifyEnum => {
+    const deriveClassifications =  useCallback((analysisData: IAnalysis[]): AnalysisClassifyEnum => {
         const positiveAnalysis = analysisData.filter(a => a.classify === AnalysisClassifyEnum.POSITIVE).length
         const nuetralAnalysis = analysisData.filter(a => a.classify === AnalysisClassifyEnum.NEUTRAL).length
         const negativeAnalysis = analysisData.filter(a => a.classify === AnalysisClassifyEnum.NEGATIVE).length
@@ -39,9 +39,9 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
         if(nuetralAnalysis >= negativeAnalysis && nuetralAnalysis >= positiveAnalysis) return AnalysisClassifyEnum.NEUTRAL
         if(negativeAnalysis >= nuetralAnalysis && negativeAnalysis >= positiveAnalysis) return AnalysisClassifyEnum.NEGATIVE
         return AnalysisClassifyEnum.POSITIVE
-    }
+    }, [allAnalysis]);
 
-    const deriveSubAnalysis = (analysisData: IAnalysis[]): any[] => {
+    const deriveSubAnalysis = useCallback((analysisData: IAnalysis[]): any[] => {
         const analysisMap = new Map<string, { count: number, classifications: Map<AnalysisClassifyEnum, number> }>();
         
         analysisData.forEach(analysis => {
@@ -73,9 +73,9 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                 count
             }))
         }));
-    };
+    }, [allAnalysis]);
 
-    const getAreaChartData = () => {
+    const getAreaChartData = useCallback(() => {
         // Sort sub-analyses by total count
         const sortedAnalysis = [...allSubAnalysis].sort((a, b) => {
             const totalA = a.classifications.reduce((sum, c) => sum + c.count, 0);
@@ -112,10 +112,10 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                 negativePercentage: total > 0 ? (negative / total) * 100 : 0
             };
         });
-    };
+    }, [allSubAnalysis]);
 
     // Custom Tooltip for enhanced visuals
-    const CustomTooltip = ({ active, payload, label }: any) => {
+    const CustomTooltip = useCallback(({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             // Find the full name and total from the data
             const data = getAreaChartData().find(d => d.name === label);
@@ -142,22 +142,11 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
             );
         }
         return null;
-    };
+    }, [allSubAnalysis]);
 
-    // Custom Axis Tick with icon
-    const CustomXAxisTick = (props: any) => {
-        const { x, y, payload } = props;
-        return (
-            <g transform={`translate(${x},${y})`}>
-                <text x={0} y={0} dy={16} textAnchor="middle" fill="#9CA3AF" fontSize={12}>
-                    {payload.value}
-                </text>
-            </g>
-        );
-    };
 
     // Animated dot
-    const AnimatedDot = (props: any) => {
+    const AnimatedDot = useCallback((props: any) => {
         const { cx, cy, stroke, key, value, onMouseOver, onMouseOut } = props;
         return (
             <circle
@@ -173,58 +162,62 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                 onMouseOut={onMouseOut}
             />
         );
-    };
+    }, []);
 
     // Responsive/collapsible legend
-    const CustomLegend = (props: any) => {
-        const { payload } = props;
-        // Responsive: collapse on small screens
-        return (
-            <div className="flex gap-3 flex-wrap justify-end items-center text-xs pb-2">
-                {payload.map((entry: any, idx: number) => {
-                    let arabicLabel = t(entry.value);
-                    return (
-                        <div key={idx} className="flex items-center gap-1">
-                            <span className="w-3 h-3 rounded-full block" style={{ background: entry.color }}></span>
-                            <span className={
-                                arabicLabel === t('positive') ? 'text-green-400' :
-                                arabicLabel === t('negative') ? 'text-red-400' :
-                                'text-gray-400'
-                            }>
-                                {arabicLabel}
-                            </span>
-                        </div>
-                    );
-                })}
-            </div>
-        );
-    };
+    const CustomLegend = useCallback(
+        (props: any) => {
+            const { payload } = props;
+            // Responsive: collapse on small screens
+            return (
+                <div className="flex gap-3 flex-wrap justify-end items-center text-xs pb-2">
+                    {payload.map((entry: any, idx: number) => {
+                        let arabicLabel = t(entry.value);
+                        return (
+                            <div key={idx} className="flex items-center gap-1">
+                                <span className="w-3 h-3 rounded-full block" style={{ background: entry.color }}></span>
+                                <span className={
+                                    arabicLabel === t('positive') ? 'text-green-400' :
+                                    arabicLabel === t('negative') ? 'text-red-400' :
+                                    'text-gray-400'
+                                }>
+                                    {arabicLabel}
+                                </span>
+                            </div>
+                        );
+                    })}
+                </div>
+            );
+    }, []);
 
     // Subtle SVG background pattern
-    const ChartBackgroundPattern = () => (
-        <svg width="100%" height="100%" className="absolute inset-0 pointer-events-none" style={{zIndex:0}}>
-            <defs>
-                <pattern id="pattern-circles" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <circle cx="10" cy="10" r="1.5" fill="#374151" />
-                </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#pattern-circles)" />
-        </svg>
-    );
+    const ChartBackgroundPattern = useCallback(
+        () => (
+            <svg width="100%" height="100%" className="absolute inset-0 pointer-events-none" style={{zIndex:0}}>
+                <defs>
+                    <pattern id="pattern-circles" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <circle cx="10" cy="10" r="1.5" fill="#374151" />
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#pattern-circles)" />
+            </svg>
+    ), []);
 
     // Download chart as image
-    const downloadChartAsImage = async () => {
-        setDownloading(true);
-        const chartNode = document.getElementById('enhanced-area-chart');
-        if (chartNode) {
-            const canvas = await html2canvas(chartNode, {});
-            const link = document.createElement('a');
-            link.download = 'chart.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        }
-        setDownloading(false);
-    };
+    const downloadChartAsImage = useCallback(
+        async () => {
+            setDownloading(true);
+            const chartNode = document.getElementById('enhanced-area-chart');
+            if (chartNode) {
+                const canvas = await html2canvas(chartNode, {});
+                const link = document.createElement('a');
+                link.download = 'chart.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            }
+            setDownloading(false);
+        }, []
+    );
 
     return (
         <div className="min-w-full overflow-x-auto flex-1 bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-1 over:shadow-xl transition-all duration-300">

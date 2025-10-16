@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
 import FormatErrorMessage from "@/components/ui/FormatErrormessage";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
 import { handleError } from "@/utils/errorUtils";
@@ -62,7 +62,6 @@ export interface IFormInputs  {
     // isFlagged?: boolean;
     isHighlighted?: boolean;
 }
-
 const AddAnalysis = () => {
     const locale = useLocale();
     const t = useTranslations("SocialMediaPage.AddAnalysis");
@@ -114,7 +113,6 @@ const AddAnalysis = () => {
     const [selectedRegion, setSelectedRegion] = useState<ISaudiLocation | null>(null);
     const [selectedCity, setSelectedCity] = useState<ISaudiLocation['cities'][0] | null>(null);
 
-
     const { isConnected, socket } = useSocket();
     const [error, setError] = useState<string | null>(null);
     useEffect(() => {
@@ -134,7 +132,7 @@ const AddAnalysis = () => {
         };
     }, [socket, isConnected])
 
-    const handleRegionInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleRegionInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setRegionInput(value);
         setShowRegionDropdown(true);
@@ -144,9 +142,9 @@ const AddAnalysis = () => {
             setCityInput("");
             setDistrictInput("");
         }
-    };
+    }, [setRegionInput, setShowRegionDropdown, setSelectedRegion, setSelectedCity, setCityInput, setDistrictInput]);
 
-    const handleCityInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleCityInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setCityInput(value);
         setShowCityDropdown(true);
@@ -154,15 +152,15 @@ const AddAnalysis = () => {
             setSelectedCity(null);
             setDistrictInput("");
         }
-    };
+    }, [setCityInput, setShowCityDropdown, setSelectedCity, setDistrictInput]);
 
-    const handleDistrictInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleDistrictInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setDistrictInput(value);
         setShowDistrictDropdown(true);
-    };
+    }, [setDistrictInput, setShowDistrictDropdown]);
 
-    const handleRegionSelect = (region: ISaudiLocation) => {
+    const handleRegionSelect = useCallback((region: ISaudiLocation) => {
         setSelectedRegion(region);
         setRegionInput(locale === 'ar' ? region.nameAr : region.name);
         setShowRegionDropdown(false);
@@ -176,9 +174,9 @@ const AddAnalysis = () => {
             lat: region.lat,
             lng: region.lng
         });
-    };
+    }, [locale, setValue]);
 
-    const handleCitySelect = (city: ISaudiLocation['cities'][0]) => {
+    const handleCitySelect = useCallback((city: ISaudiLocation['cities'][0]) => {
         setSelectedCity(city);
         setCityInput(locale === 'ar' ? city.nameAr : city.name);
         setShowCityDropdown(false);
@@ -190,7 +188,7 @@ const AddAnalysis = () => {
             lat: city.lat,
             lng: city.lng
         });
-    };
+    }, [locale, selectedRegion, setValue]);
 
     const handleDistrictSelect = (district: ISaudiLocation['cities'][0]['districts'][0]) => {
         setDistrictInput(locale === 'ar' ? district.nameAr : district.name);

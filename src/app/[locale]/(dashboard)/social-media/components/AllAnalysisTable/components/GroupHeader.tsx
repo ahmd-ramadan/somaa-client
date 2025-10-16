@@ -32,8 +32,6 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({
     group,
     level,
     collapsedGroups,
-    selectedItems,
-    selectedGroups,
     handleGroupSelect,
     isGroupFullySelected,
     isGroupPartiallySelected,
@@ -90,14 +88,20 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({
                             groupKey === 'classify' ||
                             groupKey === 'contentType' ||
                             groupKey === 'platform' ?
-                            t(group.label) : group.label
+                            (() => {
+                                // Extract the value part before the count (e.g., "positive (5)" -> "positive")
+                                const valueMatch = group.label.match(/^([^(]+)/);
+                                const value = valueMatch ? valueMatch[1].trim() : group.label;
+                                const translated = t(value);
+                                return translated !== value ? translated : group.label;
+                            })() : group.label
                         }</span>
                         <span className="text-gray-500">({totalItems})</span>
-                        {level > 0 && (
+                        {/* {level > 0 && ( */}
                             <span className="text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded-full">
                                 {groupingType}
                             </span>
-                        )}
+                        {/* )} */}
                     </div>
                 </div>
             </td>
