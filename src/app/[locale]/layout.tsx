@@ -35,23 +35,23 @@ export const generateMetadata = async({ params: { locale } }: ILocaleParams): Pr
         title,
         description,
         keywords: translate({ locale, key: 'keywords' }),
-        icons: {
-            icon: ['/favicon.ico?v=4'],
-            apple: ['/apple-touch-icon.png?v=4'],
-            shortcut: ['/apple-touch-icon.png']
-        },
+        // icons: {
+        //     icon: ['/favicon.ico?v=4'],
+        //     apple: ['/apple-touch-icon.png?v=4'],
+        //     shortcut: ['/apple-touch-icon.png']
+        // },
         openGraph: {
             title,
             description,
             type: 'website',
             url: process.env.NEXT_PUBLIC_DOMAIN,
-            images: [{ url: process.env.NEXT_PUBLIC_LOGO || "/logo.png", width: 800, height: 600, alt: 'Image description' }]
+            // images: [{ url: process.env.NEXT_PUBLIC_LOGO || "/logo.png", width: 800, height: 600, alt: 'Image description' }]
         },
         twitter: {
             card: 'summary_large_image',
             title,
             description,
-            images: [process.env.NEXT_PUBLIC_LOGO || "/logo.png"]
+            // images: [process.env.NEXT_PUBLIC_LOGO || "/logo.png"]
         }
     };
 };

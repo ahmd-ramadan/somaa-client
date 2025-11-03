@@ -43,7 +43,7 @@ next-env.d.ts
 
 # Others
 test
-.env
+*.env
 
 
 *.md
