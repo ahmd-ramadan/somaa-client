@@ -275,7 +275,7 @@ export const SideBarLinks: ISideBarLinks[] = [
     },
     {
         name: "addMonitor",
-        link: "a",
+        link: "add",
         permission: "forAll",
     },
     {

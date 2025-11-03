@@ -82,7 +82,7 @@ const LogInForm = () => {
                             { ...register('email') }
                             placeholder="you@example.com"
                             autoComplete='email'
-                            className={`flex-1 focus:outline-none w-full text-primary`}
+                            className={`flex-1 focus:outline-none w-full text-primary bg-transparent`}
                         />
                     </div>
                     {errors.email && 
@@ -103,7 +103,7 @@ const LogInForm = () => {
                             {...register('password')}
                             placeholder="********"
                             autoComplete='current-password'
-                            className={`focus:outline-none flex-1 w-full text-primary`}
+                            className={`focus:outline-none flex-1 w-full text-primary bg-transparent`}
                         />
                         <button
                             type="button"
