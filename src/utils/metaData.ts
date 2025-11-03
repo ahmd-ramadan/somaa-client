@@ -157,5 +157,8 @@ interface TranslateParams {
 }
 
 export const translate = ({ locale, key }: TranslateParams): any => {
-    return translations[locale][key ?? 'default'];
+    if(!key) {
+        return translations[locale]['default'];
+    }
+    return translations[locale][key];
 };

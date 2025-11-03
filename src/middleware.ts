@@ -9,7 +9,7 @@ import { getLocaleFromPath } from './utils/localeUtils';
 import { IDecodedToken } from './interfaces';
 import { IAdminPermissions, UserRoleTypes } from './types';
 
-const intlMiddleware = createIntlMiddleware({ locales: ['en', 'ar'], defaultLocale: 'ar' });
+const intlMiddleware = createIntlMiddleware({ locales: ['ar', 'en'], defaultLocale: 'ar' });
 
 export default async function middleware(req: NextRequest) {
     const response = intlMiddleware(req);
