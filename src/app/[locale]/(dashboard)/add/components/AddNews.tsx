@@ -197,7 +197,7 @@ const AddNews = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 px-3 py-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-3 py-1">
                 {/* URL Input */}
                 <div className="flex flex-col gap-2">
                     <label htmlFor="url" className="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -451,9 +451,9 @@ const AddNews = () => {
                 </div>
 
                 {/* Note Input */}
-                <div className="flex flex-col gap-2 md:col-span-2">
+                {/* <div className="flex flex-col gap-2 md:col-span-2">
                     <label htmlFor="note" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        {/* <MessageSquare className="w-4 h-4 text-adminPrimary" /> */}
+                        <MessageSquare className="w-4 h-4 text-adminPrimary" />
                         {t("note")}
                     </label>
                     <textarea
@@ -463,13 +463,13 @@ const AddNews = () => {
                         placeholder={t("notePlaceholder")}
                     />
                     {errors.note && <FormatErrorMessage field="note" message={errors.note.message || t("required")} />}
-                </div>
+                </div> */}
 
             </div>
 
 
             {/* Submit Button */}
-            <div className="flex justify-center items-center gap-2">
+            <div className="flex justify-center items-center gap-2 mt-8">
                 {/* Highlight and Flag Icons */}
                 <div className="flex flex-col gap-2 md:col-span-2">
                     <div className="flex items-center gap-4">

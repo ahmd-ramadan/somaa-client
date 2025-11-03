@@ -140,12 +140,12 @@ const LogInForm = () => {
                 <Link href={`/${locale}/forgot-password`} className="text-primary hover:underline">
                     {t('forgetPassMsg')}
                 </Link>
-                <Link 
+                {/* <Link 
                     href={`/${locale}/signup`}
                     className="text-secondary hover:underline"
                 >
                     {t('signupMsg')}
-                </Link>
+                </Link> */}
             </div>
         </div>
     );

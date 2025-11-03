@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { IResponseStatus } from '@/types';
-import { approveOnUser, deleteUser, fetchUsers, getUserProfile, updateUserProfile } from './userThunks';
-import { ILoggedInUser } from '@/interfaces';
+import { approveOnUser, createNewUserRole, deleteUser, fetchAllUsersRoles, fetchUsers, getUserProfile, updateUserPermissions, updateUserProfile } from './userThunks';
+import { ILoggedInUser, IUser } from '@/interfaces';
 
 interface IUserState {
     users: ILoggedInUser[],
@@ -11,7 +11,13 @@ interface IUserState {
     updateProfileStatus: IResponseStatus;
     deleteUserStatus: IResponseStatus; 
     approveOnUserStatus: IResponseStatus
-    
+
+
+    // role user
+    allUserRoles: IUser[];
+    getAllUserRolesStatus: IResponseStatus;
+    createNewUserRoleStatus: IResponseStatus;
+    updateUserPermissionsStatus: IResponseStatus;   
 }
 
 const initialState: IUserState = {
@@ -21,7 +27,12 @@ const initialState: IUserState = {
     userProfileStatus: 'idle',
     updateProfileStatus: 'idle',
     deleteUserStatus: 'idle',
-    approveOnUserStatus: 'idle'
+    approveOnUserStatus: 'idle',
+
+    allUserRoles: [],
+    getAllUserRolesStatus: 'idle',
+    createNewUserRoleStatus: 'idle',
+    updateUserPermissionsStatus: 'idle',
 };
 
 const userSlice = createSlice({
@@ -109,6 +120,57 @@ const userSlice = createSlice({
             })
             .addCase(updateUserProfile.rejected, (state) => {
                 state.updateProfileStatus = 'failed';
+            });
+
+
+        // role user
+        builder
+            .addCase(fetchAllUsersRoles.pending, (state) => {
+                state.getAllUserRolesStatus = 'loading';
+            })
+            .addCase(fetchAllUsersRoles.fulfilled, (state, action) => {
+                state.getAllUserRolesStatus = 'succeeded';
+                const { success, data } = action.payload as any;
+                if(success && data) {
+                    state.allUserRoles = data;
+                }
+            })
+            .addCase(fetchAllUsersRoles.rejected, (state) => {
+                state.getAllUserRolesStatus = 'failed';
+            });
+
+        builder
+            .addCase(createNewUserRole.pending, (state) => {
+                state.createNewUserRoleStatus = 'loading';
+            })
+            .addCase(createNewUserRole.fulfilled, (state, action) => {
+                const { success, data } = action.payload as any;
+                if(success && data) {
+                    state.createNewUserRoleStatus = 'succeeded';
+                    state.allUserRoles.push(data);
+                } else {
+                    state.createNewUserRoleStatus = 'failed';
+                }
+            })
+            .addCase(createNewUserRole.rejected, (state) => {
+                state.createNewUserRoleStatus = 'failed';
+            });
+
+        builder
+            .addCase(updateUserPermissions.pending, (state) => {
+                state.updateUserPermissionsStatus = 'loading';
+            })
+            .addCase(updateUserPermissions.fulfilled, (state, action) => {
+                state.updateUserPermissionsStatus = 'succeeded';
+                const { success, data } = action.payload as any;
+                if(success && data) {
+                    state.allUserRoles = state.allUserRoles.map(user => user._id.toString() === data._id.toString() ? data : user);
+                } else {
+                    state.updateUserPermissionsStatus = 'failed';
+                }
+            })
+            .addCase(updateUserPermissions.rejected, (state) => {
+                state.updateUserPermissionsStatus = 'failed';
             });
     }
 });

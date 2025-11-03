@@ -1,4 +1,4 @@
-import { AddAnalysisInputsName, AddressType, IAdminPermissions, InputsAdminFormTypes, InputsBussinessInfoFormTypes, InputsInfoFormTypes, InputsPassFormTypes, InputsSignUpFormTypes, NotificationForTypes, OrderEventsType, OrderStatusType, SideBarLinksTypes, UserRoleTypes, VendorOrderStatusType } from "@/types";
+import { AddAnalysisInputsName, AddressType, IAdminPermissions, InputsAdminFormTypes, InputsBussinessInfoFormTypes, InputsInfoFormTypes, InputsPassFormTypes, InputsSignUpFormTypes, InputsUserFormTypes, NotificationForTypes, OrderEventsType, OrderStatusType, SideBarLinksTypes, UserPermissions, UserRoleTypes, VendorOrderStatusType } from "@/types";
 import { ICloudinaryIMage, IDBModel } from "./general.interface";
 
 export interface ILocale {
@@ -7,6 +7,31 @@ export interface ILocale {
 
 export interface ILocaleParams {
     params: ILocale;
+}
+
+export interface ICreateRoleUserQuery {
+    name: string;
+    email: string;
+    phone?: string;
+    password: string;
+    role: 'user' | 'moderator' | 'monitor';
+    permissions: UserPermissions[];
+}
+
+export interface IUser {
+    _id: string;
+    name: string;
+    email: string;
+    phone: string;
+    role: UserRoleTypes;
+    permissions: IAdminPermissions[];
+    isDeleted: boolean;
+    isVerified: boolean;
+    avatar?: ICloudinaryIMage;
+    socialMediaMonitoringCount: number;
+    newsMonitoringCount: number;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface IInputSignUpForm {
@@ -37,6 +62,14 @@ export interface IInputAdminForm {
     label: string;
     type: string;
     name: InputsAdminFormTypes;
+    id?: string;
+    className?: string;
+}
+
+export interface IInputUserForm {
+    label: string;
+    type: string;
+    name: InputsUserFormTypes;
     id?: string;
     className?: string;
 }
@@ -490,7 +523,7 @@ export interface ILoggedInUser extends IDBModel {
     email: string;
     name: string;
     role: UserRoleTypes;
-    permissions: IAdminPermissions[]
+    permissions: UserPermissions[]
     accessToken?: string;
     token: string;
     avatar?: ICloudinaryIMage;

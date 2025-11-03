@@ -1,13 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { deleteData, getData, patchData, postData, putData } from '@/utils/apiService'
-import { ILoggedInUser } from "@/interfaces"
+import { ICreateRoleUserQuery, ILoggedInUser, IUser } from "@/interfaces"
+import { UserPermissions } from "@/types";
 
-// get all users 
-export const fetchUsers = createAsyncThunk(
+
+export const fetchUsers= createAsyncThunk(
     'userSlice/fetchUsers',
-    async (token: string ) => {
-        const response = await getData<ILoggedInUser[]>({
-            endpoint: `/admin/?role=user`,
+    async (token: string) => {
+        const response = await getData<IUser[]>({
+            endpoint: `/user/?role=user`,
             token
         });
         return response;
@@ -71,6 +72,47 @@ export const updateUserPassword = createAsyncThunk(
             endpoint: `/auth/update-password`,
             token,
             data
+        });
+        return response;
+    }
+);
+
+
+// 
+
+// get all users 
+export const fetchAllUsersRoles = createAsyncThunk(
+    'userSlice/fetchAllUserRoles',
+    async (token: string) => {
+        const response = await getData<IUser[]>({
+            endpoint: `/user/role`,
+            token
+        });
+        return response;
+    }
+);
+
+// create new user role
+export const createNewUserRole = createAsyncThunk(
+    'userSlice/createNewUserRole',
+    async ({ token, data }: { token: string; data: ICreateRoleUserQuery }) => {
+        const response = await postData<IUser>({
+            endpoint: `/user/role`,
+            token,
+            data
+        });
+        return response;
+    }
+);
+
+// update user permissions
+export const updateUserPermissions = createAsyncThunk(
+    'userSlice/updateUserPermissions',
+    async ({ token, userId, permissions }: { token: string; userId: string; permissions: UserPermissions[] }) => {
+        const response = await patchData<IUser>({
+            endpoint: `/user/role`,
+            token,
+            data: { userId, permissions }
         });
         return response;
     }

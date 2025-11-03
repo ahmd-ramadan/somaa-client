@@ -40,14 +40,14 @@ const Sidebar = () => {
     const [isCompact, setIsCompact] = useState(true);
 
     const SideBarIcons: { [key: string]: ReactNode } = {
-        news: <Newspaper size={16} />,
-        dashboard: <LayoutDashboard size={16} />,
-        admins: <UserCog size={16} />,
-        users: <Users size={16} />,
-        socialmedia: <Share2 size={16} />,
-        settings: <Settings size={16} />,
-        liveMonitoring: <Timer size={16} />,
-        addMonitor: <Plus size={16} />
+        news: <Newspaper size={20} />,
+        dashboard: <LayoutDashboard size={20} />,
+        admins: <UserCog size={20} />,
+        users: <Users size={20} />,
+        socialmedia: <Share2 size={20} />,
+        settings: <Settings size={20} />,
+        liveMonitoring: <Timer size={20} />,
+        addMonitor: <Plus size={20} />
     };
 
     const changeLanguage = () => {

@@ -21,15 +21,14 @@ const AddMonitorPage = () => {
 
     return (
         <div className="backround-pattern">
-            <div className="bg-white w-full border shadow-md rounded-md min-h-screen">
+            <div className="bg-white w-full border shadow-md rounded-md h-screen">
                 <div className="p-4 flex items-center justify-between">
                     <div className='flex flex-col gap-1'>
                         <h2 className="text-lg font-semibold text-secondary">{t("addMonitorPageTitle")}</h2>
-                        {/* <p className="text-sm">{t("showAllAnalysis")}: (<span className='text-secondary font-semibold'>{selectedAllAnalysis?.length}</span> / {allAnalysis?.length})</p> */}
                     </div>
                 </div>
                     
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <div className="relative overflow-x-auto sm:rounded-lg">
                     <Layout  />
                 </div>
             </div>

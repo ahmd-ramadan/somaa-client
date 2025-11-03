@@ -1,4 +1,4 @@
-import { IInpusAddAnalysisForm, IInputAddressForm, IInputAdminForm, IInputPassForm, IInputsBussinessInfoForm, IInputSignUpForm, IInputsInfoForm, ISideBarLinks } from "@/interfaces";
+import { IInpusAddAnalysisForm, IInputAddressForm, IInputAdminForm, IInputPassForm, IInputsBussinessInfoForm, IInputSignUpForm, IInputsInfoForm, IInputUserForm, ISideBarLinks } from "@/interfaces";
 
 export const InputsSignUpForm: IInputSignUpForm[] = [
     {
@@ -94,6 +94,45 @@ export const InputsAdminSignUpForm: IInputAdminForm[] = [
         id: "Phone",
         type: "text",
         name: "phone"
+    },
+    {
+        label: "password",
+        id: "Password",
+        type: "password",
+        name: "password"
+    },
+    {
+        label: "confirmPass",
+        id: "PasswordConfirmation",
+        type: "password",
+        name: "confirmPassword",
+    }
+]
+
+export const InputsUserSignUpForm: IInputUserForm[] = [
+    {
+        label: "name",
+        id: "Name",
+        type: "text",
+        name: "name"
+    },
+    {
+        label: "email",
+        id: "Email",
+        type: "email",
+        name: "email"
+    },
+    {
+        label: "phone",
+        id: "Phone",
+        type: "text",
+        name: "phone"
+    },
+    {
+        label: "role",
+        id: "Role",
+        type: "select",
+        name: "role"
     },
     {
         label: "password",

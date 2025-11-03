@@ -5,11 +5,13 @@ import Pagination from '@/components/ui/Pagination';
 import { RootState } from '@/lib/store';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { selectSideBarLink, setPageTitle } from '@/lib/features/layout/layoutSlice';
-import { ILoggedInUser } from '@/interfaces';
+import { ILoggedInUser, IUser } from '@/interfaces';
 import { useTranslations } from 'next-intl';
-import { fetchUsers } from '@/lib/features/user/userThunks';
-import { Users } from 'lucide-react';
+import { fetchAllUsersRoles } from '@/lib/features/user/userThunks';
 import UsersTable from './_components/UsersTable';
+import Modal from '@/components/ui/Modal';
+import AddUser from './_components/AddUser';
+import TableTitle from './_components/TableTiltle';
 
 export type KeyName = keyof ILoggedInUser;
 
@@ -24,65 +26,49 @@ const UsersPage = () => {
         dispatch(selectSideBarLink("users"));
     }, [dispatch]);
 
-    const { users, usersStatus } = useAppSelector((state: RootState) => state.user);
+    const { allUserRoles, getAllUserRolesStatus } = useAppSelector((state: RootState) => state.user);
     const { loggedInUser: { token } } = useAppSelector((state: RootState) => state.authUser);
-    
-    const [isRequestsUsers, setIsRequestsUsers] = useState<boolean>(false);
-    const [selectedUsers, setSelectedUsers] = useState<ILoggedInUser[]>(users);
+    const [isAddUserModalOpen, setIsAddUserModalOpen] = useState<boolean>(false);
+    const closeAddUserModal = () => setIsAddUserModalOpen(false);
+    const [selectedUsers, setSelectedUsers] = useState<IUser[]>(allUserRoles);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 30;
+    const itemsPerPage = 500;
 
     useEffect(() => {
-        if (usersStatus === 'idle' && token) {
-            dispatch(fetchUsers(token));
+        if (getAllUserRolesStatus === 'idle' && token) {
+            dispatch(fetchAllUsersRoles(token));
         }
-    }, [dispatch, token, usersStatus]);
+    }, [dispatch, token, getAllUserRolesStatus]);
 
     useEffect(() => {
-        if (usersStatus === 'succeeded') {
-            setSelectedUsers(users);
+        if (getAllUserRolesStatus === 'succeeded') {
+            setSelectedUsers(allUserRoles);
         }
-    }, [users, usersStatus]);
-
-    const removeUser = (userId: string) => {
-        setSelectedUsers(users.map(user => {
-            return userId === user._id.toString() ? { ...user, isDeleted: true } : user;
-        }));
-    }
+    }, [allUserRoles, getAllUserRolesStatus]);
 
     const totalPages = Math.ceil(selectedUsers.length / itemsPerPage);
-    const currentUsers = selectedUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const currentUserRoles = selectedUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     return (
         <div className="p-6">
-            <div className="mb-6 w-full border shadow-md rounded-md bg-white">
-                <div className="p-4 flex items-center justify-between">
-                    <div className='flex flex-col gap-1'>
-                        <h2 className="text-xl font-semibold text-secondary">{t("usersTableTitle")}</h2>
-                        <p className="text-sm text-primary flex items-center gap-2">
-                            <Users size={20} className="transition-all duration-300" />
-                            {t("showAllUsers")} <span className='text-secondary font-bold'>: {users.length}</span>
-                        </p>
-                    </div>
-                    <div className=''>
-                        <button 
-                            className="p-2 bg-secondary text-white rounded-md"
-                            onClick={() => setIsRequestsUsers(!isRequestsUsers)}
-                        >
-                            {isRequestsUsers ? t("showUsers") : t("allRequestsUsersBtn")}
-                        </button>
-                    </div>
-                </div>
-                    
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                    <UsersTable users={currentUsers} removeUser={removeUser} isRequestsUsers={isRequestsUsers}/>
-                </div>
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                />
+            <TableTitle 
+                allUserCount={allUserRoles.length} 
+                setIsAddUserModalOpen={setIsAddUserModalOpen} 
+            />
+
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg bg-white">
+                <UsersTable users={currentUserRoles} />
             </div>
+            
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
+
+            <Modal isOpen={isAddUserModalOpen} closeModal={closeAddUserModal} title={t("addUserModalTitle")}>
+                <AddUser />
+            </Modal>
 
         </div>
     );

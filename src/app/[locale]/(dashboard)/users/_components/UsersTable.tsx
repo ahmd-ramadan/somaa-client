@@ -7,22 +7,21 @@ import Modal from '@/components/ui/Modal';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import toast from 'react-hot-toast';
 import { handleError } from '@/utils/errorUtils';
-import { ILoggedInUser } from '@/interfaces';
+import { IUser } from '@/interfaces';
 import { RootState } from '@/lib/store';
 import { approveOnUser, deleteUser } from '@/lib/features/user/userThunks';
-import { Check, Trash2 } from 'lucide-react';
+import { CheckIcon, Trash2, VerifiedIcon } from 'lucide-react';
 import { useSocket } from '@/hooks/useSocket';
 
 import styles from '@/cssModules/connectionStatus.module.css'
 
 interface UsersTableProps {
-    users: ILoggedInUser[];
+    users: IUser[];
     removeUser?: (userId: string) => void;
-    isRequestsUsers?: boolean
 
 }
 
-const UsersTable = ({ users , isRequestsUsers }: UsersTableProps) => {
+const UsersTable = ({ users }: UsersTableProps) => {
     
     const locale = useLocale();
     const dispatch = useAppDispatch();
@@ -31,10 +30,11 @@ const UsersTable = ({ users , isRequestsUsers }: UsersTableProps) => {
 
     const { loggedInUser: { token } } = useAppSelector((state: RootState) => state.authUser);
 
-    const [selectedUsers, setSelectedUsers] = useState<ILoggedInUser[]>([]);
-    const [selectedUser, setSelectedUser] = useState<ILoggedInUser>({} as ILoggedInUser);
+    const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
+    const [selectedUser, setSelectedUser] = useState<IUser>({} as IUser);
     const [isDelModaOpen, setIsDelModaOpen] = useState(false);
     const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+    const [roleFilter, setRoleFilter] = useState<string>('all');
 
 
     const { isConnected, socket } = useSocket();
@@ -62,13 +62,20 @@ const UsersTable = ({ users , isRequestsUsers }: UsersTableProps) => {
         };
     }, [socket, isConnected])
 
-    useEffect(() => {
-        if(isRequestsUsers) setSelectedUsers(users.filter(u => u.isRequest))
-        else setSelectedUsers(users.filter(u => !u?.isRequest))
-    }, [isRequestsUsers, users])
-
     const closeDelModal = () => setIsDelModaOpen(false);
     const closeApproveModal = () => setIsApproveModalOpen(false);
+
+    // Filter users based on selected role
+    const filteredUsers = roleFilter === 'all' ? users : users.filter(user => user.role === roleFilter);
+
+    const roleOptions = [
+        { value: 'all', label: t('allRoles') || 'All Roles' },
+        { value: 'super_admin', label: t('super_admin') || 'Super Admin' },
+        { value: 'admin', label: t('admin') || 'Admin' },
+        { value: 'moderator', label: t('moderator') || 'Moderator' },
+        { value: 'monitor', label: t('monitor') || 'Monitor' },
+        { value: 'user', label: t('user') || 'User' }
+    ];
 
     const onDelModal = async () => {
         if (!selectedUser) return;
@@ -112,22 +119,44 @@ const UsersTable = ({ users , isRequestsUsers }: UsersTableProps) => {
             <thead className="text-xs text-primary uppercase bg-primary/20">
                 <tr>
                     <th scope="col" className="px-3 py-2">{t("userName")}</th>
+                    <th scope="col" className="px-3 py-2">
+                        <div className="flex items-center gap-2">
+                            {/* <span>{t("role")}</span> */}
+                            <select
+                                value={roleFilter}
+                                onChange={(e) => setRoleFilter(e.target.value)}
+                                className="text-xs bg-transparent rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            >
+                                {roleOptions.map(option => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </th>
                     <th scope="col" className="px-3 py-2">{t("userStatus")}</th>
                     <th scope="col" className="px-3 py-2">{t("connectStatus")}</th>
                     <th scope="col" className="px-3 py-2">{t("joinAt")}</th>
                     <th scope="col" className="px-3 py-2">{t("email")}</th>
+                    <th scope="col" className="px-3 py-2">{t("permissions")}</th>
+                    <th scope="col" className="px-3 py-2">{t("totalMonitoringSocialMediaCount")}</th>
+                    <th scope="col" className="px-3 py-2">{t("totalMonitoringNewsCount")}</th>
                     <th scope="col" className="px-3 py-2">{t("actions")}</th>
                 </tr>
             </thead>
             <tbody>
-                {selectedUsers.map(user => {
+                {filteredUsers.map(user => {
                     const {
                         _id,
                         name,
                         email,
                         createdAt,
-                        isDeleted,
-                        isRequest
+                        role,
+                        permissions,
+                        socialMediaMonitoringCount,
+                        newsMonitoringCount,
+                        isDeleted
                     } = user;
                     const date = formatDate({ locale, date: createdAt });
                     const status = isDeleted ? t("deleted") : t("active");
@@ -135,6 +164,7 @@ const UsersTable = ({ users , isRequestsUsers }: UsersTableProps) => {
                     return (
                         <tr key={_id} className={`border-b hover:bg-gray-200`}>
                             <th scope="row" className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{name}</th>
+                            <td className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">{t(role)}</td>
                             <td className={`px-3 py-2 font-semibold ${!isDeleted ? 'text-green-600': 'text-red-800'}`}>{status}</td>
                             <td className={`px-3 py-2 font-semibold`}>
                                 { onlineUsers.includes(_id) ?  (
@@ -152,10 +182,16 @@ const UsersTable = ({ users , isRequestsUsers }: UsersTableProps) => {
                                         <p className='text-red-600'>{t("offline")}</p>
                                     </div>
                                 ) }
-                                {/* <p>{t("")}</p> */}
                             </td>
                             <td className="px-3 py-2">{date}</td>
                             <td className="px-3 py-2">{email}</td>
+                            <td className="px-3 py-2">{permissions.length > 0 ? permissions.map((p, idx) => (
+                                <p key={idx} className='flex items-center gap-1'><CheckIcon className='text-green-600 w-4 h-4'/>{t(p)}</p>
+                            ))
+                            : <p className='flex items-center gap-1'><VerifiedIcon className='w-4 h-4 text-white fill-green-600' />{t('fullAccess')}</p>
+                            }</td>
+                            <td className="px-3 py-2">{socialMediaMonitoringCount || 0}</td>
+                            <td className="px-3 py-2">{newsMonitoringCount || 0}</td>
                             <td className="px-3 py-2 flex items-center gap-2">
                                 { !isDeleted &&
                                     <>
@@ -195,7 +231,7 @@ const UsersTable = ({ users , isRequestsUsers }: UsersTableProps) => {
                                         </Modal>
                                     </>
                                 }   
-                                { isRequest &&
+                                {/* { isRequest &&
                                     <> 
                                         <Check
                                             width="20px"
@@ -232,7 +268,7 @@ const UsersTable = ({ users , isRequestsUsers }: UsersTableProps) => {
                                             </div>
                                         </Modal>
                                     </>
-                                }
+                                } */}
                             </td>
                         </tr>
                     );

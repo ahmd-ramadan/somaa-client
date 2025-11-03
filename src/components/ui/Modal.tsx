@@ -10,9 +10,17 @@ interface ModalProps {
     titleColor?: string;
     closeColor?: string;
     children: React.ReactNode;
+    maxHeight?: string;
 }
 
-const Modal = ({ isOpen, closeModal, title, children, bgColor="#fff", titleColor="var(--color-secondary)", closeColor="#030712"}: ModalProps) => {
+const Modal = ({ 
+        isOpen, closeModal, 
+        title, children, bgColor="#fff", 
+        titleColor="var(--color-secondary)", 
+        closeColor="#030712",
+        maxHeight="max-h-96 lg:max-h-[500px]"
+    }: ModalProps
+) => {
     const modalRef = useRef<HTMLDivElement>(null);
 
     if (!isOpen) return null;
@@ -41,7 +49,7 @@ const Modal = ({ isOpen, closeModal, title, children, bgColor="#fff", titleColor
                         className="hover:pointer hover:text-red-600 transition-colors duration-200"
                     />
                 </div>
-                <div className="overflow-y-auto scrollbar max-h-96 lg:max-h-[500px] p-2 mt-4 text-gray">
+                <div className={`overflow-y-auto scrollbar p-2 mt-4 text-gray ${maxHeight ? maxHeight : ''}`}>
                     {children}
                 </div>
             </div>

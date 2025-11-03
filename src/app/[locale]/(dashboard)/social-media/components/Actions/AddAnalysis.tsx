@@ -327,8 +327,8 @@ const AddAnalysis = () => {
     }, [showCityDropdown, showDistrictDropdown, showRegionDropdown, showSectorDropdown, showSubAnalysisDropdown]);
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* URL Input */}
                 <div className="flex flex-col gap-1">
                     <label htmlFor="url" className="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -408,130 +408,132 @@ const AddAnalysis = () => {
                     {errors.contentType && <FormatErrorMessage field="contentType" message={errors.contentType.message || t("required")} />}
                 </div>
 
-                {/* Sector Selection */}
-                <div className="flex flex-col gap-1">
-                    <label htmlFor="sectorId" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-adminPrimary" />
-                        {t("sector")}
-                    </label>
-                    <div className="w-full relative">
-                        <div className="grid grid-cols-6 gap-2 items-center">
-                            <input
-                                type="text"
-                                id="sectorId"
-                                value={sectorInput}
-                                onChange={(e) => {
-                                    setSectorInput(e.target.value);
-                                    setShowSectorDropdown(true);
-                                }}
-                                onFocus={() => setShowSectorDropdown(true)}
-                                className="col-span-6 rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
-                                placeholder={t("selectOrAddSector")}
-                            />
-                        </div>
-                        
-                        {showSectorDropdown && (
-                            <div ref={sectorDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
-                                {selectedSectors
-                                    .filter(sector => 
-                                        sector.name.toLowerCase().includes(sectorInput.toLowerCase())
-                                    )
-                                    .map((sector) => (
+                <div className="flex flex-col gap-6">
+                    {/* Sector Selection */}
+                    <div className="flex flex-col gap-1">
+                        <label htmlFor="sectorId" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                            <Building2 className="w-4 h-4 text-adminPrimary" />
+                            {t("sector")}
+                        </label>
+                        <div className="w-full relative">
+                            <div className="grid grid-cols-6 gap-2 items-center">
+                                <input
+                                    type="text"
+                                    id="sectorId"
+                                    value={sectorInput}
+                                    onChange={(e) => {
+                                        setSectorInput(e.target.value);
+                                        setShowSectorDropdown(true);
+                                    }}
+                                    onFocus={() => setShowSectorDropdown(true)}
+                                    className="col-span-6 rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
+                                    placeholder={t("selectOrAddSector")}
+                                />
+                            </div>
+                            
+                            {showSectorDropdown && (
+                                <div ref={sectorDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                    {selectedSectors
+                                        .filter(sector => 
+                                            sector.name.toLowerCase().includes(sectorInput.toLowerCase())
+                                        )
+                                        .map((sector) => (
+                                            <div
+                                                key={sector._id}
+                                                onClick={() => {
+                                                    setSelectedSector(sector._id);
+                                                    setValue('sectorId', sector._id);
+                                                    setSectorInput(sector.name);
+                                                    setShowSectorDropdown(false);
+                                                }}
+                                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            >
+                                                {sector.name}
+                                            </div>
+                                        ))
+                                    }
+                                    {sectorInput && role ===  'super_admin' && !selectedSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
                                         <div
-                                            key={sector._id}
                                             onClick={() => {
-                                                setSelectedSector(sector._id);
-                                                setValue('sectorId', sector._id);
-                                                setSectorInput(sector.name);
-                                                setShowSectorDropdown(false);
+                                                if (!sectorInput.trim()) {
+                                                    toast.error(t("sectorNameRequired"));
+                                                    return;
+                                                }
+
+                                                dispatch(addSector({ 
+                                                    token: token as string, 
+                                                    data: { name: sectorInput }
+                                                }));
                                             }}
-                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            className="w-full px-4 py-2 text-adminPrimary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                         >
-                                            {sector.name}
+                                            {t("addNewSector")}: {sectorInput}
                                         </div>
-                                    ))
-                                }
-                                {sectorInput && role ===  'super_admin' && !selectedSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
-                                    <div
-                                        onClick={() => {
-                                            if (!sectorInput.trim()) {
-                                                toast.error(t("sectorNameRequired"));
-                                                return;
-                                            }
-
-                                            dispatch(addSector({ 
-                                                token: token as string, 
-                                                data: { name: sectorInput }
-                                            }));
-                                        }}
-                                        className="w-full px-4 py-2 text-adminPrimary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
-                                    >
-                                        {t("addNewSector")}: {sectorInput}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                        {errors.sectorId && <FormatErrorMessage field="sectorId" message={errors.sectorId.message || t("required")} />}
-                    </div>
-                </div>
-
-                {/* SubAnalysis Selection */}
-                <div className="flex flex-col gap-1">
-                    <label htmlFor="subAnalysisId" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-adminPrimary" />
-                        {t("subAnalysis")}
-                    </label>
-                    <div className="w-full relative">
-                        <div className="grid grid-cols-6 gap-2 items-center">
-                            <input
-                                type="text"
-                                id="subAnalysisId"
-                                value={subAnalysisInput}
-                                onChange={handleSubAnalysisInputChange}
-                                onFocus={() => setShowSubAnalysisDropdown(true)}
-                                className="col-span-5 rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
-                                placeholder={t("selectOrAddSubAnalysis")}
-                            />
-                            <button
-                                type="button"
-                                onClick={handleAddNewSubAnalysis}
-                                disabled={addSubAnalysisStatus === 'loading'}
-                                className="col-span-1 px-3 py-1 bg-adminPrimary text-white text-center rounded-lg hover:bg-adminPrimary/90 focus:outline-none focus:ring-2 focus:ring-adminPrimary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {addSubAnalysisStatus === 'loading' ? (
-                                    <div className="flex items-center gap-2 justify-center">
-                                        <Spinner />
-                                    </div>
-                                ) : (
-                                    t("add")
-                                )}
-                            </button>
+                                    )}
+                                </div>
+                            )}
+                            {errors.sectorId && <FormatErrorMessage field="sectorId" message={errors.sectorId.message || t("required")} />}
                         </div>
-                        {showSubAnalysisDropdown && (
-                            <div ref={subAnalysisDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
-                                {allSubAnalysis
-                                    .filter(sub => sub.body.toLowerCase().includes(subAnalysisInput.toLowerCase()))
-                                    .map((sub) => (
-                                        <div
-                                            key={sub._id}
-                                            onClick={() => handleSubAnalysisSelect(sub)}
-                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                        >
-                                            {sub.body}
+                    </div>
+
+                    {/* SubAnalysis Selection */}
+                    <div className="flex flex-col gap-1">
+                        <label htmlFor="subAnalysisId" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                            <Building2 className="w-4 h-4 text-adminPrimary" />
+                            {t("subAnalysis")}
+                        </label>
+                        <div className="w-full relative">
+                            <div className="grid grid-cols-6 gap-2 items-center">
+                                <input
+                                    type="text"
+                                    id="subAnalysisId"
+                                    value={subAnalysisInput}
+                                    onChange={handleSubAnalysisInputChange}
+                                    onFocus={() => setShowSubAnalysisDropdown(true)}
+                                    className="col-span-5 rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
+                                    placeholder={t("selectOrAddSubAnalysis")}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleAddNewSubAnalysis}
+                                    disabled={addSubAnalysisStatus === 'loading'}
+                                    className="col-span-1 px-3 py-1 bg-adminPrimary text-white text-center rounded-lg hover:bg-adminPrimary/90 focus:outline-none focus:ring-2 focus:ring-adminPrimary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {addSubAnalysisStatus === 'loading' ? (
+                                        <div className="flex items-center gap-2 justify-center">
+                                            <Spinner />
                                         </div>
-                                    ))
-                                }
-                                {subAnalysisInput && !allSubAnalysis.some(s => s.body.toLowerCase() === subAnalysisInput.toLowerCase()) && (
-                                    <div
-                                        onClick={handleAddNewSubAnalysis}
-                                        className="w-full px-4 py-2 text-adminPrimary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
-                                    >
-                                        {t("addNewSubAnalysis")}: {subAnalysisInput}
-                                    </div>
-                                )}
+                                    ) : (
+                                        t("add")
+                                    )}
+                                </button>
                             </div>
-                        )}
-                        {errors.subAnalysisId && <FormatErrorMessage field="subAnalysisId" message={errors.subAnalysisId.message || t("required")} />}
+                            {showSubAnalysisDropdown && (
+                                <div ref={subAnalysisDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                    {allSubAnalysis
+                                        .filter(sub => sub.body.toLowerCase().includes(subAnalysisInput.toLowerCase()))
+                                        .map((sub) => (
+                                            <div
+                                                key={sub._id}
+                                                onClick={() => handleSubAnalysisSelect(sub)}
+                                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            >
+                                                {sub.body}
+                                            </div>
+                                        ))
+                                    }
+                                    {subAnalysisInput && !allSubAnalysis.some(s => s.body.toLowerCase() === subAnalysisInput.toLowerCase()) && (
+                                        <div
+                                            onClick={handleAddNewSubAnalysis}
+                                            className="w-full px-4 py-2 text-adminPrimary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
+                                        >
+                                            {t("addNewSubAnalysis")}: {subAnalysisInput}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {errors.subAnalysisId && <FormatErrorMessage field="subAnalysisId" message={errors.subAnalysisId.message || t("required")} />}
+                        </div>
                     </div>
                 </div>
 
@@ -637,7 +639,7 @@ const AddAnalysis = () => {
                 </div>
 
                 {/* Note Input */}
-                <div className="flex flex-col gap-1">
+                {/* <div className="flex flex-col gap-1">
                     <label htmlFor="note" className="text-sm font-medium text-gray-700 flex items-center gap-2">
                         <MessageSquare className="w-4 h-4 text-adminPrimary" />
                         {t("note")}
@@ -649,12 +651,12 @@ const AddAnalysis = () => {
                         placeholder={t("notePlaceholder")}
                     />
                     {errors.note && <FormatErrorMessage field="note" message={errors.note.message || t("required")} />}
-                </div>
+                </div> */}
 
             </div>
 
             {/* Submit Button */}
-            <div className="flex justify-center items-center gap-2">
+            <div className="flex justify-center items-center gap-2 mt-10">
                 {/* Highlight and Flag Icons */}
                 <div className="flex flex-col gap-2 md:col-span-2">
                     <div className="flex items-center gap-4">

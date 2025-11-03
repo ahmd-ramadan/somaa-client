@@ -5,10 +5,13 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import AddAnalysis from "./AddAnalysis";
 import AddNews from "./AddNews";
+import { RootState } from "@/lib/store";
+import { useAppSelector } from "@/lib/hooks";
 
 interface LayoutProps {}
 const Layout = ({  }: LayoutProps) => {
     const t = useTranslations("AddMonitorPage");
+    const { loggedInUser: { role, permissions } } = useAppSelector((state: RootState) => state.authUser);
     const [activeTab, setActiveTab] = useState(0);
 
     const tabs = [
@@ -17,12 +20,14 @@ const Layout = ({  }: LayoutProps) => {
         { id: 2, label: t("addEMideaMonitor") }
     ];
 
+
+
     const TabContent = ({ tabId }: { tabId: number }) => {
         switch (tabId) {
             case 0:
-                return <AddAnalysis />;
+                return role === 'super_admin' || (role === 'admin' && permissions?.includes('manage_analysis')) ? <AddAnalysis /> : null;
             case 1:
-                return <AddNews />;
+                return role === 'super_admin' || (role === 'admin' && permissions?.includes('manage_news')) ? <AddNews /> : null;
             case 2:
                 return null;
             default:
@@ -31,7 +36,7 @@ const Layout = ({  }: LayoutProps) => {
     };
 
     return (
-        <div className="space-y-0 min-h-svh">
+        <div className="space-y-0 h-full">
             {/* Tab Navigation */}
             <div className="border-b border-gray-200">
                 <nav className="w-full grid grid-cols-3 space-x-8 px-6">

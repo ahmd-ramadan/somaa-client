@@ -41,7 +41,7 @@ const SocialMediaPage = () => {
                                 >
                                     {t("addBtn")}
                                 </button>
-                                <Modal isOpen={isAddAnalysisModalOpen} closeModal={closeAddAnalysisModal} title={t("addModalTitle")}>
+                                <Modal isOpen={isAddAnalysisModalOpen} closeModal={closeAddAnalysisModal} title={t("addModalTitle")} maxHeight="h-[70vh]">
                                     <AddAnalysis />
                                 </Modal>
                         </div> 

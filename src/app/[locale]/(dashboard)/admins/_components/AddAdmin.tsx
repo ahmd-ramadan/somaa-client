@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { handleError } from "@/utils/errorUtils";
 import { useTranslations } from "next-intl";
 import { InputsAdminSignUpForm } from "@/data";
-import { IAdminPermissions } from "@/types";
+import { IAdminPermissions, UserPermissions } from "@/types";
 import { RootState } from "@/lib/store";
 import Spinner from "@/components/ui/Spinner";
 import { AdminSignUpSchema } from "@/validations/AdminsSchemas";
@@ -32,6 +32,11 @@ interface IReqData {
 }
 
 export const AdminPermissionsOptions: IAdminPermissions[] = [
+    'manage_analysis',
+    'manage_news'
+]
+
+export const UserPermissionsOptions: UserPermissions[] = [
     'manage_analysis',
     'manage_news'
 ]

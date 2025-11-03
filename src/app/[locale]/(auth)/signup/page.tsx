@@ -5,7 +5,8 @@ import SignUpForm from "../_components/SignUpForm";
 const SignUpPage = () => {
     return (
         <AuthLayout>
-            <SignUpForm />
+            {/* <SignUpForm /> */}
+            {null}
         </AuthLayout>
     );
 };

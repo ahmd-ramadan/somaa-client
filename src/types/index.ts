@@ -2,6 +2,8 @@ export type InputsSignUpFormTypes = 'name' | 'email' | 'phone' | 'password' | 'c
 
 export type InputsAdminFormTypes = 'name' | 'email' | 'phone' | 'password' | 'confirmPassword' 
 
+export type InputsUserFormTypes = 'name' | 'email' | 'phone' | 'password' | 'confirmPassword' | 'role' | 'permissions'
+
 export type InputsInfoFormTypes = 'name' | 'email' | 'phone';
 export type InputsBussinessInfoFormTypes = 'balance' | 'allBalance' | 'factoryName' | 'factoryAddress' | 'taxNumber' | 'tradeMark' | 'websiteLink' | 'facebookLink' | 'instagramLink';
 
@@ -11,9 +13,10 @@ export type InputsFormValidationTypes = 'required' | 'number' | 'maxLength' | 'm
 
 export type IResponseStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 
-export type UserRoleTypes = 'super_admin' | 'admin' | 'user';
+export type UserRoleTypes = 'super_admin' | 'admin' | 'moderator' | 'monitor' | 'user';
 
 export type IAdminPermissions = 'manage_analysis' | 'manage_news'
+export type UserPermissions = 'manage_analysis' | 'manage_news';
 
 export type OrderStatusType = 'placed' | 'confirmed' | 'processed' | 'shipped' | 'delivered';
 
