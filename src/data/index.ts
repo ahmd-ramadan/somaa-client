@@ -288,11 +288,11 @@ export const SideBarLinks: ISideBarLinks[] = [
         link: "news",
         permission: 'forAll',
     },
-    {
-        name: "admins",
-        link: "admins",
-        permission: 'isOnlySuperAdmin'
-    }, 
+    // {
+    //     name: "admins",
+    //     link: "admins",
+    //     permission: 'isOnlySuperAdmin'
+    // }, 
     {
         name: "users",
         link: "users",

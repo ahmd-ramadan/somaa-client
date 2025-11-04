@@ -25,9 +25,9 @@ const Layout = ({  }: LayoutProps) => {
     const TabContent = ({ tabId }: { tabId: number }) => {
         switch (tabId) {
             case 0:
-                return role === 'super_admin' || (role === 'admin' && permissions?.includes('manage_analysis')) ? <AddAnalysis /> : null;
+                return role === 'super_admin' || (permissions?.includes('manage_analysis')) ? <AddAnalysis /> : null;
             case 1:
-                return role === 'super_admin' || (role === 'admin' && permissions?.includes('manage_news')) ? <AddNews /> : null;
+                return role === 'super_admin' || (permissions?.includes('manage_news')) ? <AddNews /> : null;
             case 2:
                 return null;
             default:

@@ -42,7 +42,7 @@ const Sidebar = () => {
     const SideBarIcons: { [key: string]: ReactNode } = {
         news: <Newspaper size={20} />,
         dashboard: <LayoutDashboard size={20} />,
-        admins: <UserCog size={20} />,
+        // admins: <UserCog size={20} />,
         users: <Users size={20} />,
         socialmedia: <Share2 size={20} />,
         settings: <Settings size={20} />,
@@ -70,7 +70,7 @@ const Sidebar = () => {
     const renderDataList = (data: ISideBarLinks[]) => {
         return data.map(({ name, link, permission }: ISideBarLinks): ReactNode => {
             const hasPermission =
-                (loggedInUser?.role === 'user' && permission === 'forAll') ||
+                (permission === 'forAll') ||
                 (loggedInUser?.role === 'admin' && permission !== 'isOnlySuperAdmin') ||
                 (loggedInUser?.role === 'super_admin');
 

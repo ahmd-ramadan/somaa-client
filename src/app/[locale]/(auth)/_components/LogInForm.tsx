@@ -50,7 +50,14 @@ const LogInForm = () => {
                     router.push(`/${locale}/`);
                 } else if(role === 'admin') {
                     router.push(`/${locale}/social-media`);
-                } else if(role === 'super_admin') {
+                } else if(role === 'moderator') {
+                    router.push(`/${locale}/add`);
+                } else if(role === 'monitor') {
+                    router.push(`/${locale}/add`);
+                } else if(role === 'user') {
+                    router.push(`/${locale}/profile`);
+                }
+                else if(role === 'super_admin') {
                     router.push(`/${locale}/dashboard`);
                 }
                 

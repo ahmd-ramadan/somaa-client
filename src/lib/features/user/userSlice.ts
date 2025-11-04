@@ -147,7 +147,7 @@ const userSlice = createSlice({
                 const { success, data } = action.payload as any;
                 if(success && data) {
                     state.createNewUserRoleStatus = 'succeeded';
-                    state.allUserRoles.push(data);
+                    state.allUserRoles.push(data.user);
                 } else {
                     state.createNewUserRoleStatus = 'failed';
                 }
