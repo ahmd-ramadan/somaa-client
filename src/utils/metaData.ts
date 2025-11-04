@@ -54,7 +54,7 @@ export interface TranslationsMap {
 
 const translations: TranslationsMap = {
     en: {
-        default: 'OSUS Solutions',
+        default: 'Sumaah',
         description: "",
         keywords: [],            
         profile: "Profile",
@@ -101,7 +101,7 @@ const translations: TranslationsMap = {
         addMonitor: "Add Monitor"
     },
     ar: {
-        default: 'OSUS Solutions',
+        default: 'Sumaah',
         description: "",
         keywords: [],        
         profile: "حسابي الشخصي",
