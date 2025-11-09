@@ -32,7 +32,7 @@ const MAP_STYLE = "https://api.maptiler.com/maps/streets-v2-dark/style.json?key=
 
 const SAUDI_BOUNDS: [[number, number], [number, number]] = [
   [34.4957, 16.3795], // جنوب غرب السعودية
-  [55.6667, 32.1543], // شمال شرق السعودية
+  [55.6667, 28.5], // شمال شرق السعودية (adjusted to exclude Israel)
 ];
 
 const MapComponent = ({ center, analyses }: MapComponentProps) => {
@@ -51,6 +51,7 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
         mapRef.current = new maplibregl.Map({
             container: mapContainer.current,
             style: MAP_STYLE,
+            maxBounds: SAUDI_BOUNDS, // Prevent users from panning/zooming to see Israel
         });
 
         mapRef.current.fitBounds(SAUDI_BOUNDS, { padding: 20, duration: 0 });

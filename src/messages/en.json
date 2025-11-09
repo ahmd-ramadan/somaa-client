@@ -1116,7 +1116,10 @@
                 "minutesAgo": "minutes ago",
                 "hoursAgo": "hours ago",
                 "daysAgo": "days ago",
-                "fiterByType": "Filter by"
+                "fiterByType": "Filter by",
+                "loading": "Loading...",
+                "true": "True",
+                "false": "False"
             },
             "exports": {
                 "copiedToClipboard": "Copied to colipboard" ,

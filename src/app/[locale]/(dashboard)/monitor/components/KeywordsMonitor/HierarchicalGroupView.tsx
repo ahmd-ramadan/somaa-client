@@ -324,13 +324,21 @@ export default function HierarchicalGroupView({
     const isAllSelected = selectedInGroup === totalResults && totalResults > 0;
     const isPartiallySelected = selectedInGroup > 0 && selectedInGroup < totalResults;
 
+    // Different colors for different levels
+    const levelColors = [
+      'border-blue-500 bg-blue-50 hover:bg-blue-100',
+      'border-green-500 bg-green-50 hover:bg-green-100',
+      'border-purple-500 bg-purple-50 hover:bg-purple-100',
+      'border-orange-500 bg-orange-50 hover:bg-orange-100',
+      'border-pink-500 bg-pink-50 hover:bg-pink-100'
+    ];
+
+    const colorClass = levelColors[group.level] || levelColors[levelColors.length - 1];
+
     return (
-      <div 
-        className={`flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50 transition-colors ${
-          group.level === 0 ? 'border-l-4 border-blue-500' : 
-          group.level === 1 ? 'border-l-4 border-green-500' : 
-          'border-l-4 border-purple-500'
-        }`}
+      <div
+        className={`flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer transition-colors border-l-4 ${colorClass}`}
+        onClick={() => toggleGroup(group.key)}
       >
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -355,25 +363,23 @@ export default function HierarchicalGroupView({
 
             {/* Expand/collapse button */}
             <button
-              onClick={() => toggleGroup(group.key)}
-              className="flex items-center justify-center w-4 h-4"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleGroup(group.key);
+              }}
+              className="flex items-center justify-center w-4 h-4 hover:bg-gray-200 rounded"
             >
               {hasChildren ? (
                 isExpanded ? (
-                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                  <ChevronDown className="w-4 h-4 text-gray-600" />
                 ) : (
-                  <ChevronRight className="w-4 h-4 text-gray-500" />
+                  <ChevronRight className="w-4 h-4 text-gray-600" />
                 )
               ) : (
                 <div className="w-4 h-4" />
               )}
             </button>
 
-            {/* <Icon className={`w-5 h-5 ${
-              group.level === 0 ? 'text-blue-600' : 
-              group.level === 1 ? 'text-green-600' : 
-              'text-purple-600'
-            }`} /> */}
             <span className="font-semibold text-gray-900">
               {group.label}
             </span>
@@ -382,10 +388,10 @@ export default function HierarchicalGroupView({
             {selectedInGroup > 0 ? `${selectedInGroup}/${totalResults}` : totalResults} {t('results')}
           </span>
         </div>
-        
+
         {hasChildren && (
           <div className="text-sm text-gray-500">
-            {isExpanded ? t('collapse') : t('expand')}
+            {isExpanded ? '▼' : '▶'}
           </div>
         )}
       </div>
@@ -693,21 +699,28 @@ export default function HierarchicalGroupView({
   const renderGroup = (group: GroupNode, depth: number = 0): React.ReactNode => {
     const isExpanded = expandedGroups.has(group.key);
     const hasChildren = Object.keys(group.children).length > 0;
+    const isLeafGroup = !hasChildren;
 
     return (
-      <div key={group.key} className="mb-4" style={{ marginLeft: `${depth * 20}px` }}>
+      <div key={group.key} className="mb-2" style={{ marginLeft: `${depth * 20}px` }}>
         {renderGroupHeader(group)}
-        
+
         {isExpanded && (
           <div className="mt-2 space-y-2">
+            {/* Render children groups if they exist */}
             {hasChildren ? (
-              // Render children groups
-              Object.values(group.children).map(childGroup => 
-                renderGroup(childGroup, depth + 1)
-              )
+              <div className="space-y-2">
+                {Object.values(group.children).map(childGroup =>
+                  renderGroup(childGroup, depth + 1)
+                )}
+              </div>
             ) : (
-              // Render results directly
-              renderResults(group.results, group.key)
+              /* Render results only at leaf level */
+              group.results.length > 0 && (
+                <div className="mt-2">
+                  {renderResults(group.results, group.key)}
+                </div>
+              )
             )}
           </div>
         )}

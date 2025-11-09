@@ -96,7 +96,7 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({
                                 return translated !== value ? translated : group.label;
                             })() : group.label
                         }</span>
-                        <span className="text-gray-500">({totalItems})</span>
+                        {/* <span className="text-gray-500">({totalItems})</span> */}
                         {/* {level > 0 && ( */}
                             <span className="text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded-full">
                                 {groupingType}

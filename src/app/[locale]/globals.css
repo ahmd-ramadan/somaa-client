@@ -7,10 +7,15 @@
 
 :root {
   
-  --color-primary: #00224D;
+  /* --color-primary: #00224D;
   --color-secondary: #C80036;
   --color-admin-primary: #00224D;
-  --color-admin-secondary: #C80036;
+  --color-admin-secondary: #C80036; */
+
+  --color-primary: #3c0b63;
+  --color-secondary: #0b7654;
+  --color-admin-primary: #3c0b63;
+  --color-admin-secondary: #0c7e5a;
 
   /* --color-primary: #057a38;
   --color-secondary: #00224D;

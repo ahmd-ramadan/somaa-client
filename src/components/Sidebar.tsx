@@ -27,6 +27,7 @@ import {
     Timer,
     Plus,
 } from 'lucide-react';
+import Image from 'next/image';
 
 const Sidebar = () => {
     const locale = useLocale();
@@ -89,8 +90,8 @@ const Sidebar = () => {
                         transition-all duration-300
                         ${isCompact ? 'justify-center' : 'px-6 justify-start'}
                         ${SideBarLink === link
-                            ? `bg-secondary/20 text-secondary ${locale === 'en' ? 'border-l-4' : 'border-r-4'} border-secondary`
-                            : 'text-white hover:bg-white/10'
+                            ? `bg-secondary/20 text-secondary ${locale === 'en' ? 'border-l-4' : 'border-r-4'} border-secondary font-semibold`
+                            : 'text-white hover:bg-secondary'
                         }
                     `}
                 >
@@ -121,15 +122,15 @@ const Sidebar = () => {
                     flex h-20 items-center
                     ${isCompact ? 'justify-center' : 'px-3 justify-between'}
                 `}>
-                    {/* <div className={`transition-opacity duration-200 ${isCompact ? 'opacity-0 w-0' : 'opacity-100'}`}>
+                    <div className={`transition-opacity duration-200 ${isCompact ? 'opacity-0 w-0' : 'opacity-100'}`}>
                        <Image
-                            src="/logo.png"
+                            src="/ministry-logo.png"
                             alt="logo"
                             width={160}
                             height={80}
-                            className="object-contain"
+                            className="bg-gray-200 rounded-lg px-2"
                        />
-                    </div> */}
+                    </div>
                     {/* This button is now ALWAYS visible */}
                     <button
                         onClick={() => setIsCompact(!isCompact)}

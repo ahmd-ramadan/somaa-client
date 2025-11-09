@@ -1132,7 +1132,10 @@
                 "minutesAgo": "دقيقة",
                 "hoursAgo": "ساعة",
                 "daysAgo": "يوم",
-                "fiterByType": "التصفية حسب"
+                "fiterByType": "التصفية حسب",
+                "loading": "جاري التحميل...",
+                "true": "صحيح",
+                "false": "خطأ"
             },
             "exports": {
                 "copiedToClipboard": "تم النسخ إلي الحافظة",
