@@ -20,7 +20,7 @@ import {
 import { ISector } from "@/interfaces/sector.types";
 import { addAnalysis } from "@/lib/features/socialMedia/analysisThunks";
 import { addSector } from "@/lib/features/sector/sectorThunks";
-import { Link, Globe, Tag, FileText, Building2, MapPin, MessageSquare, Star, Flag } from 'lucide-react';
+import { Link, Globe, Tag, FileText, Building2, MapPin, MessageSquare, Star, Flag, CircleCheck, CheckCircle } from 'lucide-react';
 import { saudiLocations, ISaudiLocation } from '@/data/saudiLocations';
 import { fetchAllSectors } from "@/lib/features/sector/sectorThunks";
 import { fetchAllSubAnalysis, addSubAnalysis } from "@/lib/features/subAnalysis/subAnalysisThunks";
@@ -249,8 +249,9 @@ const AddAnalysis = () => {
         }
     };
 
-    const [isHighlighted, setIsHighlighted] = useState<boolean>(false);
     // const [isFlagged, setIsFlagged] = useState<boolean>(false);
+    const [isHighlighted, setIsHighlighted] = useState<boolean>(false);
+    const [isRelated, setIsRelated] = useState<boolean>(false);
 
     const onSubmit = async (data: IFormInputs) => {
         try {
@@ -263,6 +264,7 @@ const AddAnalysis = () => {
                 subAnalysisId: selectedSubAnalysis || data.subAnalysisId,
                 note: data.note,
                 // isFlagged: isFlagged,
+                isRelated: isRelated,
                 isHighlighted: isHighlighted
             };
 
@@ -670,6 +672,17 @@ const AddAnalysis = () => {
                             }`}
                         >
                             <Star className="w-6 h-6" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setIsRelated(!isRelated)}
+                            className={`p-2 rounded-lg transition-all ${
+                                isRelated 
+                                    ? 'bg-green-100 text-green-600' 
+                                    : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                            }`}
+                        >
+                            <CheckCircle className="w-6 h-6" />
                         </button>
                         {/* <button
                             type="button"

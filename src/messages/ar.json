@@ -225,6 +225,10 @@
             "tweet": "منشور",
             "reply": "رد",
             "quote": "مقتبس",
+            "postRelationship": "علاقة المنشور",
+            "internal": "منشور داخلي",
+            "external": "منشور خارجي",
+            "isRelated": "علاقة المنشور",
             "content": "المحتوي",
             "createdAt": "التاريخ",
             "classify": "التصنيف",
@@ -861,6 +865,8 @@
     "Monitor": {
         "pageTitle": "الرصد المباشر",
         "pageDescription": "البحث والرصد من جميع منصات التواصل الاجتماعي باستخدام الكلمات المفتاحية والملفات الشخصية والروابط",
+        "profileMonitoringComingSoon": "... الرصد الملف الشخصي قيد التطوير",
+        "urlMonitoringComingSoon": "... الرصد الرابط قيد التطوير",
         "tabs": {
             "keywords": "رصد الكلمات المفتاحية",
             "profile": "رصد الملف الشخصي", 

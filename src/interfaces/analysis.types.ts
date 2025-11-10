@@ -29,6 +29,7 @@ export interface IAnalysisModel extends IDBModel {
     note?: string;
     isFlagged: boolean;
     isHighlighted: boolean;
+    isRelated: boolean;
     addedBy: string;
 }
 
@@ -104,6 +105,7 @@ export interface ICreateAnalysisQuery {
     note?: string;
     isFlagged?: boolean;
     isHighlighted?: boolean;
+    isRelated?: boolean;
 }
 
 export interface ICreateAnalysisData extends Omit<ICreateAnalysisQuery, 'contentType'> {

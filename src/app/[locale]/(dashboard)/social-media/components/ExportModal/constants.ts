@@ -17,6 +17,7 @@ export const AVAILABLE_COLUMNS: Column[] = [
     { id: 'addedBy', label: 'Added By', selected: false },
     { id: 'tweetType', label: 'Tweet Type', selected: false },
     { id: 'contentType', label: 'Content Type', selected: false },
+    { id: 'isRelated', label: 'Post Relationship', selected: false },
 ];
 
 export const LOCAL_STORAGE_KEY = 'exportTemplates';

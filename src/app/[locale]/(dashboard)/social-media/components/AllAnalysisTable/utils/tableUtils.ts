@@ -83,6 +83,7 @@ export const getGroupingTypeLabel = (groupKey: string, level: number, t: (key: s
     if (currentLevel.startsWith('classify-')) return t("classify");
     if (currentLevel.startsWith('contentType-')) return t("contentType");
     if (currentLevel.startsWith('tweetType-')) return t("tweetType");
+    if (currentLevel.startsWith('isRelated-')) return t("isRelated");
     return t("group");
 };
 
@@ -98,6 +99,7 @@ export const getGroupingKey = (groupKey: string, level: number): string => {
     if (currentLevel.startsWith('classify-')) return "classify";
     if (currentLevel.startsWith('contentType-')) return "contentType";
     if (currentLevel.startsWith('tweetType-')) return "tweetType";
+    if (currentLevel.startsWith('isRelated-')) return "isRelated";
     return "";
 
 };
@@ -125,5 +127,7 @@ export const getClassificationColor = (classify: AnalysisClassifyEnum): string =
 export const isEnumValue = (value: string): boolean => {
     return Object.values(AnalysisClassifyEnum).includes(value as AnalysisClassifyEnum) ||
            Object.values(ContentTypesEnum).includes(value as ContentTypesEnum) ||
-           Object.values(TweetTypesEnum).includes(value as TweetTypesEnum);
+           Object.values(TweetTypesEnum).includes(value as TweetTypesEnum) ||
+           value === "internal" ||
+           value === "external";
 }; 

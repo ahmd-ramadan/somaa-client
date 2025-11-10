@@ -17,14 +17,14 @@ export default function KeywordsMonitor() {
   const defaultFilters: IKeywordsFilters = {
     platforms: [
       { name: PlatformsNamesEnum.X, enabled: true, sortBy: 'latest' },
-      { name: PlatformsNamesEnum.FACEBOOK, enabled: true, sortBy: 'latest' },
-      { name: PlatformsNamesEnum.INSTAGRAM, enabled: true, sortBy: 'latest' },
-      { name: PlatformsNamesEnum.LINKEDIN, enabled: true, sortBy: 'latest' },
+      // { name: PlatformsNamesEnum.FACEBOOK, enabled: true, sortBy: 'latest' },
+      // { name: PlatformsNamesEnum.INSTAGRAM, enabled: true, sortBy: 'latest' },
+      // { name: PlatformsNamesEnum.LINKEDIN, enabled: true, sortBy: 'latest' },
       { name: PlatformsNamesEnum.YOUTUBE, enabled: true, sortBy: 'latest' },
       { name: PlatformsNamesEnum.TIKTOK, enabled: true, sortBy: 'latest' },
       { name: PlatformsNamesEnum.REDDIT, enabled: true, sortBy: 'latest' },
       { name: PlatformsNamesEnum.THREADS, enabled: true, sortBy: 'latest' },
-      { name: PlatformsNamesEnum.GOOGLE, enabled: true, sortBy: 'latest' }
+      // { name: PlatformsNamesEnum.GOOGLE, enabled: true, sortBy: 'latest' }
     ],
     sortBy: MonitorSortByEnum.LATEST,
     excludeUsers: [],

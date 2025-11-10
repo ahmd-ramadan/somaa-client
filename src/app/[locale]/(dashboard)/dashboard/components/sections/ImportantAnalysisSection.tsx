@@ -82,7 +82,7 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
                     animate={!isImportantAnalysisAnimating ? "pause" : "animate"}
                 >
                     <div className="space-y-2">
-                        {importantAnalysis.slice(0, 40).map((analysis, index) => (
+                        {importantAnalysis.slice(0, 50).map((analysis, index) => (
                             <motion.div 
                                 key={analysis._id || index} 
                                 className="bg-gray-600 p-2 rounded-lg animate-pulse"

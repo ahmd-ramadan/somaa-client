@@ -18,7 +18,8 @@ const groupingPossibleValues: Record<string, string[]> = {
 //   platform: Object.values(PlatformsEnum),
   classify: Object.values(AnalysisClassifyEnum),
 //   tweetType: Object.values(TweetTypesEnum),
-//   contentType: Object.values(ContentTypesEnum)
+//   contentType: Object.values(ContentTypesEnum),
+  isRelated: ["internal", 'external']
 };
 
 export const useAnalysisTable = () => {

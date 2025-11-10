@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Hash, AtSign, Link } from 'lucide-react';
+import { Hash, AtSign, Link, Loader2 } from 'lucide-react';
 import KeywordsMonitor from './components/KeywordsMonitor';
 import type { MonitorTab } from '@/types/monitor';
 
@@ -23,8 +23,9 @@ export default function MonitorPage() {
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               {t('tabs.profile')}
             </h3>
-            <p className="text-gray-600">
-              Profile monitoring functionality coming soon...
+            <p className="text-gray-600 flex items-center justify-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              {t('profileMonitoringComingSoon')}
             </p>
           </div>
         );
@@ -37,8 +38,9 @@ export default function MonitorPage() {
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               {t('tabs.url')}
             </h3>
-            <p className="text-gray-600">
-              URL monitoring functionality coming soon...
+            <p className="text-gray-600 flex items-center justify-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              {t('urlMonitoringComingSoon')}
             </p>
           </div>
         );

@@ -16,17 +16,8 @@ import {
   MonitorLanguagesEnum
 } from './types';
 import { monitorByKeywords } from '@/lib/features/monitor/monitorThunks';
-import { setCurrentFilters, setCurrentKeywords, toggleAutoRefresh } from '@/lib/features/monitor/monitorSlice';
+import { setCurrentFilters, setCurrentKeywords } from '@/lib/features/monitor/monitorSlice';
 import { RootState, AppDispatch } from '@/lib/store';
-import FacebookIcon from '@/components/icons/SocialMedia/Facebook';
-import InstagramIcon from '@/components/icons/SocialMedia/Instagram';
-import LinkedInIcon from '@/components/icons/SocialMedia/LinkedIn';
-import YoutubeIcon from '@/components/icons/SocialMedia/Youtube';
-import TikTokIcon from '@/components/icons/SocialMedia/TikTok';
-import XIcon from '@/components/icons/SocialMedia/X';
-import RedditIcon from '@/components/icons/SocialMedia/Reddit';
-import GoogleIcon from '@/components/icons/SocialMedia/Google';
-import ThreadsIcon from '@/components/icons/SocialMedia/Threads';
 import { getPlatformIcon } from './utils';
 
 interface KeywordsFiltersProps {
@@ -214,14 +205,14 @@ export default function KeywordsFilters({
   // Define all available platforms
   const allPlatforms: { name: PlatformsNamesEnum; displayName: string }[] = [
     { name: PlatformsNamesEnum.X, displayName: t('platforms.x') },
-    { name: PlatformsNamesEnum.FACEBOOK, displayName: t('platforms.facebook') },
-    { name: PlatformsNamesEnum.INSTAGRAM, displayName: t('platforms.instagram') },
-    { name: PlatformsNamesEnum.LINKEDIN, displayName: t('platforms.linkedin') },
+    // { name: PlatformsNamesEnum.FACEBOOK, displayName: t('platforms.facebook') },
+    // { name: PlatformsNamesEnum.INSTAGRAM, displayName: t('platforms.instagram') },
+    // { name: PlatformsNamesEnum.LINKEDIN, displayName: t('platforms.linkedin') },
     { name: PlatformsNamesEnum.YOUTUBE, displayName: t('platforms.youtube') },
     { name: PlatformsNamesEnum.TIKTOK, displayName: t('platforms.tiktok') },
     { name: PlatformsNamesEnum.REDDIT, displayName: t('platforms.reddit') },
     { name: PlatformsNamesEnum.THREADS, displayName: t('platforms.threads') },
-    { name: PlatformsNamesEnum.GOOGLE, displayName: t('platforms.google') }
+    // { name: PlatformsNamesEnum.GOOGLE, displayName: t('platforms.google') }
   ];
 
   const getPlatformSortOptions = (platform: PlatformsNamesEnum): MonitorSortByEnum[] => {
@@ -290,7 +281,7 @@ export default function KeywordsFilters({
       {/* Header with Toggle Button */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Settings className="w-4 h-4 text-blue-600" />
+          <Settings className="w-4 h-4 text-secondary" />
           <h3 className="text-base font-semibold text-gray-900">{t('settingsTitle')}</h3>
         </div>
         <div className="flex items-center gap-3">
@@ -300,7 +291,7 @@ export default function KeywordsFilters({
               <button
                 onClick={() => dispatch(toggleAutoRefresh())}
                 className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                  !autoRefreshEnabled ? 'bg-gray-300' : 'bg-blue-600'
+                  !autoRefreshEnabled ? 'bg-gray-300' : 'bg-secondary'
                 }`}
               >
                 <span
@@ -365,7 +356,7 @@ export default function KeywordsFilters({
                   <button 
                     onClick={addKeyword}
                     disabled={!newKeywordText.trim()}
-                    className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                    className="px-3 py-1 bg-secondary text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                   >
                     <Plus className="w-3 h-3" />
                     {t('addKeyword')}
@@ -538,7 +529,7 @@ export default function KeywordsFilters({
                               type="checkbox"
                               checked={(filters.language || []).length === 0}
                               onChange={() => updateFilters({ language: [] })}
-                              className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              className="w-3 h-3 text-secondary border-gray-300 rounded focus:ring-blue-500"
                             />
                             <span className="ml-2 text-xs">{t('allLanguages')}</span>
                           </label>
@@ -549,7 +540,7 @@ export default function KeywordsFilters({
                                 type="checkbox"
                                 checked={isLanguageSelected(lang)}
                                 onChange={() => toggleLanguage(lang)}
-                                className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                className="w-3 h-3 text-secondary border-gray-300 rounded focus:ring-blue-500"
                               />
                               <span className="ml-2 text-xs">{t(`filters.${lang}`)}</span>
                             </label>
@@ -584,7 +575,7 @@ export default function KeywordsFilters({
                     type="checkbox"
                     checked={filters.hasMedia}
                     onChange={(e) => updateFilters({ hasMedia: e.target.checked })}
-                    className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-3 h-3 text-secondary border-gray-300 rounded focus:ring-blue-500"
                   />
                   <span className="mr-2 text-xs font-medium text-gray-700">{t('hasMedia')}</span>
                 </label>
@@ -594,7 +585,7 @@ export default function KeywordsFilters({
                     type="checkbox"
                     checked={filters.verifiedOnly}
                     onChange={(e) => updateFilters({ verifiedOnly: e.target.checked })}
-                    className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-3 h-3 text-secondary border-gray-300 rounded focus:ring-blue-500"
                   />
                   <span className="mr-2 text-xs font-medium text-gray-700">{t('verifiedOnly')}</span>
                 </label>

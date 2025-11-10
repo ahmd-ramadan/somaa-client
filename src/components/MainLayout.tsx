@@ -50,12 +50,14 @@ const MainLayout = ({ cookiesData, children }: IProps) => {
 
     return (
         <div className="w-full flex bg-primary h-svh">
-            <Sidebar />
-            <div className={`w-full bg-gray-200 ${locale === 'en' ? 'lg:rounded-l-2xl' : 'lg:rounded-r-2xl'} overflow-auto`}>
+            <div className="flex flex-col h-full">
+                <Sidebar />
+            </div>
+            <div className={`w-full h-full bg-gray-200 ${locale === 'en' ? 'lg:rounded-l-2xl' : 'lg:rounded-r-2xl'} overflow-auto`}>
                 {/* <header className="sticky top-0 z-10 bg-gray-200">
                     <Header />
                 </header> */}
-                <main className='w-full'>
+                <main className='w-full h-full'>
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={pathname}

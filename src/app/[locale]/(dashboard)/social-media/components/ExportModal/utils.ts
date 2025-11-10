@@ -40,6 +40,8 @@ export const getCellValue = (item: IAnalysis, columnId: string, t: (key: string)
             return t(item?.tweetType) || t(TweetTypesEnum.TWEET);
         case 'contentType':
             return t(item?.content?.type) || t(ContentTypesEnum.TEXT);
+        case 'isRelated':
+            return item.isRelated ? t('internal') : t('external');
         default:
             return '';
     }

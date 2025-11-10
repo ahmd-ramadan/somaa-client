@@ -87,16 +87,17 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({
                             groupKey === 'tweetType' ||
                             groupKey === 'classify' ||
                             groupKey === 'contentType' ||
-                            groupKey === 'platform' ?
+                            groupKey === 'platform' ||
+                            groupKey === 'isRelated' ?
                             (() => {
                                 // Extract the value part before the count (e.g., "positive (5)" -> "positive")
                                 const valueMatch = group.label.match(/^([^(]+)/);
                                 const value = valueMatch ? valueMatch[1].trim() : group.label;
                                 const translated = t(value);
                                 return translated !== value ? translated : group.label;
-                            })() : group.label
+                            })() : group.label.split(' ').slice(0, -1).join(' ')
                         }</span>
-                        {/* <span className="text-gray-500">({totalItems})</span> */}
+                        <span className="text-gray-500">({totalItems})</span>
                         {/* {level > 0 && ( */}
                             <span className="text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded-full">
                                 {groupingType}

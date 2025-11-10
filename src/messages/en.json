@@ -225,6 +225,10 @@
             "tweet": "Post",
             "reply": "Reply",
             "quote": "Quote",
+            "postRelationship": "Post Relationship",
+            "internal": "Internal Post",
+            "external": "External Post",
+            "isRelated": "Post Relationship",
             "content": "Content",
             "createdAt": "Date",
             "classify": "Classification",
@@ -851,6 +855,8 @@
     "Monitor": {
         "pageTitle": "Live Monitoring",
         "pageDescription": "Search and monitor all social media platforms using keywords, profiles, and URLs",
+        "profileMonitoringComingSoon": "... Profile monitoring functionality coming soon",
+        "urlMonitoringComingSoon": "... URL monitoring functionality coming soon",
         "tabs": {
             "keywords": "Keywords Monitoring",
             "profile": "Profile Monitoring", 

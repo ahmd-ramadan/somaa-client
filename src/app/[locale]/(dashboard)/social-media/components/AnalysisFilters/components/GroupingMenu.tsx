@@ -106,6 +106,14 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             >
                                 {t("tweetType")}
                             </button>
+                            <button
+                                onClick={() => toggleGrouping('isRelated')}
+                                className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
+                                    groupings.isRelated?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                }`}
+                            >
+                                {t("postRelationship")}
+                            </button>
                         </div>
                     </div>
                 </div>

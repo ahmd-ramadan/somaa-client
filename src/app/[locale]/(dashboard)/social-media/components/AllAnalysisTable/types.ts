@@ -40,5 +40,6 @@ export const groupingOrderMap: GroupingOrderMap = {
     subAnalysis: { key: 'subAnalysis', getValue: (item: IAnalysis) => item.subAnalysisData.body },
     classify: { key: 'classify', getValue: (item: IAnalysis) => item.classify },
     contentType: { key: 'contentType', getValue: (item: IAnalysis) => item.content?.type },
-    tweetType: { key: 'tweetType', getValue: (item: IAnalysis) => item.tweetType }
+    tweetType: { key: 'tweetType', getValue: (item: IAnalysis) => item.tweetType },
+    isRelated: { key: 'isRelated', getValue: (item: IAnalysis) => item.isRelated === true ? 'internal' : 'external' }
 }; 
