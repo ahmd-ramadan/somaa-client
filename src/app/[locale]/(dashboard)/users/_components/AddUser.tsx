@@ -53,23 +53,27 @@ const AddUser = () => {
     } = useForm<IFormInputs>({
         resolver: yupResolver(AddUserSchema) as any,
         defaultValues: {
+            phone: '',
             permissions: [],
             role: 'user'
         }
     });
 
+    const phone = useWatch({ control, name: 'phone' });
+    console.log(phone)
+
     const onSubmit = async (data: IFormInputs) => {
         try {
             let formData: IReqData = {
                 name: data.name,
-                phone: data.phone || '' as string,
                 email: data.email,
+                phone: data.phone || '',
                 password: data.password,
                 permissions: data.permissions,
                 role: data.role
             };
             if (data?.phone) formData.phone = data.phone;
-            // console.log(formData)
+            console.log(formData)
             const action = await dispatch(createNewUserRole({ token: token as string, data: formData }));
             const { success, message } = action.payload as any;
             if (success) {

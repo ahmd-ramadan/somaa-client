@@ -764,7 +764,20 @@
         "permissions": "Permissions",
         "totalMonitoringSocialMediaCount": "Total Social Media Monitoring Count",
         "totalMonitoringNewsCount": "Total News Monitoring Count",
-        "fullAccess": "Full Access"
+        "fullAccess": "Full Access",
+        "phoneNumberRequired": "Phone number is required",
+        "phoneNumberInvalid": "Phone number is invalid",
+        "password": "Password",
+        "confirmPass": "Confirm Password",
+        "role": "Role",
+        "selectRole": "Select Role",
+        "manage_news": "Manage News",
+        "manage_analysis": "Manage Social Media",
+        "submitBtn": "Add User",
+        "submitBtnLoad": "Adding...",
+        "addUserBtn": "Add User",
+        "addUserModalTitle": "Add New User",
+        "addUserBtnLoad": "Adding..."
     },
     "AdminsPage": {
         "adminsPageTitle": "Admins Management",

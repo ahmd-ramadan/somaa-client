@@ -70,11 +70,13 @@ const Sidebar = () => {
 
     const renderDataList = (data: ISideBarLinks[]) => {
         return data.map(({ name, link, permission }: ISideBarLinks): ReactNode => {
-            const hasPermission =
+            let hasPermission =
                 (permission === 'forAll') ||
                 (loggedInUser?.role === 'admin' && permission !== 'isOnlySuperAdmin') ||
                 (loggedInUser?.role === 'super_admin');
 
+            if(loggedInUser?.role === 'user' && link === 'add') hasPermission = false;
+            
             if (!hasPermission) {
                 return null;
             }

@@ -14,8 +14,8 @@ export const AddUserSchema = yup.object().shape({
         .required(formatValidationMessage('required')),
     phone: yup
         .string()
-        .required('Phone number is required')
-        .test('is-valid-phone', formatValidationMessage('default'), value => isValidPhoneNumber(value || '')),
+        .optional(),
+        // .test('is-valid-phone', formatValidationMessage('default'), value => isValidPhoneNumber(value || '')),
     password:  yup.string()
         .matches(passwordRegExp, formatValidationMessage('passMatches'))
         .max(20, formatValidationMessage('maxLength', 20))
@@ -25,7 +25,7 @@ export const AddUserSchema = yup.object().shape({
         .required(formatValidationMessage('required')),
     permissions: yup.array()
         .of(yup.string())
-        .min(1, formatValidationMessage('min', 1))
+        // .min(1, formatValidationMessage('min', 1))
         .required(formatValidationMessage('required')),
     role: yup.string()
         .oneOf(['user', 'moderator', 'monitor'], formatValidationMessage('required'))
