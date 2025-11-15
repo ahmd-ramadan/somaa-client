@@ -14,7 +14,7 @@ import { ReactNode } from 'react';
 import Layout from '@/components/MainLayout';
 import { ICookiesData, IDecodedToken, ILocaleParams } from '@/interfaces';
 import { Metadata } from 'next';
-import { translate } from '@/utils/metaData';
+import { metaDataKeywords, metaDataTitle, TranslationsAr, TranslationsEn } from '@/utils/metaData';
 import { cookies } from 'next/headers';
 import { verifyRefreshToken } from '@/utils/auth';
 import StoreProvider from './providers/StoreProvider';
@@ -29,12 +29,12 @@ interface IProps {
 
 export const generateMetadata = async({ params: { locale } }: ILocaleParams): Promise<Metadata> => {
     // const title = `${translate({ locale, key: 'default' })} ${translate({ locale, key: 'description'})}`;
-    const title = `${translate({ locale, key: 'default' })}`;
-    const description = translate({ locale, key: 'description' });
+    const title = metaDataTitle;
+    const description = locale === 'en' ? TranslationsEn.description : TranslationsAr.description;
     return {
         title,
         description,
-        keywords: translate({ locale, key: 'keywords' }),
+        keywords: metaDataKeywords,
         icons: {
             icon: ['/favicon.ico?v=4'],
             apple: ['/apple-touch-icon.png?v=4'],

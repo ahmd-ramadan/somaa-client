@@ -1,164 +1,47 @@
 
-export interface Translations {
-    default: string;
-    description: string;
-    keywords: string[];
-    profile: string;
-    myOrders: string;
-    orderDetails: string;
-    myWishlist: string;
-    becomeVendor: string;
-    login: string;
-    signup: string;
-    verifyAccount: string;
-    vendorSetPassword: string; 
-    searchResult: string;
-    category: string;
-    subCategory: string;
-    product: string;
-    discountProducts: string;
-    bestSellingProducts: string;
-    reviews: string;
-    forgetPassword: string;
-    resetPassword: string;
-    manageAdmins: string;
-    manageCategories: string;
-    manageSubCategories: string;
-    manageProducts: string;
-    manageCoupons: string;
-    manageMarket: string;
-    manageVendors: string;
-    manageInfluencers: string;
-    manageOrders: string;
-    manageShipping: string;
-    manageOrderDetails: string;
-    manageCouponDetails: string;
-    manageProductDetails: string;
-    manageVendorDetails: string;
-    adminDashboard: string;
-    notAuthorized: string;
-    socialMedia: string;
-    news: string;
-    users: string;
-    admins: string;
-    dashboard: string;
-    settings: string;
-    liveMonitoring: string;
-    addMonitor: string;
-}
-
-export interface TranslationsMap {
-    en: Translations;
-    ar: Translations;
-}
-
-const translations: TranslationsMap = {
-    en: {
-        default: 'Sumaah',
-        description: "",
-        keywords: [],            
-        profile: "Profile",
-        myOrders: "My Orders",
-        orderDetails: "Order Details",
-        myWishlist: "Wishlist",
-        login: "Login",
-        signup: "Signup",
-        becomeVendor: "Become Vendor",
-        verifyAccount: "Verify Account",
-        vendorSetPassword: "Vendor Set New Password",
-        searchResult: "Search results for",
-        category: "Categories",
-        subCategory: "subCategories",
-        product: "Products",
-        discountProducts: "Discount Products",
-        bestSellingProducts: "Best Selling Products",
-        reviews: "Reviews",
-        forgetPassword: "Forget Password",
-        resetPassword: "Reset Password",
-        manageAdmins: "Manage Admins",
-        manageCategories: "Manage Categories",
-        manageCoupons: "Manage Coupons",
-        manageInfluencers: "Manage Influencers",
-        manageMarket: "Manage Market",
-        manageOrders: "Manage Orders",
-        manageProducts: "Manage Products",
-        manageSubCategories: "Manage SubCategories",
-        manageVendors: "Manage Vendors",
-        manageShipping: "Manage Shipping",
-        manageOrderDetails: "Order Details",
-        manageCouponDetails: "Coupon Details",
-        manageProductDetails: "Product Details",
-        manageVendorDetails: "Vendor Details",
-        adminDashboard: "Admin Dashboard",
-        notAuthorized: "Not Authorized",
-        admins: "Admins Management",
-        users: "Users Management",
-        socialMedia: "Social Media",
-        news: "News",
-        dashboard: "Dashboard",
-        settings: "Settings",
-        liveMonitoring: "Live Monitoring",
-        addMonitor: "Add Monitor"
-    },
-    ar: {
-        default: 'Sumaah',
-        description: "",
-        keywords: [],        
-        profile: "حسابي الشخصي",
-        myOrders: "طلباتي",
-        orderDetails: "تفاصيل الطلب",
-        myWishlist: "منتجاتي المفضلة",
-        becomeVendor: "بع معنا",
-        verifyAccount: "تفعيل الحساب",
-        vendorSetPassword: "تعيين كلمة سر جديدة للتاجر",
-        login: "تسجيل الدخول",
-        signup: "إنشاء الحساب",
-        searchResult: "نتائج البحث ل",
-        category: "الفئات",
-        subCategory: "الفئات الفرعية",
-        product: 'المنتجات',
-        discountProducts: "منتجات الخصومات",
-        bestSellingProducts: "المنتجات الأفضل مبيعا",
-        reviews: "المراجعات",
-        forgetPassword: "نسيت كلمة السر",
-        resetPassword: "إعادة تعيين كلمة المرور",
-        manageAdmins: "إدارة الأدمنز",
-        manageCategories: "إدارة الفئات",
-        manageCoupons: "إدارة الخصومات",
-        manageInfluencers: "إدارة الأنفلونسرز",
-        manageMarket: "إدارة السوق",
-        manageOrders: "إدارة الطلبات",
-        manageProducts: "إداراة المنتجات",
-        manageSubCategories: "إدارة الفئات الفرعية",
-        manageVendors: "إدارة التجار",
-        manageShipping: "إدارة الشحن",
-        manageOrderDetails: "تفاصيل الطلب",
-        manageCouponDetails: "تفاصيل الكوبون",
-        manageProductDetails: "تفاصيل المنتج",
-        manageVendorDetails: "تفاصيل التاجر",
-        adminDashboard: "لوحة تحكم المشرف",
-        notAuthorized: "",
-        admins: "إدارة الأدمنز",
-        users: " إدارة المستخدمين",
-        socialMedia: "التواصل الإجتماعي",
-        news: "الأخبار",
-        dashboard: "لوحة التحكم",
-        settings: "الإعدادات",
-        liveMonitoring: "الرصد المياشر",
-        addMonitor: "إضافة رصد"
-    }
+export enum TranslationsEn {
+    default = 'Sumaah - سًمعة',
+    description = "Reputation allows you to see things from a different perspective. It doesn\'t just report; it reveals public opinion trends. It doesn\'t simply track what\'s being said, but analyzes why it was said, who said it, and how it will affect you.\nIt\'s a communication intelligence system that combines high-precision technology with human expertise in qualitative analysis to deliver proactive insights that enhance decision-making and professional reputation management.",          
+    profile = "Profile",
+    login = "Login",
+    signup = "Signup",
+    verifyAccount = "Verify Account",
+    forgetPassword = "Forget Password",
+    resetPassword = "Reset Password",
+    notAuthorized = "Not Authorized",
+    users = "Users Management",
+    socialMedia = "Monitoring Social Media",
+    news = "Monitoring News",
+    manageAdmins = "Manage Admins",
+    dashboard = "Dashboard",
+    settings = "Settings",
+    liveMonitoring = "Live Monitoring",
+    addMonitor = "Add Monitor"
 };
 
-type Locale = keyof TranslationsMap;
-
-interface TranslateParams {
-    locale: Locale;
-    key?: keyof TranslationsMap[Locale];
-}
-
-export const translate = ({ locale, key }: TranslateParams): any => {
-    if(!key) {
-        return translations[locale]['default'];
-    }
-    return translations[locale][key];
+export enum TranslationsAr {
+    description = "سُمعة تمكنك من الرؤية عبر منظور مختلف فهي لا تقدم التقارير فحسب ، بل تكشف لك توجهات الرأي العام. ولا تتابع فقط ما يقال، بل تحلل لماذا قيل، ومن قاله، وكيف يكون أثره. هي نظام ذكاء إتصالي يدمج بين التقنية عالية الدقة والخبرة البشرية في التحليل النوعي، لتقديم رؤي إستباقية تعزز إتخاذ القرار وتدير السمعة بأحتراف.  ",               
+    profile = "حسابي الشخصي",
+    verifyAccount = "تفعيل الحساب",
+    login = "تسجيل الدخول",
+    signup = "إنشاء الحساب",
+    forgetPassword = "نسيت كلمة السر",
+    resetPassword = "إعادة تعيين كلمة المرور",
+    notAuthorized = "غير مصرح لك",
+    users = " إدارة المستخدمين",
+    socialMedia = "التواصل الإجتماعي رصد",
+    news = "الأخبار",
+    manageAdmins = "إدارة الأدمنز",
+    dashboard = "لوحة التحكم",
+    settings = "الإعدادات",
+    liveMonitoring = "الرصد المياشر",
+    addMonitor = "إضافة رصد"
 };
+
+export const metaDataTitle = "Sumaah - سًمعة";
+export const metaDataKeywords = [
+    "Sumaah", "سًمعة", "الرصد", "رصد", "يرصد", "Monitoring", "Monitor", "Monitorings", "Monitors", "Monitored", "Monitoreds", "Monitoredings", "Monitoreds", "Monitoredings", "Monitoreds",
+    "مراقبة", "كلمات مفتاحية", "Keywords", "Keywords Monitoring", "Keywords Monitors", "Keywords Monitored", "Keywords Monitoreds", "Keywords Monitoredings", "Keywords Monitoreds", "Keywords Monitoredings", "Keywords Monitoreds",
+    "الرصد المباشر", "رصد مباشر", "يرصد مباشر", "Monitoring Direct", "Monitor Direct", "Monitorings Direct", "Monitors Direct", "Monitored Direct", "Monitoreds Direct", "Monitoredings Direct", "Monitoreds Direct", "Monitoredings Direct", "Monitoreds Direct",
+    "reputation", "communication", "intelligence", "decision-making", "professional reputation management", 
+]

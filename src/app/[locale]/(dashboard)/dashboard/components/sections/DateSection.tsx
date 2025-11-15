@@ -45,8 +45,8 @@ const DateSection = ({
         >
             <div className="relative w-[80%] h-20 mx-auto">
                 <Image
-                    src="/ministry-logo.png"
-                    alt="date-section"
+                    src="/ministry-of-water/logo-2.webp"
+                    alt="Ministry of Water Logo"
                     fill
                     className="object-cover"
                 />

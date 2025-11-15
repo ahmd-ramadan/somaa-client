@@ -126,11 +126,11 @@ const Sidebar = () => {
                 `}>
                     <div className={`transition-opacity duration-200 ${isCompact ? 'opacity-0 w-0' : 'opacity-100'}`}>
                        <Image
-                            src="/ministry-logo.png"
-                            alt="logo"
-                            width={160}
-                            height={80}
-                            className="bg-gray-200 rounded-lg px-2"
+                            src="/ministry-of-water/logo-2.webp"
+                            alt="Ministry of Water Logo"
+                            width={200}
+                            height={100}
+                            className="rounded-3xl bg-gray-100 backdrop-blur-sm"
                        />
                     </div>
                     {/* This button is now ALWAYS visible */}
