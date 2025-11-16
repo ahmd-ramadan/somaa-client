@@ -20,6 +20,8 @@ import { addNews } from "@/lib/features/news/newsthunks";
 import { useSocket } from "@/hooks/useSocket";
 import { addNewspaper, fetchAllNewspapers } from "@/lib/features/newspaper/newspaperThunks";
 import { INewspaper } from "@/interfaces/newspaper";
+import { UserRoleTypes } from "@/types";
+import { showAddComponentsForSector } from "@/utils/authComponents";
 
 export interface IFormInputs  {
     url: string;
@@ -125,6 +127,55 @@ const AddNews = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [showSectorDropdown, showNewspaperDropdown]);
+
+
+    const handleAddNewSector = async () => {
+        if (!sectorInput.trim()) {
+            toast.error(t("sectorNameRequired"));
+            return;
+        }
+        try {
+            const action = await dispatch(addSector({ token: token as string, data: { name: sectorInput } }));
+            const res = action.payload as any;
+            const { success, data, message } = res;
+            if (success) {
+                toast.success(message || t("sectorAddedSuccessfully"));
+                setSelectedSector(data._id);
+                setValue('sectorId', data._id);
+                setSectorInput(data.name);
+                setShowSectorDropdown(false);
+            }
+            else {
+                toast.error(message || t("failedToAddSector"));
+            }
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    const handleAddNewNewspaper = async () => {
+        if (!newspaperInput.trim()) {
+            toast.error(t("newspaperNameRequired"));
+            return;
+        }
+        try {
+            const action = await dispatch(addNewspaper({ token: token as string, data: { name: newspaperInput } }));
+            const res = action.payload as any;
+            const { success, data, message } = res;
+            if (success) {
+                toast.success(message || t("newspaperAddedSuccessfully"));
+                setSelectedNewspaper(data._id);
+                setValue('newspaper', data.name);
+                setNewspaperInput(data.name);
+                setShowNewspaperDropdown(false);
+            }
+            else {
+                toast.error(message || t("failedToAddNewspaper"));
+            }
+        } catch (error) {
+            handleError(error);
+        }
+    }
 
     const onSubmit = async (data: IFormInputs) => {
         try {
@@ -246,19 +297,9 @@ const AddNews = () => {
                                         </div>
                                     ))
                                 }
-                                {sectorInput && role === 'super_admin' && !selectedSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
+                                {sectorInput && showAddComponentsForSector(role as UserRoleTypes) && !selectedSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
                                     <div
-                                        onClick={() => {
-                                            if (!sectorInput.trim()) {
-                                                toast.error(t("sectorNameRequired"));
-                                                return;
-                                            }
-
-                                            dispatch(addSector({ 
-                                                token: token as string, 
-                                                data: { name: sectorInput }
-                                            }));
-                                        }}
+                                        onClick={handleAddNewSector}
                                         className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                     >
                                         {t("addNewSector")}: {sectorInput}
@@ -378,17 +419,7 @@ const AddNews = () => {
                                 }
                                 {newspaperInput && !selectedNewspapers.some(n => n.name.toLowerCase() === newspaperInput.toLowerCase()) && (
                                     <div
-                                        onClick={() => {
-                                            if (!newspaperInput.trim()) {
-                                                toast.error(t("newspaperNameRequired"));
-                                                return;
-                                            }
-
-                                            dispatch(addNewspaper({ 
-                                                token: token as string, 
-                                                data: { name: newspaperInput }
-                                            }));
-                                        }}
+                                        onClick={handleAddNewNewspaper}
                                         className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                     >
                                         {t("addNewNewspaper")}: {newspaperInput}

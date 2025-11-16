@@ -32,6 +32,8 @@ import { INews, NewsAdTypesEnum, NewsClassifyEnum, NewsGeographicalClassifyEnum,
 import { updateNews } from '@/lib/features/news/newsthunks';
 import { useSocket } from '@/hooks/useSocket';
 import { addNewspaper, fetchAllNewspapers } from '@/lib/features/newspaper/newspaperThunks';
+import { UserRoleTypes } from '@/types';
+import { showAddComponentsForSector } from '@/utils/authComponents';
 
 interface EditNewsProps {
     news: INews;
@@ -178,6 +180,28 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
             handleError(error);
         }
     };
+
+    const handleAddNewNewspaper = async () => {
+        if (!newspaperInput.trim()) {
+            toast.error(t("newspaperNameRequired"));
+            return;
+        }
+        try {
+            const action = await dispatch(addNewspaper({ token: token as string, data: { name: newspaperInput } }));
+            const res = action.payload as any;
+            const { success, data, message } = res;
+            if (success) {
+                toast.success(message || t("newspaperAddedSuccessfully"));
+                handleInputChange('newspaper', data.name);
+                setNewspaperInput(data.name);
+                setShowNewspaperDropdown(false);
+            } else {
+                toast.error(message || t("failedToAddNewspaper"));
+            }
+        } catch (error) {
+            handleError(error);
+        }
+    }
 
     const validateChanges = (): boolean => {
         // Always require title (not just if changed)
@@ -341,7 +365,7 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
                                         </div>
                                     ))
                                 }
-                                {sectorInput && role === 'super_admin' && !allSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
+                                {sectorInput && showAddComponentsForSector(role as UserRoleTypes) && !allSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
                                     <div
                                         onClick={handleAddNewSector}
                                         className="w-full px-2 py-1 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
@@ -451,17 +475,7 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
                                 }
                                 {newspaperInput && !allNewspapers.some(n => n.name.toLowerCase() === newspaperInput.toLowerCase()) && (
                                     <div
-                                        onClick={() => {
-                                            if (!newspaperInput.trim()) {
-                                                toast.error(t("newspaperNameRequired"));
-                                                return;
-                                            }
-
-                                            dispatch(addNewspaper({ 
-                                                token: token as string, 
-                                                data: { name: newspaperInput }
-                                            }));
-                                        }}
+                                        onClick={handleAddNewNewspaper}
                                         className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                     >
                                         {t("addNewNewspaper")}: {newspaperInput}

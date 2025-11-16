@@ -9,6 +9,5 @@ export interface ISectorModel extends IDBModel {
 export interface ISector extends ISectorModel{}
 
 export interface ICreateSector {
-    name: string;
-    
+    name: string;   
 }

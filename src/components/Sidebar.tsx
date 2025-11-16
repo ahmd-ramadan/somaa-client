@@ -18,7 +18,6 @@ import {
     LayoutDashboard,
     Newspaper,
     Users,
-    UserCog,
     Share2,
     LogOut,
     Languages,

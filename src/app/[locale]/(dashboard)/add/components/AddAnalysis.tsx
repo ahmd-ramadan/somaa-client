@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
 import FormatErrorMessage from "@/components/ui/FormatErrormessage";
-import { use, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
 import { handleError } from "@/utils/errorUtils";
@@ -27,6 +27,8 @@ import { fetchAllSubAnalysis, addSubAnalysis } from "@/lib/features/subAnalysis/
 import { ISubAnalysis } from "@/interfaces/subAnalysis.types";
 import { ApiResponse } from "@/utils/apiService";
 import { useSocket } from "@/hooks/useSocket";
+import { UserRoleTypes } from "@/types";
+import { showAddComponentsForSector } from "@/utils/authComponents";
 
 // Add platform detection function
 const detectPlatformFromUrl = (url: string): PlatformsEnum | null => {
@@ -251,6 +253,30 @@ const AddAnalysis = () => {
         }
     };
 
+    const handleAddNewSector = async () => {
+        if (!sectorInput.trim()) {
+            toast.error(t("sectorNameRequired"));
+            return;
+        }
+        try {
+            const action = await dispatch(addSector({ token: token as string, data: { name: sectorInput } }));
+            const res = action.payload as any;
+            const { success, data, message } = res;
+            if (success) {
+                toast.success(message || t("sectorAddedSuccessfully"));
+                setSelectedSector(data._id);
+                setValue('sectorId', data._id);
+                setSectorInput(data.name);
+                setShowSectorDropdown(false);
+            }
+            else {
+                toast.error(message || t("failedToAddSector"));
+            }
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
     const [isHighlighted, setIsHighlighted] = useState<boolean>(false);
     const [isRelated, setIsRelated] = useState<boolean>(false);
     // const [isFlagged, setIsFlagged] = useState<boolean>(false);
@@ -329,6 +355,8 @@ const AddAnalysis = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [showCityDropdown, showDistrictDropdown, showRegionDropdown, showSectorDropdown, showSubAnalysisDropdown]);
+
+    
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -484,19 +512,9 @@ const AddAnalysis = () => {
                                             </div>
                                         ))
                                     }
-                                    {sectorInput && role ===  'super_admin' && !selectedSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
+                                    {sectorInput && showAddComponentsForSector(role as UserRoleTypes) && !selectedSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
                                         <div
-                                            onClick={() => {
-                                                if (!sectorInput.trim()) {
-                                                    toast.error(t("sectorNameRequired"));
-                                                    return;
-                                                }
-
-                                                dispatch(addSector({ 
-                                                    token: token as string, 
-                                                    data: { name: sectorInput }
-                                                }));
-                                            }}
+                                            onClick={handleAddNewSector}
                                             className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                         >
                                             {t("addNewSector")}: {sectorInput}

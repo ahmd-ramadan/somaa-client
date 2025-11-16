@@ -27,6 +27,8 @@ import { fetchAllSubAnalysis, addSubAnalysis } from "@/lib/features/subAnalysis/
 import { ISubAnalysis } from "@/interfaces/subAnalysis.types";
 import { ApiResponse } from "@/utils/apiService";
 import { useSocket } from "@/hooks/useSocket";
+import { showAddComponentsForSector } from "@/utils/authComponents";
+import { UserRoleTypes } from "@/types";
 
 // Add platform detection function
 const detectPlatformFromUrl = (url: string): PlatformsEnum | null => {
@@ -249,6 +251,29 @@ const AddAnalysis = () => {
         }
     };
 
+    const handleAddNewSector = async () => {
+        if (!sectorInput.trim()) {
+            toast.error(t("sectorNameRequired"));
+            return;
+        }
+        try {
+            const action = await dispatch(addSector({ token: token as string, data: { name: sectorInput } }));
+            const res = action.payload as any;
+            const { success, data, message } = res;
+            if (success) {
+                setSelectedSector(data._id);
+                setValue('sectorId', data._id);
+                setSectorInput(data.name);
+                setShowSectorDropdown(false);
+                toast.success(message || t("sectorAddedSuccessfully"));
+            } else {
+                toast.error(message || t("failedToAddSector"));
+            }
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
     // const [isFlagged, setIsFlagged] = useState<boolean>(false);
     const [isHighlighted, setIsHighlighted] = useState<boolean>(false);
     const [isRelated, setIsRelated] = useState<boolean>(false);
@@ -454,19 +479,9 @@ const AddAnalysis = () => {
                                             </div>
                                         ))
                                     }
-                                    {sectorInput && role ===  'super_admin' && !selectedSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
+                                    {sectorInput && showAddComponentsForSector(role as UserRoleTypes) && !selectedSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
                                         <div
-                                            onClick={() => {
-                                                if (!sectorInput.trim()) {
-                                                    toast.error(t("sectorNameRequired"));
-                                                    return;
-                                                }
-
-                                                dispatch(addSector({ 
-                                                    token: token as string, 
-                                                    data: { name: sectorInput }
-                                                }));
-                                            }}
+                                            onClick={handleAddNewSector}
                                             className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                         >
                                             {t("addNewSector")}: {sectorInput}

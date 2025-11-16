@@ -7,19 +7,6 @@ import { saudiLocations, ISaudiLocation } from '@/data/saudiLocations';
 import { fetchAllSectors, addSector } from "@/lib/features/sector/sectorThunks";
 import { fetchAllSubAnalysis, addSubAnalysis } from "@/lib/features/subAnalysis/subAnalysisThunks";
 import { 
-    Globe, 
-    User, 
-    Building2, 
-    Tag, 
-    FileText, 
-    Type, 
-    Calendar, 
-    MapPin,  
-    ExternalLink, 
-    BarChart2, 
-    Info,
-    Save,
-    XCircle,
     Plus,
     MessageCircle,
     Share2,
@@ -39,6 +26,8 @@ import { updateAnalysis } from '@/lib/features/socialMedia/analysisThunks';
 import { ApiResponse } from '@/utils/apiService';
 import { useSocket } from '@/hooks/useSocket';
 import { getPlatformIcon } from '../AllAnalysisTable/components/TableRow';
+import { showAddComponentsForSector } from '@/utils/authComponents';
+import { UserRoleTypes } from '@/types';
 
 interface EditAnalysisProps {
     analysis: IAnalysis;
@@ -537,7 +526,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                         </div>
                                     ))
                                 }
-                                {sectorInput && role === 'super_admin' && !allSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
+                                {sectorInput && showAddComponentsForSector(role as UserRoleTypes) && !allSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
                                     <div
                                         onClick={handleAddNewSector}
                                         className="w-full px-3 py-1 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"

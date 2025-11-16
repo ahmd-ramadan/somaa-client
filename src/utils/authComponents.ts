@@ -7,3 +7,7 @@ export const showAuthComponentsForAnalysis = ({ role, permissions = [] }: { role
 export const showAuthComponentsForNews = ({ role, permissions = [] }: { role: UserRoleTypes, permissions: IAdminPermissions[] }): boolean => {
     return role !== 'user' && (role === 'super_admin' || (permissions?.includes('manage_news'))); 
 } 
+
+export const showAddComponentsForSector = (role: UserRoleTypes): boolean => {
+    return (role === 'super_admin' || role === 'moderator'); 
+} 
