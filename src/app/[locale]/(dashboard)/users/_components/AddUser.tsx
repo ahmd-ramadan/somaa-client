@@ -171,7 +171,7 @@ const AddUser = () => {
                                                         : field.value.filter(v => v !== value);
                                                     field.onChange(newPermissions);
                                                 }}
-                                                className={`${field.value.includes(option) ? 'font-semibold text-adminPrimary' : ''}`}
+                                                className={`${field.value.includes(option) ? 'font-semibold text-primary' : ''}`}
                                             />
                                         )}
                                     />
@@ -190,7 +190,7 @@ const AddUser = () => {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="rounded-md w-full border font-semibold text-white bg-adminPrimary p-3 px-6"
+                        className="rounded-md w-full border font-semibold text-white bg-primary p-3 px-6"
                     >
                         { createNewUserRoleStatus === 'loading' ? 
                         (

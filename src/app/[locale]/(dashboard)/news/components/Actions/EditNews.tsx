@@ -410,7 +410,7 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
 
                 <div className="flex flex-col gap-2" ref={newspaperDropdownRef}>
                     <label htmlFor="newspaperId" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        {/* <Building2 className="w-4 h-4 text-adminPrimary" /> */}
+                        {/* <Building2 className="w-4 h-4 text-primary" /> */}
                         {t("newspaper")}
                     </label>
                     <div className="w-full relative">
@@ -462,7 +462,7 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
                                                 data: { name: newspaperInput }
                                             }));
                                         }}
-                                        className="w-full px-4 py-2 text-adminPrimary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
+                                        className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                     >
                                         {t("addNewNewspaper")}: {newspaperInput}
                                     </div>

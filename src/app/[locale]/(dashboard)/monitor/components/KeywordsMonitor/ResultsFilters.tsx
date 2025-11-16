@@ -344,7 +344,7 @@ export default function ResultsFiltersV2({
                                     onChange={(e) => {
                                       setActiveFilterType(e.target.value);
                                     }}
-                                    className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none bg-gray-50"
+                                    className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
                                 >
                                     <option value="">{t("selectFilterType")}</option>
                                     {filterTypes.map((f) => ( <option value={f.key} key={f.key}>{f.label}</option>) )}

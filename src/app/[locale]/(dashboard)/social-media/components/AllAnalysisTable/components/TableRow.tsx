@@ -160,7 +160,7 @@ const TableRow: React.FC<TableRowProps> = ({
             <td className="px-2 py-1">
                 <div className="flex items-center justify-center gap-1">
                     { !copied && <Copy 
-                            className='w-5 h-5 text-adminPrimary hover:bg-adminPrimary hover:text-white rounded-md cursor-pointer p-1' 
+                            className='w-5 h-5 text-primary hover:bg-primary hover:text-white rounded-md cursor-pointer p-1' 
                             onClick={handleCopy}
                         /> 
                     }
@@ -170,7 +170,7 @@ const TableRow: React.FC<TableRowProps> = ({
                         && (role === 'super_admin' || addedBy.toString() === userId.toString()) ?
                         <>
                             <Edit
-                                className="w-5 h-5 text-adminPrimary hover:bg-adminPrimary hover:text-white rounded-md cursor-pointer p-1"
+                                className="w-5 h-5 text-primary hover:bg-primary hover:text-white rounded-md cursor-pointer p-1"
                                 onClick={() => openDetailsModal(analysis)}
                             />
                             <Trash2
@@ -181,7 +181,7 @@ const TableRow: React.FC<TableRowProps> = ({
                         : 
                         <>
                             <EyeIcon
-                                className="w-5 h-5 text-adminPrimary hover:bg-adminPrimary hover:text-white rounded-md cursor-pointer p-1"
+                                className="w-5 h-5 text-primary hover:bg-primary hover:text-white rounded-md cursor-pointer p-1"
                                 onClick={() => openViewModal(analysis)}
                             />
                         </>

@@ -121,14 +121,14 @@ const ActiveFiltersDisplay: React.FC<ActiveFiltersDisplayProps> = ({
                 {Object.entries(groupings || {}).map(([type, value]) => {
                     if (value?.active) {
                         return (
-                            <div key={type} className="flex items-center gap-1 bg-adminPrimary/10 px-2 py-1 rounded-full text-xs shadow-sm border border-adminPrimary/20">
-                                <span className="font-medium text-adminPrimary">{t("groupBy")}:</span>
-                                <span className="text-adminPrimary">{t(type)}</span>
+                            <div key={type} className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full text-xs shadow-sm border border-primary/20">
+                                <span className="font-medium text-primary">{t("groupBy")}:</span>
+                                <span className="text-primary">{t(type)}</span>
                                 <button 
                                     onClick={() => {
                                         toggleGrouping(type as keyof typeof groupings);
                                     }} 
-                                    className="text-adminPrimary/60 hover:text-adminPrimary transition-colors ml-1"
+                                    className="text-primary/60 hover:text-primary transition-colors ml-1"
                                     title={t("removeGrouping")}
                                 >
                                     <X className="w-3.5 h-3.5" />

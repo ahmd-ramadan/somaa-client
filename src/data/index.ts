@@ -122,12 +122,12 @@ export const InputsUserSignUpForm: IInputUserForm[] = [
         type: "email",
         name: "email"
     },
-    {
-        label: "phone",
-        id: "Phone",
-        type: "text",
-        name: "phone"
-    },
+    // {
+    //     label: "phone",
+    //     id: "Phone",
+    //     type: "text",
+    //     name: "phone"
+    // },
     {
         label: "role",
         id: "Role",

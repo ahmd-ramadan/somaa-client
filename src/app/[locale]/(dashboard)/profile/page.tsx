@@ -66,7 +66,7 @@ const ProfilePage = () => {
                             type="text"
                             readOnly
                             value={formatDate({ locale, date: profile.createdAt, withTime: true })}
-                            className="p-2 h-10 w-full border border-gray-300 rounded-md shadow-sm focus:border-adminPrimary focus:ring-primary sm:text-sm transition duration-200"
+                            className="p-2 h-10 w-full border border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring-primary sm:text-sm transition duration-200"
                         />
                     </div>
                 </div>

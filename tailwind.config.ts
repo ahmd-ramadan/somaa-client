@@ -15,20 +15,8 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       colors: {
-        // primary: "#00224D",
-        // secondary: "#C80036",
-        // adminPrimary: "#00224D",
-        // adminSecondary: "#C80036",
-
         primary: "var(--color-primary)",
         secondary: "var(--color-secondary)",
-        adminPrimary: "var(--color-admin-primary)",
-        adminSecondary: "var(--color-admin-secondary)",
-
-        // primary: "#057a38",
-        // secondary: "#00224D",
-        // adminPrimary: "#057a38",
-        // adminSecondary: "#00224D",
       },
       scrollbar: {
         DEFAULT: {

@@ -173,14 +173,14 @@ const AddNews = () => {
                 {/* URL Input */}
                 <div className="flex flex-col gap-2">
                     <label htmlFor="url" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        {/* <Link className="w-4 h-4 text-adminPrimary" /> */}
+                        {/* <Link className="w-4 h-4 text-primary" /> */}
                         {t("url")}
                     </label>
                     <input
                         type="text"
                         id="url"
                         {...register("url")}
-                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
                         placeholder={t("urlPlaceholder")}
                     />
                     {errors.url && <FormatErrorMessage field="url" message={errors.url.message || t("required")} />}
@@ -189,14 +189,14 @@ const AddNews = () => {
                 {/* Title Input */}
                 <div className="flex flex-col gap-2">
                     <label htmlFor="title" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        {/* <Link className="w-4 h-4 text-adminPrimary" /> */}
+                        {/* <Link className="w-4 h-4 text-primary" /> */}
                         {t("title")}
                     </label>
                     <input
                         type="text"
                         id="title"
                         {...register("title")}
-                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
                         placeholder={t("titlePlaceholder")}
                     />
                     {errors.title && <FormatErrorMessage field="tilte" message={errors.title.message || t("required")} />}
@@ -205,7 +205,7 @@ const AddNews = () => {
                 {/* Sector Selection */}
                 <div className="flex flex-col gap-2" ref={sectorDropdownRef}>
                     <label htmlFor="sectorId" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        {/* <Building2 className="w-4 h-4 text-adminPrimary" /> */}
+                        {/* <Building2 className="w-4 h-4 text-primary" /> */}
                         {t("sector")}
                     </label>
                     <div className="w-full relative">
@@ -220,7 +220,7 @@ const AddNews = () => {
                                     setShowSectorDropdown(true);
                                 }}
                                 onFocus={() => setShowSectorDropdown(true)}
-                                className="col-span-6 rounded-lg border border-gray-300 px-3 py-1 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
+                                className="col-span-6 rounded-lg border border-gray-300 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all flex-1"
                                 placeholder={t("selectOrAddSector")}
                             />
                         </div>
@@ -259,7 +259,7 @@ const AddNews = () => {
                                                 data: { name: sectorInput }
                                             }));
                                         }}
-                                        className="w-full px-4 py-2 text-adminPrimary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
+                                        className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                     >
                                         {t("addNewSector")}: {sectorInput}
                                     </div>
@@ -273,13 +273,13 @@ const AddNews = () => {
                 {/* Classification Selection */}
                 <div className="flex flex-col gap-2">
                     <label htmlFor="classify" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        {/* <Tag className="w-4 h-4 text-adminPrimary" /> */}
+                        {/* <Tag className="w-4 h-4 text-primary" /> */}
                         {t("classify")}
                     </label>
                     <select
                         id="classify"
                         {...register("classify")}
-                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
                     >
                         <option value="">{t("selectClassify")}</option>
                         {Object.values(NewsClassifyEnum).map((classify) => (
@@ -294,13 +294,13 @@ const AddNews = () => {
                 {/* Geo Classification Selection */}
                 <div className="flex flex-col gap-2">
                     <label htmlFor="geoClassify" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        {/* <Tag className="w-4 h-4 text-adminPrimary" /> */}
+                        {/* <Tag className="w-4 h-4 text-primary" /> */}
                         {t("geoClassify")}
                     </label>
                     <select
                         id="geoClassify"
                         {...register("geoClassify")}
-                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
                     >
                         <option value="">{t("selectGeoClassify")}</option>
                         {Object.values(NewsGeographicalClassifyEnum).map((classify) => (
@@ -315,13 +315,13 @@ const AddNews = () => {
                 {/* Ad Type Selection */}
                 <div className="flex flex-col gap-2">
                     <label htmlFor="adType" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        {/* <Tag className="w-4 h-4 text-adminPrimary" /> */}
+                        {/* <Tag className="w-4 h-4 text-primary" /> */}
                         {t("adType")}
                     </label>
                     <select
                         id="adType"
                         {...register("adType")}
-                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
                     >
                         <option value="">{t("selectAdType")}</option>
                         {Object.values(NewsAdTypesEnum).map((adType) => (
@@ -336,7 +336,7 @@ const AddNews = () => {
                 {/* Newspaper Input */}
                 <div className="flex flex-col gap-2" ref={newspaperDropdownRef}>
                     <label htmlFor="newspaperId" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        {/* <Building2 className="w-4 h-4 text-adminPrimary" /> */}
+                        {/* <Building2 className="w-4 h-4 text-primary" /> */}
                         {t("newspaper")}
                     </label>
                     <div className="w-full relative">
@@ -350,7 +350,7 @@ const AddNews = () => {
                                     setShowNewspaperDropdown(true);
                                 }}
                                 onFocus={() => setShowNewspaperDropdown(true)}
-                                className="col-span-6 rounded-lg border border-gray-300 px-3 py-1 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
+                                className="col-span-6 rounded-lg border border-gray-300 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all flex-1"
                                 placeholder={t("selectOrAddNewspaper")}
                             />
                         </div>
@@ -389,7 +389,7 @@ const AddNews = () => {
                                                 data: { name: newspaperInput }
                                             }));
                                         }}
-                                        className="w-full px-4 py-2 text-adminPrimary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
+                                        className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                     >
                                         {t("addNewNewspaper")}: {newspaperInput}
                                     </div>
@@ -404,13 +404,13 @@ const AddNews = () => {
                 {/* Press Type Selection */}
                 <div className="flex flex-col gap-2">
                     <label htmlFor="pressType" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        {/* <Tag className="w-4 h-4 text-adminPrimary" /> */}
+                        {/* <Tag className="w-4 h-4 text-primary" /> */}
                         {t("pressType")}
                     </label>
                     <select
                         id="pressType"
                         {...register("pressType")}
-                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
                     >
                         <option value="">{t("selectPressType")}</option>
                         {Object.values(NewsPressTypesEnum).map((pressType) => (
@@ -425,13 +425,13 @@ const AddNews = () => {
                 {/* Note Input */}
                 <div className="flex flex-col gap-2 md:col-span-2">
                     <label htmlFor="note" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        {/* <MessageSquare className="w-4 h-4 text-adminPrimary" /> */}
+                        {/* <MessageSquare className="w-4 h-4 text-primary" /> */}
                         {t("note")}
                     </label>
                     <textarea
                         id="note"
                         {...register("note")}
-                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all min-h-[50px] resize-none"
+                        className="rounded-lg border border-gray-300 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all min-h-[50px] resize-none"
                         placeholder={t("notePlaceholder")}
                     />
                     {errors.note && <FormatErrorMessage field="note" message={errors.note.message || t("required")} />}
@@ -472,7 +472,7 @@ const AddNews = () => {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-6 py-3 bg-adminPrimary text-white rounded-lg hover:bg-adminPrimary/90 focus:outline-none focus:ring-2 focus:ring-adminPrimary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isSubmitting ? (
                         <div className="flex items-center gap-2">

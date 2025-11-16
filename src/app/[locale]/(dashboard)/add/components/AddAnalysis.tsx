@@ -364,14 +364,14 @@ const AddAnalysis = () => {
                 {/* URL Input */}
                 <div className="flex flex-col gap-1">
                     <label htmlFor="url" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Link className="w-4 h-4 text-adminPrimary" />
+                        <Link className="w-4 h-4 text-primary" />
                         {t("url")}
                     </label>
                     <input
                         type="text"
                         id="url"
                         {...register("url")}
-                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
                         placeholder={t("urlPlaceholder")}
                     />
                     {errors.url && <FormatErrorMessage field="url" message={errors.url.message || t("required")} />}
@@ -380,13 +380,13 @@ const AddAnalysis = () => {
                 {/* Platform Selection */}
                 <div className="flex flex-col gap-1">
                     <label htmlFor="platform" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Globe className="w-4 h-4 text-adminPrimary" />
+                        <Globe className="w-4 h-4 text-primary" />
                         {t("platform")}
                     </label>
                     <select
                         id="platform"
                         {...register("platform")}
-                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
                     >
                         <option value="">{t("selectPlatform")}</option>
                         {Object.values(PlatformsEnum).map((platform) => (
@@ -401,13 +401,13 @@ const AddAnalysis = () => {
                 {/* Classification Selection */}
                 <div className="flex flex-col gap-1">
                     <label htmlFor="classify" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Tag className="w-4 h-4 text-adminPrimary" />
+                        <Tag className="w-4 h-4 text-primary" />
                         {t("classify")}
                     </label>
                     <select
                         id="classify"
                         {...register("classify")}
-                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
                     >
                         <option value="">{t("selectClassify")}</option>
                         {Object.values(AnalysisClassifyEnum).map((classify) => (
@@ -422,13 +422,13 @@ const AddAnalysis = () => {
                 {/* Content Type Selection */}
                 <div className="flex flex-col gap-1">
                     <label htmlFor="contentType" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-adminPrimary" />
+                        <FileText className="w-4 h-4 text-primary" />
                         {t("contentType")}
                     </label>
                     <select
                         id="contentType"
                         {...register("contentType")}
-                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
                     >
                         <option value="">{t("selectContentType")}</option>
                         {Object.values(ContentTypesEnum).map((type) => (
@@ -444,7 +444,7 @@ const AddAnalysis = () => {
                     {/* Sector Selection */}
                     <div className="flex flex-col gap-1">
                         <label htmlFor="sectorId" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                            <Building2 className="w-4 h-4 text-adminPrimary" />
+                            <Building2 className="w-4 h-4 text-primary" />
                             {t("sector")}
                         </label>
                         <div className="w-full relative">
@@ -458,7 +458,7 @@ const AddAnalysis = () => {
                                         setShowSectorDropdown(true);
                                     }}
                                     onFocus={() => setShowSectorDropdown(true)}
-                                    className="col-span-6 rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
+                                    className="col-span-6 rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all flex-1"
                                     placeholder={t("selectOrAddSector")}
                                 />
                             </div>
@@ -497,7 +497,7 @@ const AddAnalysis = () => {
                                                     data: { name: sectorInput }
                                                 }));
                                             }}
-                                            className="w-full px-4 py-2 text-adminPrimary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
+                                            className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                         >
                                             {t("addNewSector")}: {sectorInput}
                                         </div>
@@ -511,7 +511,7 @@ const AddAnalysis = () => {
                     {/* SubAnalysis Selection */}
                     <div className="flex flex-col gap-1">
                         <label htmlFor="subAnalysisId" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                            <Building2 className="w-4 h-4 text-adminPrimary" />
+                            <Building2 className="w-4 h-4 text-primary" />
                             {t("subAnalysis")}
                         </label>
                         <div className="w-full relative">
@@ -522,14 +522,14 @@ const AddAnalysis = () => {
                                     value={subAnalysisInput}
                                     onChange={handleSubAnalysisInputChange}
                                     onFocus={() => setShowSubAnalysisDropdown(true)}
-                                    className="col-span-5 rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all flex-1"
+                                    className="col-span-5 rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all flex-1"
                                     placeholder={t("selectOrAddSubAnalysis")}
                                 />
                                 <button
                                     type="button"
                                     onClick={handleAddNewSubAnalysis}
                                     disabled={addSubAnalysisStatus === 'loading'}
-                                    className="col-span-1 px-3 py-1 bg-adminPrimary text-white text-center rounded-lg hover:bg-adminPrimary/90 focus:outline-none focus:ring-2 focus:ring-adminPrimary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="col-span-1 px-3 py-1 bg-primary text-white text-center rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {addSubAnalysisStatus === 'loading' ? (
                                         <div className="flex items-center gap-2 justify-center">
@@ -557,7 +557,7 @@ const AddAnalysis = () => {
                                     {subAnalysisInput && !allSubAnalysis.some(s => s.body.toLowerCase() === subAnalysisInput.toLowerCase()) && (
                                         <div
                                             onClick={handleAddNewSubAnalysis}
-                                            className="w-full px-4 py-2 text-adminPrimary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
+                                            className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
                                         >
                                             {t("addNewSubAnalysis")}: {subAnalysisInput}
                                         </div>
@@ -572,7 +572,7 @@ const AddAnalysis = () => {
                 {/* Location Selection */}
                 <div className="flex flex-col gap-1">
                     <label htmlFor="location" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-adminPrimary" />
+                        <MapPin className="w-4 h-4 text-primary" />
                         {t("location")}
                     </label>
                     <div className="space-y-2">
@@ -583,7 +583,7 @@ const AddAnalysis = () => {
                                 value={regionInput}
                                 onChange={handleRegionInputChange}
                                 onFocus={() => setShowRegionDropdown(true)}
-                                className="w-full rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all"
+                                className="w-full rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
                                 placeholder={t("selectRegion")}
                             />
                             {showRegionDropdown && (
@@ -614,7 +614,7 @@ const AddAnalysis = () => {
                                 onChange={handleCityInputChange}
                                 onFocus={() => setShowCityDropdown(true)}
                                 disabled={!selectedRegion}
-                                className="w-full rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all disabled:bg-gray-100"
+                                className="w-full rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all disabled:bg-gray-100"
                                 placeholder={t("selectCity")}
                             />
                             {showCityDropdown && selectedRegion && (
@@ -645,7 +645,7 @@ const AddAnalysis = () => {
                                 onChange={handleDistrictInputChange}
                                 onFocus={() => setShowDistrictDropdown(true)}
                                 disabled={!selectedCity}
-                                className="w-full rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all disabled:bg-gray-100"
+                                className="w-full rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all disabled:bg-gray-100"
                                 placeholder={t("selectDistrict")}
                             />
                             {showDistrictDropdown && selectedCity && (
@@ -673,13 +673,13 @@ const AddAnalysis = () => {
                 {/* Note Input */}
                 {/* <div className="flex flex-col gap-1">
                     <label htmlFor="note" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <MessageSquare className="w-4 h-4 text-adminPrimary" />
+                        <MessageSquare className="w-4 h-4 text-primary" />
                         {t("note")}
                     </label>
                     <textarea
                         id="note"
                         {...register("note")}
-                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none transition-all h-full resize-none"
+                        className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all h-full resize-none"
                         placeholder={t("notePlaceholder")}
                     />
                     {errors.note && <FormatErrorMessage field="note" message={errors.note.message || t("required")} />}
@@ -719,7 +719,7 @@ const AddAnalysis = () => {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-6 py-3 bg-adminPrimary text-white rounded-lg hover:bg-adminPrimary/90 focus:outline-none focus:ring-2 focus:ring-adminPrimary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isSubmitting ? (
                         <div className="flex items-center gap-2">

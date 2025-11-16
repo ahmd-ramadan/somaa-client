@@ -288,7 +288,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                     {t("selectFilterType")}
                 </span>
                 {activeFiltersCount > 0 && (
-                    <span className="bg-adminPrimary text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                    <span className="bg-primary text-white px-2 py-0.5 rounded-full text-xs font-medium">
                         {activeFiltersCount}
                     </span>
                 )}
@@ -309,7 +309,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                                     setSelectedFilterType(e.target.value as keyof typeof filters);
                                     setSearchQuery('');
                                 }}
-                                className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none bg-gray-50"
+                                className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
                             >
                                 <option value="">{t("selectFilterType")}</option>
                                 <option value="dateRange">{t("timeRange")}</option>
@@ -336,7 +336,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                                         type="datetime-local"
                                         value={dateRange.from}
                                         onChange={(e) => setDateRange({ ...dateRange, from: e.target.value })}
-                                        className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none bg-gray-50"
+                                        className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
                                         required
                                     />
                                 </div>
@@ -348,7 +348,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                                         type="datetime-local"
                                         value={dateRange.to}
                                         onChange={(e) => setDateRange({ ...dateRange, to: e.target.value })}
-                                        className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none bg-gray-50"
+                                        className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
                                         required
                                     />
                                 </div>
@@ -356,7 +356,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                                     <button
                                         onClick={handleDateFilterSubmit}
                                         disabled={!dateRange.from || !dateRange.to}
-                                        className="flex-1 px-4 py-2 bg-adminPrimary text-white rounded-lg hover:bg-adminPrimary/90 transition-colors text-sm font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                        className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
                                     >
                                         {t("apply")}
                                     </button>
@@ -380,7 +380,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                             placeholder={t("searchFilter")}
-                                            className="w-full rounded-lg border border-gray-300 p-2 pl-3 pr-10 text-sm focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none bg-gray-50"
+                                            className="w-full rounded-lg border border-gray-300 p-2 pl-3 pr-10 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
                                         />
                                         {searchQuery && (
                                             <button
@@ -398,7 +398,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                                             }
                                         }}
                                         disabled={!searchQuery}
-                                        className="px-4 py-2 bg-adminPrimary text-white rounded-lg hover:bg-adminPrimary/90 transition-colors text-sm font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                        className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
                                     >
                                         {t("apply")}
                                     </button>

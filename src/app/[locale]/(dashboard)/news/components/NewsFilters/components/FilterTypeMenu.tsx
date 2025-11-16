@@ -145,7 +145,7 @@ const FilterTypeMenu: React.FC<FilterTypeMenuProps> = ({
                         setShowFilterTypeMenu(e.target.value.length > 0);
                     }}
                     placeholder={t("searchFilterType")}
-                    className="w-48 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none bg-gray-50"
+                    className="w-48 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
                 />
             </div>
 

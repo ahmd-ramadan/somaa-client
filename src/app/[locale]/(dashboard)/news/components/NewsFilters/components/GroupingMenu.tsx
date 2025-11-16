@@ -45,7 +45,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             <button
                                 onClick={() => toggleGrouping('sector')}
                                 className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
-                                    groupings.sector?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                    groupings.sector?.active ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                 }`}
                             >
                                 {t("sector")}
@@ -53,7 +53,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             <button
                                 onClick={() => toggleGrouping('classify')}
                                 className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
-                                    groupings.classify?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                    groupings.classify?.active ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                 }`}
                             >
                                 {t("classify")}
@@ -61,7 +61,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             <button
                                 onClick={() => toggleGrouping('adType')}
                                 className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
-                                    groupings.adType?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                    groupings.adType?.active ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                 }`}
                             >
                                 {t("adType")}
@@ -69,7 +69,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             <button
                                 onClick={() => toggleGrouping('pressType')}
                                 className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
-                                    groupings.pressType?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                    groupings.pressType?.active ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                 }`}
                             >
                                 {t("pressType")}
@@ -77,7 +77,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             <button
                                 onClick={() => toggleGrouping('geoClassify')}
                                 className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
-                                    groupings.geoClassify?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                    groupings.geoClassify?.active ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                 }`}
                             >
                                 {t("geoClassify")}
@@ -85,7 +85,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             <button
                                 onClick={() => toggleGrouping('addedBy')}
                                 className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
-                                    groupings.addedBy?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                    groupings.addedBy?.active ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                 }`}
                             >
                                 {t("addedBy")}
@@ -93,7 +93,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             <button
                                 onClick={() => toggleGrouping('newspaper')}
                                 className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
-                                    groupings.newspaper?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                    groupings.newspaper?.active ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                 }`}
                             >
                                 {t("newspaper")}
@@ -101,7 +101,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             {/* <button
                                 onClick={() => toggleGrouping('url')}
                                 className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
-                                    groupings.url?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                    groupings.url?.active ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                 }`}
                             >
                                 {t("url")}
@@ -109,7 +109,7 @@ const GroupingMenu: React.FC<GroupingMenuProps> = ({
                             {/* <button
                                 onClick={() => toggleGrouping('date')}
                                 className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 hover:text-secondary rounded-lg transition-colors ${
-                                    groupings.date?.active ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                    groupings.date?.active ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                 }`}
                             >
                                 {t("date")}

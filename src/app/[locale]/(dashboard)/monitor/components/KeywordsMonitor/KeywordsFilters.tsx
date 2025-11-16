@@ -19,6 +19,7 @@ import { monitorByKeywords } from '@/lib/features/monitor/monitorThunks';
 import { setCurrentFilters, setCurrentKeywords } from '@/lib/features/monitor/monitorSlice';
 import { RootState, AppDispatch } from '@/lib/store';
 import { getPlatformIcon } from './utils';
+import { toast } from 'react-hot-toast';
 
 interface KeywordsFiltersProps {
   showFilters: boolean;
@@ -183,23 +184,35 @@ export default function KeywordsFilters({
     }
   };
 
-  const handleStartMonitoring = () => {
+  const handleStartMonitoring = async () => {
     if (keywords.length === 0 || !filters.platforms.some(p => p.enabled) || !accessToken) {
       return;
     }
 
-    // Store current state in Redux
-    dispatch(setCurrentKeywords(keywords));
-    dispatch(setCurrentFilters(filters));
+    try {
+      // Store current state in Redux
+      dispatch(setCurrentKeywords(keywords));
+      dispatch(setCurrentFilters(filters));
 
-    // Call the server route with token
-    dispatch(monitorByKeywords({
-      token: accessToken,
-      data: {
-        keywords,
-        filters
+      // Call the server route with token
+      const response = await dispatch(monitorByKeywords({
+        token: accessToken,
+        data: {
+          keywords,
+          filters
+        }
+      })).unwrap();
+
+      const { success, message } = response || {};
+      if(success) {
+        toast.success(message || 'Monitoring started successfully');
+      } else {
+        toast.error(message || 'Failed to start monitoring');
       }
-    }));
+    } catch (error) {
+      console.log('Error starting monitoring:', error);
+      toast.error('Failed to start monitoring');
+    }
   };
 
   // Define all available platforms

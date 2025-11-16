@@ -73,7 +73,7 @@ const DashboardPage = () => {
                     </div>
                     <div className="flex items-center gap-2">
                         <button 
-                            className="p-2 bg-adminPrimary text-white rounded-md"
+                            className="p-2 bg-primary text-white rounded-md"
                             onClick={() => setIsAddAdminModalOpen(true)}
                         >
                             {t("addAdminBtn")}

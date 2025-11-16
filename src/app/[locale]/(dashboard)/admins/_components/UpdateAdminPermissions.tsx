@@ -105,7 +105,7 @@ const UpdatePermissions = ({ admin }: IUpdatePermissionsProps) => {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="inline-block w-full rounded-md border border-adminPrimary bg-adminPrimary p-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-adminPrimary focus:outline-none focus:ring"
+                                className="inline-block w-full rounded-md border border-primary bg-primary p-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-primary focus:outline-none focus:ring"
                             >
                                 { updateAdminPerStatus === 'loading' ? 
                                     (

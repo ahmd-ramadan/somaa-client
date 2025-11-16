@@ -114,7 +114,7 @@ const Sidebar = () => {
     return (
         <aside
             className={`
-                flex h-screen flex-col bg-adminPrimary shadow-xl
+                flex h-screen flex-col bg-primary shadow-xl
                 transition-all duration-300 ease-in-out
                 ${isCompact ? 'w-12 md:w-20' : 'w-64'}
             `}

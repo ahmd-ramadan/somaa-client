@@ -281,7 +281,7 @@ const NewsFilters = ({
                                 {selectedFilterType ? t(selectedFilterType) : t("selectFilterType")}
                             </span>
                             {activeFiltersCount > 0 && (
-                                <span className="bg-adminPrimary text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                                <span className="bg-primary text-white px-2 py-0.5 rounded-full text-xs font-medium">
                                     {activeFiltersCount}
                                 </span>
                             )}
@@ -302,7 +302,7 @@ const NewsFilters = ({
                                                 setSelectedFilterType(e.target.value as keyof FilterState);
                                                 setSearchQuery('');
                                             }}
-                                            className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none bg-gray-50"
+                                            className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
                                         >
                                             <option value="sector">{t("sector")}</option>
                                             <option value="classify">{t("classification")}</option>
@@ -326,7 +326,7 @@ const NewsFilters = ({
                                                     type="datetime-local"
                                                     value={dateRange.from}
                                                     onChange={(e) => setDateRange({ ...dateRange, from: e.target.value })}
-                                                    className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none bg-gray-50"
+                                                    className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
                                                 />
                                             </div>
                                             <div>
@@ -337,13 +337,13 @@ const NewsFilters = ({
                                                     type="datetime-local"
                                                     value={dateRange.to}
                                                     onChange={(e) => setDateRange({ ...dateRange, to: e.target.value })}
-                                                    className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none bg-gray-50"
+                                                    className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
                                                 />
                                             </div>
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={handleDateFilterSubmit}
-                                                    className="flex-1 px-4 py-2 bg-adminPrimary text-white rounded-lg hover:bg-adminPrimary/90 transition-colors text-sm font-medium"
+                                                    className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
                                                 >
                                                     {t("apply")}
                                                 </button>
@@ -367,7 +367,7 @@ const NewsFilters = ({
                                                         value={searchQuery}
                                                         onChange={(e) => setSearchQuery(e.target.value)}
                                                         placeholder={t("searchFilter")}
-                                                        className="w-full rounded-lg border border-gray-300 p-2 pl-3 pr-10 text-sm focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none bg-gray-50"
+                                                        className="w-full rounded-lg border border-gray-300 p-2 pl-3 pr-10 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
                                                     />
                                                     {searchQuery && (
                                                         <button
@@ -384,7 +384,7 @@ const NewsFilters = ({
                                                             handleFilterSelect(searchQuery);
                                                         }
                                                     }}
-                                                    className="px-4 py-2 bg-adminPrimary text-white rounded-lg hover:bg-adminPrimary/90 transition-colors text-sm font-medium"
+                                                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
                                                 >
                                                     {t("apply")}
                                                 </button>
@@ -435,7 +435,7 @@ const NewsFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('sector')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.sector ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.sector ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("sector")}
@@ -443,7 +443,7 @@ const NewsFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('classify')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.classify ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.classify ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("classification")}
@@ -451,7 +451,7 @@ const NewsFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('adType')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.adType ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.adType ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("adType")}
@@ -459,7 +459,7 @@ const NewsFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('pressType')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.pressType ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.pressType ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("pressType")}
@@ -467,7 +467,7 @@ const NewsFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('geoClassify')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.geoClassify ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.geoClassify ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("geoClassify")}
@@ -475,7 +475,7 @@ const NewsFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('addedBy')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.addedBy ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.addedBy ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("addedBy")}
@@ -483,7 +483,7 @@ const NewsFilters = ({
                                         <button
                                             onClick={() => toggleGrouping('newspaper')}
                                             className={`w-full px-4 py-2.5 text-sm hover:bg-gray-50 rounded-lg transition-colors ${
-                                                groupings.newspaper ? 'bg-adminPrimary text-white hover:bg-adminPrimary/90' : 'text-gray-700'
+                                                groupings.newspaper ? 'bg-primary text-white hover:bg-primary/90' : 'text-gray-700'
                                             }`}
                                         >
                                             {t("newspaper")}
@@ -505,7 +505,7 @@ const NewsFilters = ({
                                     setShowFilterTypeMenu(e.target.value.length > 0);
                                 }}
                                 placeholder={t("searchFilterType")}
-                                className="w-48 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-adminPrimary focus:ring-2 focus:ring-adminPrimary/20 focus:outline-none bg-gray-50"
+                                className="w-48 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
                             />
                         </div>
 
@@ -588,9 +588,9 @@ const NewsFilters = ({
                         {Object.entries(groupings).map(([type, isActive]) => {
                             if (isActive) {
                                 return (
-                                    <div key={type} className="flex items-center gap-1 bg-adminPrimary/10 px-2 py-.5 rounded-full text-xs shadow-sm border border-adminPrimary/20">
-                                        <span className="font-medium text-adminPrimary">{t("groupBy")}:</span>
-                                        <span className="text-adminPrimary">{t(type)}</span>
+                                    <div key={type} className="flex items-center gap-1 bg-primary/10 px-2 py-.5 rounded-full text-xs shadow-sm border border-primary/20">
+                                        <span className="font-medium text-primary">{t("groupBy")}:</span>
+                                        <span className="text-primary">{t(type)}</span>
                                         <button 
                                             onClick={() => {
                                                 setGroupings({
@@ -598,7 +598,7 @@ const NewsFilters = ({
                                                     [type]: false
                                                 });
                                             }} 
-                                            className="text-adminPrimary/60 hover:text-adminPrimary transition-colors"
+                                            className="text-primary/60 hover:text-primary transition-colors"
                                         >
                                             <X className="w-3.5 h-3.5" />
                                         </button>
