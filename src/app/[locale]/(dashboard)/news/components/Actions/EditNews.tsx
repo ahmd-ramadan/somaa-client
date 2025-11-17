@@ -349,7 +349,7 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
                             <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
                                 {allSectors
                                     .filter(sector => 
-                                        sector.name.toLowerCase().includes(sectorInput.toLowerCase())
+                                        sector.name.toLowerCase().includes(sectorInput.trim().toLowerCase())
                                     )
                                     .map((sector) => (
                                         <div
@@ -365,7 +365,7 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
                                         </div>
                                     ))
                                 }
-                                {sectorInput && showAddComponentsForSector(role as UserRoleTypes) && !allSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
+                                {sectorInput && showAddComponentsForSector(role as UserRoleTypes) && !allSectors.some(s => s.name.toLowerCase() === sectorInput.trim().toLowerCase()) && (
                                     <div
                                         onClick={handleAddNewSector}
                                         className="w-full px-2 py-1 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
@@ -457,7 +457,7 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
                             <div ref={newspaperDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
                                 {allNewspapers
                                     .filter(newspaper => 
-                                        newspaper.name.toLowerCase().includes(newspaperInput.toLowerCase())
+                                        newspaper.name.toLowerCase().includes(newspaperInput.trim().toLowerCase())
                                     )
                                     .map((newspaper) => (
                                         <div
@@ -473,7 +473,7 @@ const EditNews = ({ news, onSave, onCancel }: EditNewsProps) => {
                                         </div>
                                     ))
                                 }
-                                {newspaperInput && !allNewspapers.some(n => n.name.toLowerCase() === newspaperInput.toLowerCase()) && (
+                                {newspaperInput && !allNewspapers.some(n => n.name.toLowerCase() === newspaperInput.trim().toLowerCase()) && (
                                     <div
                                         onClick={handleAddNewNewspaper}
                                         className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"

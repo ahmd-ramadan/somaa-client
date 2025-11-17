@@ -66,6 +66,7 @@ const LogInForm = () => {
             }
         } catch (error) {
             // console.error("Login failed:", error);
+            toast.error("فشل في تسجيل الدخول");
         }
     };
 

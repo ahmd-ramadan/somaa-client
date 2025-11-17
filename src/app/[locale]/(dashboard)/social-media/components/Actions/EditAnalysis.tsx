@@ -509,7 +509,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                             <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
                                 {allSectors
                                     .filter(sector => 
-                                        sector.name.toLowerCase().includes(sectorInput.toLowerCase())
+                                        sector.name.toLowerCase().includes(sectorInput.trim().toLowerCase())
                                     )
                                     .map((sector) => (
                                         <div
@@ -526,7 +526,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                         </div>
                                     ))
                                 }
-                                {sectorInput && showAddComponentsForSector(role as UserRoleTypes) && !allSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
+                                {sectorInput && showAddComponentsForSector(role as UserRoleTypes) && !allSectors.some(s => s.name.toLowerCase() === sectorInput.trim().toLowerCase()) && (
                                     <div
                                         onClick={handleAddNewSector}
                                         className="w-full px-3 py-1 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
@@ -573,7 +573,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                         {showSubAnalysisDropdown && (
                             <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
                                 {allSubAnalysis
-                                    .filter(sub => sub.body.toLowerCase().includes(subAnalysisInput.toLowerCase()))
+                                    .filter(sub => sub.body.toLowerCase().includes(subAnalysisInput.trim().toLowerCase()))
                                     .map((sub) => (
                                         <div
                                             key={sub._id}
@@ -589,7 +589,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                         </div>
                                     ))
                                 }
-                                {subAnalysisInput && !allSubAnalysis.some(s => s.body.toLowerCase() === subAnalysisInput.toLowerCase()) && (
+                                {subAnalysisInput && !allSubAnalysis.some(s => s.body.toLowerCase() === subAnalysisInput.trim().toLowerCase()) && (
                                     <div
                                         onClick={handleAddNewSubAnalysis}
                                         className="w-full px-3 py-1 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"

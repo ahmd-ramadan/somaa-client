@@ -495,7 +495,7 @@ const AddAnalysis = () => {
                                 <div ref={sectorDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
                                     {selectedSectors
                                         .filter(sector => 
-                                            sector.name.toLowerCase().includes(sectorInput.toLowerCase())
+                                            sector.name.toLowerCase().includes(sectorInput.trim().toLowerCase())
                                         )
                                         .map((sector) => (
                                             <div
@@ -512,7 +512,7 @@ const AddAnalysis = () => {
                                             </div>
                                         ))
                                     }
-                                    {sectorInput && showAddComponentsForSector(role as UserRoleTypes) && !selectedSectors.some(s => s.name.toLowerCase() === sectorInput.toLowerCase()) && (
+                                    {sectorInput && showAddComponentsForSector(role as UserRoleTypes) && !selectedSectors.some(s => s.name.trim().toLowerCase() === sectorInput.trim().toLowerCase()) && (
                                         <div
                                             onClick={handleAddNewSector}
                                             className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
@@ -561,7 +561,7 @@ const AddAnalysis = () => {
                             {showSubAnalysisDropdown && (
                                 <div ref={subAnalysisDropdownRef} className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
                                     {allSubAnalysis
-                                        .filter(sub => sub.body.toLowerCase().includes(subAnalysisInput.toLowerCase()))
+                                        .filter(sub => sub.body.toLowerCase().includes(subAnalysisInput.trim().toLowerCase()))
                                         .map((sub) => (
                                             <div
                                                 key={sub._id}
@@ -572,7 +572,7 @@ const AddAnalysis = () => {
                                             </div>
                                         ))
                                     }
-                                    {subAnalysisInput && !allSubAnalysis.some(s => s.body.toLowerCase() === subAnalysisInput.toLowerCase()) && (
+                                    {subAnalysisInput && !allSubAnalysis.some(s => s.body.toLowerCase() === subAnalysisInput.trim().toLowerCase()) && (
                                         <div
                                             onClick={handleAddNewSubAnalysis}
                                             className="w-full px-4 py-2 text-primary hover:bg-gray-100 cursor-pointer border-t border-gray-200"
