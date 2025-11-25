@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { IAnalysis, PlatformsEnum } from "@/interfaces/analysis.types";
 import { formatDate } from "@/utils/formatDateAndTime";
 import { useLocale } from "next-intl";
@@ -21,6 +21,8 @@ import YoutubeIcon from '@/components/icons/SocialMedia/Youtube';
 import InstagramIcon from '@/components/icons/SocialMedia/Instagram';
 import TikTokIcon from '@/components/icons/SocialMedia/TikTok';
 import LinkedInIcon from '@/components/icons/SocialMedia/LinkedIn';
+import Modal from '@/components/ui/Modal';
+import ViewContent from '../../Actions/ViewContent';
 
 interface TableRowProps {
     analysis: IAnalysis;
@@ -94,6 +96,7 @@ const TableRow: React.FC<TableRowProps> = ({
 
     const [copied, setCopied] = useState(false);
     const [imageError, setImageError] = useState(false);
+    const [isViewContentOpen, setIsViewContentOpen] = useState<boolean>(false);
 
     const handleCopy = () => {
       navigator.clipboard.writeText(url)
@@ -112,13 +115,12 @@ const TableRow: React.FC<TableRowProps> = ({
                 />
             </td>
             <td className="px-2 py-1 text-start">
-                <Link
+                <button
                     className="text-secondary font-semibold underline"
-                    target='_blank'
-                    href={url}
+                    onClick={() => setIsViewContentOpen(true)}
                 >
                     {t(platform)}
-                </Link>
+                </button>
             </td>
             <th scope="row" className="px-2 py-1 font-medium text-gray-900 whitespace-nowrap flex justify-start gap-2 items-center">
                 <div className="relative group">
@@ -166,8 +168,13 @@ const TableRow: React.FC<TableRowProps> = ({
                     }
                     {copied && <span className="text-green-500 text-[10px] whitespace-nowrap">{t("copied")}!</span>}
 
+                    <EyeIcon
+                        className="w-5 h-5 text-primary hover:bg-primary hover:text-white rounded-md cursor-pointer p-1"
+                        onClick={() => openViewModal(analysis)}
+                    />
+
                     {showAuthComponentsForAnalysis({ role, permissions }) 
-                        && (role === 'super_admin' || addedBy.toString() === userId.toString()) ?
+                        && (role === 'super_admin' || addedBy.toString() === userId.toString()) &&
                         <>
                             <Edit
                                 className="w-5 h-5 text-primary hover:bg-primary hover:text-white rounded-md cursor-pointer p-1"
@@ -178,16 +185,14 @@ const TableRow: React.FC<TableRowProps> = ({
                                 onClick={() => openDeleteModal(analysis)}
                             />
                         </>
-                        : 
-                        <>
-                            <EyeIcon
-                                className="w-5 h-5 text-primary hover:bg-primary hover:text-white rounded-md cursor-pointer p-1"
-                                onClick={() => openViewModal(analysis)}
-                            />
-                        </>
                     }
                 </div>
             </td>
+
+
+            {isViewContentOpen && (
+               <ViewContent analysis={analysis} onClose={() => setIsViewContentOpen(false)} />
+            )}
         </tr>
     );
 };
