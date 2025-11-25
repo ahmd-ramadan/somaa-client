@@ -185,11 +185,14 @@ const UsersTable = ({ users }: UsersTableProps) => {
                             </td>
                             <td className="px-3 py-2">{date}</td>
                             <td className="px-3 py-2">{email}</td>
-                            <td className="px-3 py-2">{permissions.length > 0 ? permissions.map((p, idx) => (
-                                <p key={idx} className='flex items-center gap-1'><CheckIcon className='text-green-600 w-4 h-4'/>{t(p)}</p>
-                            ))
-                            : <p className='flex items-center gap-1'><VerifiedIcon className='w-4 h-4 text-white fill-green-600' />{t('fullAccess')}</p>
-                            }</td>
+                            <td className="px-3 py-2">{
+                                role !== "super_admin" ? 
+                                    permissions.map((p, idx) => (
+                                        <p key={idx} className='flex items-center gap-1'><CheckIcon className='text-green-600 w-4 h-4'/>{t(p)}</p>
+                                    ))
+                                    : <p className='flex items-center gap-1'><VerifiedIcon className='w-4 h-4 text-white fill-green-600' />{t('fullAccess')}</p>
+                                }
+                            </td>
                             <td className="px-3 py-2">{socialMediaMonitoringCount || 0}</td>
                             <td className="px-3 py-2">{newsMonitoringCount || 0}</td>
                             <td className="px-3 py-2 flex items-center gap-2">
