@@ -125,10 +125,10 @@ const Sidebar = () => {
                 `}>
                     <div className={`transition-opacity duration-200 ${isCompact ? 'opacity-0 w-0' : 'opacity-100'}`}>
                        <Image
-                            src="/ministry-of-water/logo-2.webp"
-                            alt="Ministry of Water Logo"
-                            width={200}
-                            height={100}
+                            src="/logo.png"
+                            alt="Sumaah Logo"
+                            width={180}
+                            height={60}
                             className="rounded-3xl bg-gray-100 backdrop-blur-sm"
                        />
                     </div>

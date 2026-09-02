@@ -43,10 +43,10 @@ const DateSection = ({
         <div
             className="flex flex-col gap-2 mb-1 w-full mx-1"
         >
-            <div className="relative w-[80%] h-20 mx-auto">
+            <div className="relative w-[70%] h-20 mx-auto">
                 <Image
-                    src="/ministry-of-water/logo-2.webp"
-                    alt="Ministry of Water Logo"
+                    src="/logo.png"
+                    alt="Sumaah Logo"
                     fill
                     className="object-cover"
                 />
