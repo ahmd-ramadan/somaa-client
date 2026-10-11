@@ -3,7 +3,7 @@ import { IAnalysis, PlatformsEnum } from "@/interfaces/analysis.types";
 import { formatDate } from "@/utils/formatDateAndTime";
 import { useLocale } from "next-intl";
 import Link from "next/link";
-import { 
+import {
     Edit,
     Trash2,
     Eye as EyeIcon,
@@ -23,6 +23,8 @@ import TikTokIcon from '@/components/icons/SocialMedia/TikTok';
 import LinkedInIcon from '@/components/icons/SocialMedia/LinkedIn';
 import Modal from '@/components/ui/Modal';
 import ViewContent from '../../Actions/ViewContent';
+import WhatsAppCopyButton from '@/components/common/WhatsAppCopyButton';
+import { generateAnalysisWhatsappMessage } from '@/utils/whatsappMessage';
 
 interface TableRowProps {
     analysis: IAnalysis;
@@ -38,14 +40,14 @@ interface TableRowProps {
 }
 
 export const getPlatformIcon = (platform: PlatformsEnum) => {
-    switch(platform) {
-        case PlatformsEnum.X :
+    switch (platform) {
+        case PlatformsEnum.X:
             return <XIcon className='w-8 h-8 text-primary' />
-        case PlatformsEnum.FACEBOOK :
+        case PlatformsEnum.FACEBOOK:
             return <FacebookIcon className='w-8 h-8 text-primary' />
-        case PlatformsEnum.YOUTUBE :
+        case PlatformsEnum.YOUTUBE:
             return <YoutubeIcon className='w-8 h-8 text-primary' />
-        case PlatformsEnum.INSTAGRAM :
+        case PlatformsEnum.INSTAGRAM:
             return <InstagramIcon className='w-8 h-8 text-primary' />
         case PlatformsEnum.TIKTOK:
             return <TikTokIcon className='w-8 h-8 text-primary' />
@@ -88,10 +90,10 @@ const TableRow: React.FC<TableRowProps> = ({
         addedByData,
     } = analysis;
 
-    const formattedDate = formatDate({ 
-        locale, 
-        date: createdAt, 
-        withTime: true 
+    const formattedDate = formatDate({
+        locale,
+        date: createdAt,
+        withTime: true
     });
 
     const [copied, setCopied] = useState(false);
@@ -99,11 +101,11 @@ const TableRow: React.FC<TableRowProps> = ({
     const [isViewContentOpen, setIsViewContentOpen] = useState<boolean>(false);
 
     const handleCopy = () => {
-      navigator.clipboard.writeText(url)
-        .then(() => {
-          setCopied(true);
-          setTimeout(() => setCopied(false), 1500); // Optional: reset after 1.5s
-        });
+        navigator.clipboard.writeText(url)
+            .then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500); // Optional: reset after 1.5s
+            });
     };
 
     return (
@@ -155,16 +157,21 @@ const TableRow: React.FC<TableRowProps> = ({
             <td className="px-2 py-1 w-fit">{formattedDate}</td>
             <th scope="row" className="px-2 py-1 font-medium text-gray-900">
                 <div className="flex h-full justify-start gap-1 whitespace-nowrap">
-                    <CircleUserRound className='w-4 h-4 text-primary'/>
+                    <CircleUserRound className='w-4 h-4 text-primary' />
                     <p className="text-xs">{addedByData?.name}</p>
                 </div>
             </th>
             <td className="px-2 py-1">
                 <div className="flex items-center justify-center gap-1">
-                    { !copied && <Copy 
-                            className='w-5 h-5 text-primary hover:bg-primary hover:text-white rounded-md cursor-pointer p-1' 
-                            onClick={handleCopy}
-                        /> 
+                    <WhatsAppCopyButton
+                        getMessage={() => generateAnalysisWhatsappMessage(analysis)}
+                    />
+
+                    {!copied && <Copy
+                        className='w-5 h-5 text-primary hover:bg-primary hover:text-white rounded-md cursor-pointer p-1'
+                        onClick={handleCopy}
+                        aria-label={locale === 'ar' ? 'نسخ الرابط' : 'Copy link'}
+                    />
                     }
                     {copied && <span className="text-green-500 text-[10px] whitespace-nowrap">{t("copied")}!</span>}
 
@@ -173,7 +180,7 @@ const TableRow: React.FC<TableRowProps> = ({
                         onClick={() => openViewModal(analysis)}
                     />
 
-                    {showAuthComponentsForAnalysis({ role, permissions }) 
+                    {showAuthComponentsForAnalysis({ role, permissions })
                         && (role === 'super_admin' || addedBy.toString() === userId.toString()) &&
                         <>
                             <Edit
@@ -191,7 +198,7 @@ const TableRow: React.FC<TableRowProps> = ({
 
 
             {isViewContentOpen && (
-               <ViewContent analysis={analysis} onClose={() => setIsViewContentOpen(false)} />
+                <ViewContent analysis={analysis} onClose={() => setIsViewContentOpen(false)} />
             )}
         </tr>
     );

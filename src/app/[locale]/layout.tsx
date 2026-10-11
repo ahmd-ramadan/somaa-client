@@ -2,8 +2,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Toaster } from 'react-hot-toast';
 import { Noto_Kufi_Arabic } from 'next/font/google';
-const kufi = Noto_Kufi_Arabic({ 
-    subsets: ['arabic'], 
+const kufi = Noto_Kufi_Arabic({
+    subsets: ['arabic'],
     weight: ["300", "500", "700", "800", "900"],
     display: 'swap',
     preload: true,
@@ -22,12 +22,12 @@ import StoreProvider from './providers/StoreProvider';
 
 interface IProps {
     children: ReactNode;
-    params: { 
-        locale: string 
+    params: {
+        locale: string
     };
-}       
+}
 
-export const generateMetadata = async({ params: { locale } }: ILocaleParams): Promise<Metadata> => {
+export const generateMetadata = async ({ params: { locale } }: ILocaleParams): Promise<Metadata> => {
     // const title = `${translate({ locale, key: 'default' })} ${translate({ locale, key: 'description'})}`;
     const title = metaDataTitle;
     const description = locale === 'en' ? TranslationsEn.description : TranslationsAr.description;
@@ -69,7 +69,7 @@ const LocaleLayout = async ({ children, params: { locale } }: IProps) => {
     };
     if (refreshToken) {
         try {
-            const decoded: IDecodedToken | null  = await verifyRefreshToken(refreshToken);
+            const decoded: IDecodedToken | null = await verifyRefreshToken(refreshToken);
             cookiesData.role = decoded?.role || "";
             cookiesData.userId = decoded?.userId || "";
             cookiesData.permissions = decoded?.permissions || [];
@@ -93,10 +93,30 @@ const LocaleLayout = async ({ children, params: { locale } }: IProps) => {
                 <NextIntlClientProvider messages={messages}>
                     <StoreProvider>
                         {/* <NextAuthProvider> */}
-                            <Layout cookiesData={cookiesData}>
-                                { children }
-                            </Layout>
-                            <Toaster />
+                        <Layout cookiesData={cookiesData}>
+                            {children}
+                        </Layout>
+                        <Toaster
+                        // position={dir === 'ltr' ? "top-right" : "top-left"}
+                        // containerClassName='p-8'
+                        // toastOptions={{
+                        //     success: {
+                        //         duration: 4000,
+                        //         className: "bg-green-300"
+                        //         // className: "bg-[var(--color-primary)]/20 border border-[var(--color-primary)] text-[var(--color-primary)]",
+
+                        //     },
+                        //     error: {
+                        //         duration: 4000,
+                        //         className: "bg-[var(--red-20)] border border-[var(--red-600)] text-[var(--red-900)]",
+                        //     },
+                        //     loading: {
+                        //         duration: 4000,
+                        //         className: "bg-[var(--green-20)] border border-[var(--green-600)] text-[var(--green-900)]",
+                        //     }
+                        // }}
+                        // reverseOrder={false}
+                        />
                         {/* </NextAuthProvider> */}
                     </StoreProvider>
                 </NextIntlClientProvider>

@@ -3,7 +3,7 @@ import { INews } from "@/interfaces/news.types";
 import { formatDate } from "@/utils/formatDateAndTime";
 import { useLocale } from "next-intl";
 import Link from "next/link";
-import { 
+import {
     Edit,
     Trash2,
     Eye as EyeIcon,
@@ -14,6 +14,8 @@ import { showAuthComponentsForNews } from '@/utils/authComponents';
 import { getClassificationColor } from '../utils/tableUtils';
 import { UserRoleTypes } from '@/types';
 import { Checkbox } from '@/components/ui/checkbox';
+import WhatsAppCopyButton from '@/components/common/WhatsAppCopyButton';
+import { generateNewsWhatsappMessage } from '@/utils/whatsappMessage';
 
 interface TableRowProps {
     news: INews;
@@ -59,23 +61,23 @@ const TableRow: React.FC<TableRowProps> = ({
         sectorId,
         title,
         upadtedAt,
-        note  
+        note
     } = news;
 
-    const formattedDate = formatDate({ 
-        locale, 
-        date: createdAt, 
-        withTime: true 
+    const formattedDate = formatDate({
+        locale,
+        date: createdAt,
+        withTime: true
     });
 
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
-      navigator.clipboard.writeText(url)
-        .then(() => {
-          setCopied(true);
-          setTimeout(() => setCopied(false), 1500); // Optional: reset after 1.5s
-        });
+        navigator.clipboard.writeText(url)
+            .then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500); // Optional: reset after 1.5s
+            });
     };
 
     return (
@@ -104,20 +106,25 @@ const TableRow: React.FC<TableRowProps> = ({
             <td className="px-2 py-1 w-fit">{formattedDate}</td>
             <th scope="row" className="px-2 py-1 font-medium text-gray-900">
                 <div className="flex h-full justify-start gap-1 whitespace-nowrap">
-                    <CircleUserRound className='w-4 h-4 text-primary'/>
+                    <CircleUserRound className='w-4 h-4 text-primary' />
                     <p className="text-xs">{addedByData?.name}</p>
                 </div>
             </th>
             <td className="px-2 py-1">
                 <div className="flex items-center justify-center gap-1">
-                    { !copied && <Copy 
-                            className='w-5 h-5 text-primary hover:bg-primary hover:text-white rounded-md cursor-pointer p-1' 
-                            onClick={handleCopy}
-                        /> 
+                    <WhatsAppCopyButton
+                        getMessage={() => generateNewsWhatsappMessage(news)}
+                    />
+
+                    {!copied && <Copy
+                        className='w-5 h-5 text-primary hover:bg-primary hover:text-white rounded-md cursor-pointer p-1'
+                        onClick={handleCopy}
+                        araia-label={locale === 'ar' ? 'نسخ الرابط' : 'Copy link'}
+                    />
                     }
                     {copied && <span className="text-green-500 text-[10px] whitespace-nowrap">{t("copied")}!</span>}
 
-                    {showAuthComponentsForNews({ role, permissions }) 
+                    {showAuthComponentsForNews({ role, permissions })
                         && (role === 'super_admin' || addedBy.toString() === userId.toString()) ?
                         <>
                             <Edit
@@ -129,7 +136,7 @@ const TableRow: React.FC<TableRowProps> = ({
                                 onClick={() => openDeleteModal(news)}
                             />
                         </>
-                        : 
+                        :
                         <>
                             <EyeIcon
                                 className="w-5 h-5 text-primary hover:bg-primary hover:text-white rounded-md cursor-pointer p-1"
