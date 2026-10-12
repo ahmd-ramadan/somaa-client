@@ -11,7 +11,7 @@ export interface IDateSectionProps {
     setStartDate: (date: string) => void
     setEndDate: (date: string) => void
     callData: () => void
-    handleShowMore:  () => void
+    handleShowMore: () => void
 }
 
 const DateSection = ({
@@ -45,7 +45,7 @@ const DateSection = ({
         >
             <div className="relative w-[70%] h-20 mx-auto">
                 <Image
-                    src="/logo.png"
+                    src="/logo-2.png"
                     alt="Sumaah Logo"
                     fill
                     className="object-cover"
@@ -77,18 +77,18 @@ const DateSection = ({
                 <div className="w-[20%] flex items-center gap-1">
                     <button
                         onClick={callData}
-                        className={`h-full ${ dashboardPagenation?.totalPages > dashboardPagenation?.page ? 'w-[70%]' : 'w-[100%]'} bg-gradient-to-r from-primary to-secondary text-white px-2 py-0.5 rounded shadow hover:from-secondary hover:to-primary transition font-semibold text-xs whitespace-nowrap ${dashboardPagenation?.totalPages > dashboardPagenation?.page ? 'opacity-100' : 'opacity-50'}`}
-                        // className="flex-1 bg-gray-700 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
+                        className={`h-full ${dashboardPagenation?.totalPages > dashboardPagenation?.page ? 'w-[70%]' : 'w-[100%]'} bg-gradient-to-r from-primary to-secondary text-white px-2 py-0.5 rounded shadow hover:from-secondary hover:to-primary transition font-semibold text-xs whitespace-nowrap ${dashboardPagenation?.totalPages > dashboardPagenation?.page ? 'opacity-100' : 'opacity-50'}`}
+                    // className="flex-1 bg-gray-700 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
                     >
                         {t("updateTime")}
                     </button>
-                    { dashboardPagenation?.totalPages > dashboardPagenation?.page && <div
+                    {dashboardPagenation?.totalPages > dashboardPagenation?.page && <div
                         onClick={handleShowMoreClick}
-                            title={t("showMore")}
-                            className="size-[30%] p-.5 rounded-sm text-secondary font-bold cursor-pointer"
-                        >
+                        title={t("showMore")}
+                        className="size-[30%] p-.5 rounded-sm text-secondary font-bold cursor-pointer"
+                    >
                         <IterationCcw className={`w-full h-full transition-transform duration-200 ${isSpinning ? 'animate-spin' : ''}`} />
-                        </div> 
+                    </div>
                     }
                 </div>
             </div>

@@ -34,7 +34,7 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
     };
 
     return (
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-1 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col">
+        <div className="bg-transparent/20 shadow-secondary backdrop-blur-sm rounded-lg shadow-md border border-gray-700/50 p-1 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col">
             <div
                 className="p-1 flex items-center justify-between"
             >    

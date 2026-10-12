@@ -45,7 +45,7 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
     return (
         <div
             className={
-                "rounded-lg shadow-lg border border-gray-700/50 p-1 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col " +
+                "rounded-lg bg-transparent/20 shadow-secondary shadow-md border border-gray-700/50 p-1 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col " +
                 (importantAnalysis.length === 0
                     // ? "bg-gradient-to-br from-primary via-blue-800 to-blue-700"
                     ? "bg-gradient-to-r from-secondary to-primary"

@@ -74,8 +74,8 @@ const Sidebar = () => {
                 (loggedInUser?.role === 'admin' && permission !== 'isOnlySuperAdmin') ||
                 (loggedInUser?.role === 'super_admin');
 
-            if(loggedInUser?.role === 'user' && link === 'add') hasPermission = false;
-            
+            if (loggedInUser?.role === 'user' && link === 'add') hasPermission = false;
+
             if (!hasPermission) {
                 return null;
             }
@@ -124,13 +124,13 @@ const Sidebar = () => {
                     ${isCompact ? 'justify-center' : 'px-3 justify-between'}
                 `}>
                     <div className={`transition-opacity duration-200 ${isCompact ? 'opacity-0 w-0' : 'opacity-100'}`}>
-                       <Image
-                            src="/logo.png"
+                        <Image
+                            src="/logo-2.png"
                             alt="Sumaah Logo"
                             width={180}
                             height={60}
-                            className="rounded-3xl bg-gray-100 backdrop-blur-sm"
-                       />
+                            className="rounded-3xl"
+                        />
                     </div>
                     {/* This button is now ALWAYS visible */}
                     <button
@@ -148,7 +148,7 @@ const Sidebar = () => {
 
                 <div className="mt-auto mx-1 md:mx-3 mb-4 justify-center flex flex-col items-center gap-y-2">
                     <button
-                        onClick={ () => router.push(`/${locale}/profile`)}
+                        onClick={() => router.push(`/${locale}/profile`)}
                         title={t('profile')}
                         className="w-full flex items-center gap-x-3 rounded-lg px-3 py-1 justify-center text-white bg-secondary hover:bg-opacity-80 transition-colors duration-300 text-medium"
                     >
@@ -171,7 +171,7 @@ const Sidebar = () => {
                         onClick={handleLogout}
                         title={t("logoutBtn")}
                         className="w-full flex items-center gap-x-3 rounded-lg px-3 py-1 justify-center text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 text-medium"
-                     >
+                    >
                         <LogOut size={16} />
                         <span className={`${isCompact ? 'hidden' : 'inline'}`}>
                             {t("logoutBtn")}

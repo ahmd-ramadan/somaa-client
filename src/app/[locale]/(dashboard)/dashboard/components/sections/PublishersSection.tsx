@@ -165,10 +165,10 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
     }
 
     return (
-        <div className="bg-gray-900 transition-all duration-300 w-full lg:w-3/6">
+        <div className="bg-transparent/20 shadow-secondary shadow-md transition-all duration-300 w-full lg:w-3/6">
             <div className="flex flex-col gap-1 h-full">
                 {/* Section 3.2.1 Top Accounts by Engagement Section */}
-                <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-1 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col overflow-hidden">
+                <div className="bg-transparent/20 backdrop-blur-sm rounded-lg shadow-secondary border border-gray-700/50 p-1 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col overflow-hidden">
                     <div className="w-full flex justify-between gap-1 items-center">
                         <h3 className="text-sm font-semibold text-gray-300 flex items-center gap-1">
                             <TrendingUp className="w-5 h-5 text-blue-300" />

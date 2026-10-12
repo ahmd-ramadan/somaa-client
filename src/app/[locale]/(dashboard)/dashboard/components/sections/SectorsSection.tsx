@@ -284,7 +284,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
     };
 
     return (
-        <div className="flex flex-col gap-2 flex-1">
+        <div className="flex flex-col gap-2 flex-1 bg-transparent/20 shadow-secondary shadow-md">
             <div className="h-full overflow-hidden">
                 <AnimatePresence mode="popLayout">
                     <motion.div
@@ -296,7 +296,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                     >
                         {/* Component 1: General Information */}
                         <motion.div 
-                            className="bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-1 transition-all duration-300 hover:shadow-xl"
+                            className="bg-transparent/20 shadow-secondary backdrop-blur-sm rounded-lg shadow-lmdg border border-gray-700/50 p-1 transition-all duration-300 hover:shadow-xl"
                             initial={{ x: 20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.05 }}
@@ -480,7 +480,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                         { top3Sectors && top3Sectors.map((selectedSector, indx) => (
                             <motion.div 
                                 key={indx} 
-                                className="text-[10px] bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-1 transition-all duration-300 hover:shadow-xl"
+                                className="text-[10px] bg-transparent/20 shadow-secondary backdrop-blur-sm rounded-lg shadow-md border border-gray-700/50 p-1 transition-all duration-300 hover:shadow-xl"
                                 initial={{ x: 20, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ delay: (indx) * 0.05 }}

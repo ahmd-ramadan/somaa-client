@@ -176,7 +176,7 @@ const DashboardLayout = () => {
         <div className="backround-pattern-2">
             <div
                 ref={dashboardRef}
-                className="bg-gray-900/90 w-full h-screen p-2 overflow-y-auto overflow-x-hidden"
+                className="bg-[#2e3537] dark:bg-[#2e3537] w-full h-screen p-2 overflow-y-auto overflow-x-hidden"
             >
                 {error && (
                     <div className="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
@@ -184,8 +184,8 @@ const DashboardLayout = () => {
                     </div>
                 )}
                 {!isConnected && (
-                    <div className="fixed top-4 right-4 bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
-                        Connecting to server...
+                    <div className="fixed top-4 right-4 bg-gray-100 text-xs text-black-700 px-4 py-2 rounded-lg shadow-lg z-50">
+                        الاتصال بالسيرفر ...
                     </div>
                 )}
                 {isMounted && (

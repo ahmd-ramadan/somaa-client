@@ -90,7 +90,7 @@ export const generateAnalysisWhatsappMessage = (analysis: IAnalysis): string => 
 ${content?.body || '— لا يوجد محتوى —'}
 
 📌 *تفاصيل المنشور:*  
-👤 *صاحب المنشور:* ${publisherName}
+👤 *الناشر:* ${publisherName}
 👥 *المتابعين:* ${followers} 
 🏷️ *القطاع:* ${sectorData?.name || ''}  
 ⚙️ *التصنيف:* ${getAnalysisClassifyArabicWord(classify)}  

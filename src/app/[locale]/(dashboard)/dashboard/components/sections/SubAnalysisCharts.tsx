@@ -220,7 +220,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
     );
 
     return (
-        <div className="min-w-full overflow-x-auto flex-1 bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-1 over:shadow-xl transition-all duration-300">
+        <div className="min-w-full overflow-x-auto flex-1 backdrop-blur-sm rounded-lg bg-transparent/20 shadow-secondary shadow-md border border-gray-700/50 p-1 over:shadow-xl transition-all duration-300">
             {/* Statistics Row */}
             <div className="flex justify-between items-center mb-1">
                 <motion.div 

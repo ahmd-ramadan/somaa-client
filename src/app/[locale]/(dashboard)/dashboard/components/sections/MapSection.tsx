@@ -36,7 +36,7 @@ const MapSection = ({ allAnalysis }: IMapSectionProps) => {
     }, []);
 
     return (
-        <div className="w-full h-full min-h-[300px] flex flex-col bg-gray-800/50 backdrop-blur-sm rounded-lg shadow border border-gray-700/50 hover:shadow-xl transition-all duration-300">
+        <div className="w-full h-full min-h-[300px] flex flex-col bg-transparent/20 shadow-secondary backdrop-blur-sm rounded-lg shadow-md border border-gray-700/50 hover:shadow-xl transition-all duration-300">
             <div className="flex-1 relative w-full h-full">
                 {isMounted && (
                     <MapWithNoSSR
