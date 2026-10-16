@@ -5,22 +5,22 @@ export const getPlatformArabicWord = (platform?: PlatformsEnum | string): string
     switch (platform) {
         case PlatformsEnum.FACEBOOK:
         case 'facebook':
-            return 'فيسبوك';
+            return 'Facebook';
         case PlatformsEnum.X:
         case 'x':
             return 'X';
         case PlatformsEnum.INSTAGRAM:
         case 'instagram':
-            return 'إنستجرام';
+            return 'Instagram';
         case PlatformsEnum.LINKEDIN:
         case 'linkedin':
-            return 'لينكدان';
+            return 'Linkedin';
         case PlatformsEnum.TIKTOK:
         case 'tiktok':
-            return 'تيكتوك';
+            return 'TikTok';
         case PlatformsEnum.YOUTUBE:
         case 'youtube':
-            return 'يوتيوب';
+            return 'Youtube';
         default:
             return 'غير محدد';
     }
@@ -82,7 +82,12 @@ export const generateAnalysisWhatsappMessage = (analysis: IAnalysis): string => 
     const totalEngagement = reactions + shares + comments;
 
     const locParts = [location?.region, location?.city, location?.district].filter(Boolean);
-    const locationStr = locParts.length > 0 ? locParts.join(" - ") : "";
+    // const locationStr = locParts.length > 0 ? locParts.join(" - ") : "";
+
+    // تجميع عناصر الموقع المتاحة وتجاهل الفارغ منها
+    const locationText = [location?.region, location?.city, location?.district]
+        .filter(Boolean)
+        .join(" - ") || "غير محدد";
 
     return `🔗 *الرابط:* ${url || ''}
 *المصدر:* ${getPlatformArabicWord(platform)}  
@@ -95,7 +100,7 @@ ${content?.body || '— لا يوجد محتوى —'}
 🏷️ *القطاع:* ${sectorData?.name || ''}  
 ⚙️ *التصنيف:* ${getAnalysisClassifyArabicWord(classify)}  
 📊 *التحليل:* ${subAnalysisData?.body || ''}  
-📍 *الموقع:* ${locationStr}  
+📍 *الموقع:* ${locationText}  
 
 ❤  ${reactions.toLocaleString("en-US")}  
 🔄 ${shares.toLocaleString("en-US")}  
