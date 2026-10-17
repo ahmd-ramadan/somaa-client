@@ -102,7 +102,7 @@ ${content?.body || '— لا يوجد محتوى —'}
 📊 *التحليل:* ${subAnalysisData?.body || ''}  
 📍 *الموقع:* ${locationText}  
 
-❤  ${reactions.toLocaleString("en-US")}  
+❤ ${reactions.toLocaleString("en-US")}  
 🔄 ${shares.toLocaleString("en-US")}  
 💬 ${comments.toLocaleString("en-US")}
 👀 ${views.toLocaleString("en-US")}
