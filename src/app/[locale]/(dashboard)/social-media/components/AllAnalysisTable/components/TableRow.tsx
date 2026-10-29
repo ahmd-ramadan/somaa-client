@@ -56,6 +56,7 @@ export const getPlatformIcon = (platform: PlatformsEnum) => {
     }
 }
 
+
 const TableRow: React.FC<TableRowProps> = ({
     analysis,
     selectedItems,
@@ -77,6 +78,7 @@ const TableRow: React.FC<TableRowProps> = ({
         createdAt,
         platform,
         publisher,
+        publisherData,
         sectorData,
         statistics: {
             reactions,
@@ -126,10 +128,13 @@ const TableRow: React.FC<TableRowProps> = ({
             </td>
             <th scope="row" className="px-2 py-1 font-medium text-gray-900 whitespace-nowrap flex justify-start gap-2 items-center">
                 <div className="relative group">
-                    {analysis?.publisher?.avatar && !imageError ? (
+                    {(analysis?.publisher?.avatar) && !imageError ? (
                         <img
                             src={analysis.publisher.avatar}
-                            onError={() => setImageError(true)}
+			    referrerPolicy="no-referrer"
+                            onError={(e) => {
+				setImageError(true)
+			    }}
                             alt="Publisher avatar"
                             className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
                         />
