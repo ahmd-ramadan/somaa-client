@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { 
+import {
     SearchX,
     FilterX,
     FileDown,
@@ -78,6 +78,7 @@ const AllNewsTable: React.FC<AllNewsTableProps> = () => {
 
         // Methods
         toggleGrouping,
+        toggleGroupSort,
         toggleGroup,
         expandAllGroups,
         collapseAllGroups,
@@ -112,10 +113,10 @@ const AllNewsTable: React.FC<AllNewsTableProps> = () => {
                 const height = pageHeader.current?.offsetHeight || 0;
                 setHeaderHeight(height);
             };
-            
+
             updateHeight();
             window.addEventListener('resize', updateHeight);
-            
+
             return () => window.removeEventListener('resize', updateHeight);
         }
     }, [showFilters]);
@@ -150,12 +151,12 @@ const AllNewsTable: React.FC<AllNewsTableProps> = () => {
     // Render loading state
     if (allNewsstatus === 'loading') {
         return (
-            <div 
+            <div
                 className="flex flex-col items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg"
-                style={{ minHeight: `calc(100vh - 120px)` }}    
+                style={{ minHeight: `calc(100vh - 120px)` }}
             >
                 <div className="flex items-center justify-center w-16 h-16 mb-4 bg-gray-100 rounded-full">
-                    <Spinner size="100px"/>
+                    <Spinner size="100px" />
                 </div>
                 <div className="text-xl font-semibold mb-2 text-primary">{t("loadingData")}</div>
                 <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -212,6 +213,7 @@ const AllNewsTable: React.FC<AllNewsTableProps> = () => {
                             setShowFilters={setShowFilters}
                             groupings={groupings}
                             setGroupings={setGroupings}
+                            toggleGroupSort={toggleGroupSort as any}
                             allNews={filteredNews}
                         />
                     </div>
@@ -220,8 +222,8 @@ const AllNewsTable: React.FC<AllNewsTableProps> = () => {
 
             {/* No Data State */}
             {filteredNews.length === 0 && (
-                <div 
-                    className="flex flex-col items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg" 
+                <div
+                    className="flex flex-col items-center justify-center py-16 text-gray-500 bg-gray-50 rounded-lg"
                     style={{ minHeight: `calc(100vh - ${headerHeight}px - 120px)` }}
                 >
                     <div className="flex items-center justify-center w-16 h-16 mb-4 bg-gray-100 rounded-full">
@@ -253,6 +255,8 @@ const AllNewsTable: React.FC<AllNewsTableProps> = () => {
                                 collapsedGroups={collapsedGroups}
                                 selectedItems={selectedItems}
                                 selectedGroups={selectedGroups}
+                                groupings={groupings}
+                                toggleGroupSort={toggleGroupSort}
                                 handleItemSelect={handleItemSelect}
                                 handleGroupSelect={handleGroupSelect}
                                 isGroupFullySelected={isGroupFullySelected}
@@ -307,7 +311,7 @@ const AllNewsTable: React.FC<AllNewsTableProps> = () => {
 
             {/* Image Preview Hover */}
             {hoveredImage && (
-                <div 
+                <div
                     className="fixed z-50 bg-white rounded-lg shadow-xl p-4 transform transition-all duration-200"
                     style={{
                         left: hoveredImage.position.x + 60,

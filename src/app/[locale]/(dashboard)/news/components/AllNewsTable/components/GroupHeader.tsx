@@ -1,8 +1,8 @@
 import React from 'react';
 import { INews } from "@/interfaces/news.types";
-import { GroupedNewsData } from '../types';
+import { GroupedNewsData, GroupingState } from '../types';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, ArrowUpDown, ArrowDown, ArrowUp } from 'lucide-react';
 import { 
     getTotalItemsInGroup, 
     getAllItemsInGroup, 
@@ -21,6 +21,8 @@ interface GroupHeaderProps {
     collapsedGroups: Record<string, boolean>;
     selectedItems: Set<string>;
     selectedGroups: Set<string>;
+    groupings?: GroupingState;
+    toggleGroupSort?: (key: string) => void;
     handleGroupSelect: (groupKey: string, items: INews[]) => void;
     isGroupFullySelected: (groupKey: string, items: INews[]) => boolean;
     isGroupPartiallySelected: (groupKey: string, items: INews[]) => boolean;
@@ -34,6 +36,8 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({
     collapsedGroups,
     selectedItems,
     selectedGroups,
+    groupings,
+    toggleGroupSort,
     handleGroupSelect,
     isGroupFullySelected,
     isGroupPartiallySelected,
@@ -93,10 +97,42 @@ const GroupHeader: React.FC<GroupHeaderProps> = ({
                             t(group.label) : group.label
                         }</span>
                         <span className="text-gray-500">({totalItems})</span>
-                        {level > 0 && (
-                            <span className="text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded-full">
-                                {groupingType}
-                            </span>
+                        <span className="text-xs text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full font-medium">
+                            {groupingType}
+                        </span>
+
+                        {toggleGroupSort && groupKey && (
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleGroupSort(groupKey);
+                                }}
+                                className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 bg-white/80 hover:bg-white text-gray-700 hover:text-primary rounded-md border border-gray-300 shadow-xs transition-colors cursor-pointer"
+                                title={
+                                    groupings?.[groupKey]?.sort === 'desc' ? (t("sortDescCount") || "تنازلي حسب العدد") :
+                                    groupings?.[groupKey]?.sort === 'asc' ? (t("sortAscCount") || "تصاعدي حسب العدد") : (t("sortNormal") || "ترتيب عادي")
+                                }
+                            >
+                                {groupings?.[groupKey]?.sort === 'desc' && (
+                                    <>
+                                        <ArrowDown className="w-3 h-3 text-primary font-bold" />
+                                        <span className="font-semibold text-primary">{t("sortDesc") || "تنازلي"}</span>
+                                    </>
+                                )}
+                                {groupings?.[groupKey]?.sort === 'asc' && (
+                                    <>
+                                        <ArrowUp className="w-3 h-3 text-secondary font-bold" />
+                                        <span className="font-semibold text-secondary">{t("sortAsc") || "تصاعدي"}</span>
+                                    </>
+                                )}
+                                {(!groupings?.[groupKey]?.sort || groupings?.[groupKey]?.sort === 'normal') && (
+                                    <>
+                                        <ArrowUpDown className="w-3 h-3 text-gray-500" />
+                                        <span>{t("sortNormal") || "عادي"}</span>
+                                    </>
+                                )}
+                            </button>
                         )}
                     </div>
                 </div>

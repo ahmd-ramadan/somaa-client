@@ -81,6 +81,7 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
 
         // Methods
         toggleGrouping,
+        toggleGroupSort,
         toggleGroup,
         expandAllGroups,
         collapseAllGroups,
@@ -326,6 +327,8 @@ const AllAnalysisTable: React.FC<AllAnalysisTableProps> = () => {
                                 collapsedGroups={collapsedGroups}
                                 selectedItems={selectedItems}
                                 selectedGroups={selectedGroups}
+                                groupings={groupings}
+                                toggleGroupSort={toggleGroupSort}
                                 handleItemSelect={handleItemSelect}
                                 handleGroupSelect={handleGroupSelect}
                                 isGroupFullySelected={isGroupFullySelected}

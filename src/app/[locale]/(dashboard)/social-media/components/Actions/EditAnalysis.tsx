@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from "next-intl";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
-import { IAnalysis, AnalysisClassifyEnum, ContentTypesEnum, PlatformsEnum } from "@/interfaces/analysis.types";
+import { IAnalysis, AnalysisClassifyEnum, ContentTypesEnum, PlatformsEnum, TweetTypesEnum } from "@/interfaces/analysis.types";
 import { saudiLocations, ISaudiLocation } from '@/data/saudiLocations';
 import { fetchAllSectors, addSector } from "@/lib/features/sector/sectorThunks";
 import { fetchAllSubAnalysis, addSubAnalysis } from "@/lib/features/subAnalysis/subAnalysisThunks";
-import { 
+import {
     Plus,
     MessageCircle,
     Share2,
@@ -17,7 +17,6 @@ import {
     TrendingUp,
     Podcast
 } from 'lucide-react';
-import Image from "next/image";
 import toast from "react-hot-toast";
 import { handleError } from "@/utils/errorUtils";
 import Spinner from "@/components/ui/Spinner";
@@ -71,7 +70,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
     const { isConnected, socket } = useSocket();
     const [error, setError] = useState<string | null>(null);
     useEffect(() => {
-        if(!socket || !isConnected) {
+        if (!socket || !isConnected) {
             return;
         }
 
@@ -86,7 +85,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
             socket.off('error');
         };
     }, [socket, isConnected])
-    
+
 
     // Add refs for dropdown containers
     const sectorDropdownRef = React.useRef<HTMLDivElement>(null);
@@ -138,7 +137,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
     const handleInputChange = (field: string, value: any) => {
         setEditedAnalysis((prev: any) => {
             if (!prev) return null;
-            
+
             let newValue;
             if (field.includes('.')) {
                 const [parent, child] = field.split('.');
@@ -170,7 +169,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                     newValue = {
                         ...prev,
                         statistics: {
-                            ...prev.statistics,
+                            ...(prev.statistics || {}),
                             [child]: value
                         }
                     };
@@ -183,7 +182,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
             }
 
             // Track changed fields
-            const originalValue = field.includes('.') 
+            const originalValue = field.includes('.')
                 ? field.split('.').reduce((obj: any, key) => obj?.[key], analysis as any)
                 : analysis[field as keyof IAnalysis];
 
@@ -210,14 +209,14 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
             return;
         }
         try {
-            const action = await dispatch(addSector({ 
-                token: token as string, 
+            const action = await dispatch(addSector({
+                token: token as string,
                 data: { name: sectorInput }
             }));
-            
+
             const res = action.payload as any;
             const { success, data, message } = res;
-            
+
             if (success) {
                 setSelectedSector(data._id);
                 handleInputChange('sector.sectorId', data._id);
@@ -239,14 +238,14 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
             return;
         }
         try {
-            const action = await dispatch(addSubAnalysis({ 
-                token: token as string, 
+            const action = await dispatch(addSubAnalysis({
+                token: token as string,
                 data: { body: subAnalysisInput }
             }));
-            
+
             const res = action.payload as any;
             const { success, data, message } = res;
-            
+
             if (success) {
                 setSelectedSubAnalysis(data._id);
                 handleInputChange('subAnalysis.subAnalysisId', data._id);
@@ -353,6 +352,11 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
             return false;
         }
 
+        if (changedFields.tweetType && !Object.values(TweetTypesEnum).includes(changedFields.tweetType)) {
+            toast.error(t("invalidTweetType") || "نوع المنشور غير صحيح");
+            return false;
+        }
+
         // Validate sector
         if (changedFields['sector.sectorId'] && !changedFields['sector.name']) {
             toast.error(t("sectorNameRequired"));
@@ -366,24 +370,17 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
         }
 
         // Validate statistics (if changed)
-        if (changedFields.statistics) {
-            const stats = changedFields.statistics;
-            if (stats.reactions !== undefined && (isNaN(stats.reactions) || stats.reactions < 0)) {
-                toast.error(t("invalidReactionsCount"));
-                return false;
-            }
-            if (stats.comments !== undefined && (isNaN(stats.comments) || stats.comments < 0)) {
-                toast.error(t("invalidCommentsCount"));
-                return false;
-            }
-            if (stats.shares !== undefined && (isNaN(stats.shares) || stats.shares < 0)) {
-                toast.error(t("invalidSharesCount"));
-                return false;
-            }
-            if (stats.views !== undefined && (isNaN(stats.views) || stats.views < 0)) {
-                toast.error(t("invalidViewsCount"));
-                return false;
-            }
+        const checkStat = (val: any) => val !== undefined && (isNaN(Number(val)) || Number(val) < 0);
+        const statsObj = changedFields.statistics || {};
+        const reactions = changedFields['statistics.reactions'] !== undefined ? changedFields['statistics.reactions'] : statsObj.reactions;
+        const comments = changedFields['statistics.comments'] !== undefined ? changedFields['statistics.comments'] : statsObj.comments;
+        const shares = changedFields['statistics.shares'] !== undefined ? changedFields['statistics.shares'] : statsObj.shares;
+        const views = changedFields['statistics.views'] !== undefined ? changedFields['statistics.views'] : statsObj.views;
+        const appearance = changedFields['statistics.appearance'] !== undefined ? changedFields['statistics.appearance'] : statsObj.appearance;
+
+        if (checkStat(reactions) || checkStat(comments) || checkStat(shares) || checkStat(views) || checkStat(appearance)) {
+            toast.error("قيمة الإحصائيات غير صحيحة");
+            return false;
         }
 
         return true;
@@ -417,21 +414,21 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                 return acc;
             }, {} as Record<string, any>);
 
-            if(updateData.content?.type) {
-                updateData.contentType = updateData.content?.type; 
+            if (updateData.content?.type) {
+                updateData.contentType = updateData.content?.type;
             }
 
-            const action = await dispatch(updateAnalysis({ 
-                token: token as string, 
+            const action = await dispatch(updateAnalysis({
+                token: token as string,
                 analysisId: analysis._id,
                 data: updateData
             }));
-            
+
             const res = action.payload as ApiResponse<IAnalysis>;
             const { success, message, data } = res;
 
-            if(isConnected) socket?.emit('updateAnalysis', data);
-            
+            if (isConnected) socket?.emit('updateAnalysis', data);
+
             if (success) {
                 toast.success(message || t("updateSuccess"));
                 onSave(data);
@@ -445,10 +442,10 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
     };
 
     return (
-        <div className="pt-4 flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
 
-            <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
+            <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="space-y-.2">
                     <h3 className="font-semibold text-primary flex items-center gap-2">
                         {/* <Globe className="w-4 h-4 text-primary" /> */}
                         {t("platform")}
@@ -468,25 +465,12 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                     <input
                         type="text"
                         className="w-full rounded-md border cursor-not-allowed border-primary px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
-                        value={t(analysis.platform ) }
+                        value={t(analysis.platform)}
                         disabled={true}
                     />
                 </div>
 
-                <div className="space-y-1">
-                    <h4 className="font-semi-bold text-primary flex items-center gap-1">
-                        {/* <Calendar className="w-4 h-4" /> */}
-                        {t("createdAt")}
-                    </h4>
-                    <input
-                        type="datetime-local"
-                        className="w-full rounded-md border border-primary px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
-                        value={editedAnalysis.createdAt ? new Date(editedAnalysis.createdAt).toISOString().slice(0, 16) : ""}
-                        onChange={e => handleInputChange('createdAt', new Date(e.target.value).toISOString())}
-                    />
-                </div>
-
-                <div className="space-y-1">
+                <div className="space-y-.2">
                     <h3 className="font-semibold text-primary flex items-center gap-2">
                         {/* <Building2 className="w-4 h-4 text-primary" /> */}
                         {t("sector")}
@@ -508,7 +492,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                         {showSectorDropdown && (
                             <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
                                 {allSectors
-                                    .filter(sector => 
+                                    .filter(sector =>
                                         sector.name.toLowerCase().includes(sectorInput.trim().toLowerCase())
                                     )
                                     .map((sector) => (
@@ -539,7 +523,44 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                     </div>
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-.2">
+                    <h3 className="font-semibold text-primary flex items-center gap-2">
+                        {/* <Tag className="w-4 h-4 text-primary" /> */}
+                        {t("classify")}
+                    </h3>
+                    <select
+                        value={editedAnalysis.classify}
+                        onChange={(e) => handleInputChange('classify', e.target.value)}
+                        className="w-full px-3 py-1 border border-primary rounded-md text-primary"
+                    >
+                        {Object.values(AnalysisClassifyEnum).map(classify => (
+                            <option key={classify} value={classify}>
+                                {t(classify)}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="space-y-.2">
+                    <h3 className="font-semibold text-primary flex items-center gap-2">
+                        {/* <Type className="w-4 h-4 text-primary" /> */}
+                        {t("contentType")}
+                    </h3>
+                    <select
+                        value={editedAnalysis.content?.type}
+                        onChange={(e) => handleInputChange('content.type', e.target.value)}
+                        className="w-full px-3 py-1 border border-primary rounded-md text-primary"
+                    >
+                        {Object.values(ContentTypesEnum).map(type => (
+                            <option key={type} value={type}>
+                                {t(type)}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+
+                <div className="space-y-.2 col-span-2">
                     <h3 className="font-semibold text-primary flex items-center gap-2">
                         {/* <FileText className="w-4 h-4 text-primary" /> */}
                         {t("subAnalysis")}
@@ -566,7 +587,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                 {addSubAnalysisStatus === 'loading' ? (
                                     <Spinner />
                                 ) : (
-                                    <Plus className="w-6 h-6"/>
+                                    <Plus className="w-6 h-6" />
                                 )}
                             </button>
                         </div>
@@ -602,40 +623,29 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                     </div>
                 </div>
 
-                <div className="space-y-1">
-                    <h3 className="font-semibold text-primary flex items-center gap-2">
-                        {/* <Tag className="w-4 h-4 text-primary" /> */}
-                        {t("classify")}
-                    </h3>
-                    <select
-                        value={editedAnalysis.classify}
-                        onChange={(e) => handleInputChange('classify', e.target.value)}
-                        className="w-full px-3 py-1 border border-primary rounded-md text-primary"
-                    >
-                        {Object.values(AnalysisClassifyEnum).map(classify => (
-                            <option key={classify} value={classify}>
-                                {t(classify)}
-                            </option>
-                        ))}
-                    </select>
+                <div className="space-y-.2">
+                    <h4 className="font-semi-bold text-primary flex items-center gap-1">
+                        {/* <Calendar className="w-4 h-4" /> */}
+                        {t("createdAt")}
+                    </h4>
+                    <input
+                        type="datetime-local"
+                        className="w-full rounded-md border border-primary px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                        value={editedAnalysis.createdAt ? new Date(editedAnalysis.createdAt).toISOString().slice(0, 16) : ""}
+                        onChange={e => handleInputChange('createdAt', new Date(e.target.value).toISOString())}
+                    />
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-.2">
                     <h3 className="font-semibold text-primary flex items-center gap-2">
-                        {/* <Type className="w-4 h-4 text-primary" /> */}
-                        {t("contentType")}
+                        {t("publishDate")}
                     </h3>
-                    <select
-                        value={editedAnalysis.content?.type}
-                        onChange={(e) => handleInputChange('content.type', e.target.value)}
+                    <input
+                        type="datetime-local"
+                        value={editedAnalysis.publishDate ? new Date(editedAnalysis.publishDate).toISOString().slice(0, 16) : ""}
+                        onChange={(e) => handleInputChange('publishDate', e.target.value ? new Date(e.target.value) : undefined)}
                         className="w-full px-3 py-1 border border-primary rounded-md text-primary"
-                    >
-                        {Object.values(ContentTypesEnum).map(type => (
-                            <option key={type} value={type}>
-                                {t(type)}
-                            </option>
-                        ))}
-                    </select>
+                    />
                 </div>
             </div>
 
@@ -659,7 +669,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                 {showRegionDropdown && (
                                     <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
                                         {saudiLocations
-                                            .filter(region => 
+                                            .filter(region =>
                                                 getLocalizedName(region).toLowerCase().includes(regionInput.toLowerCase())
                                             )
                                             .map((region) => (
@@ -689,7 +699,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                 {showCityDropdown && selectedRegion && (
                                     <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
                                         {selectedRegion.cities
-                                            .filter(city => 
+                                            .filter(city =>
                                                 getLocalizedName(city).toLowerCase().includes(cityInput.toLowerCase())
                                             )
                                             .map((city) => (
@@ -719,7 +729,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                 {showDistrictDropdown && selectedCity && (
                                     <div className="absolute z-10 w-full mt-1 bg-white border border-primary rounded-lg shadow-lg max-h-60 overflow-auto">
                                         {selectedCity.districts
-                                            .filter(district => 
+                                            .filter(district =>
                                                 getLocalizedName(district).toLowerCase().includes(districtInput.toLowerCase())
                                             )
                                             .map((district) => (
@@ -782,65 +792,92 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                 // height={30}
                                 className="w-10 h-10 rounded-full"
                             /> */}
-                            <CircleUserRound className='w-4 h-4 text-primary'/>
+                            <CircleUserRound className='w-4 h-4 text-primary' />
                             <p className="text-primary px-3 py-1">{editedAnalysis.addedByData?.name}</p>
                         </div>
                     </div>
                     <div className="space-y-1">
-                        {/* <h4 className="font-medium text-primary flex items-center gap-2">
-                            <User className="w-4 h-4" />
-                            {t("tweetType")}
-                        </h4> */}
                         <div className="flex items-center gap-2">
-                            {/* <img
-                                src={editedAnalysis.addedByData?.avatar?.secure_url || '/logo.png'}
-                                alt="Added By"
-                                // width={30}
-                                // height={30}
-                                className="w-10 h-10 rounded-full"
-                            /> */}
-                            <Podcast className='w-4 h-4 text-primary'/>
-                            <p className="text-primary px-3 py-1">{t(editedAnalysis.tweetType)}</p>
+                            <Podcast className='w-4 h-4 text-primary shrink-0' />
+                            <select
+                                value={editedAnalysis.tweetType || TweetTypesEnum.TWEET}
+                                onChange={(e) => handleInputChange('tweetType', e.target.value)}
+                                className="w-full px-3 py-1 border border-primary rounded-md text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            >
+                                {Object.values(TweetTypesEnum).map(type => (
+                                    <option key={type} value={type}>
+                                        {t(type)}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex flex-col gap-1">
-                    {/* <h3 className="font-semibold text-primary mb-3 flex items-center gap-1">
-                        <BarChart2 className="w-4 h-4 text-primary" />
-                        {t("statistics")}
-                    </h3> */}
-                    <div className="grid grid-cols-6 gap-1">
-                        <div className="bg-red-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
-                            <Heart className="w-4 h-4 text-red-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.reactions.toLocaleString()}</span>
+                    <div className="grid grid-cols-6 gap-2">
+                        <div className="bg-red-50 border border-red-200 px-2 py-1 rounded-lg flex items-center justify-between gap-1" title={t("reactions")}>
+                            <Heart className="w-4 h-4 text-red-500 shrink-0" />
+                            <input
+                                type="number"
+                                min="0"
+                                value={editedAnalysis.statistics?.reactions ?? 0}
+                                onChange={(e) => handleInputChange('statistics.reactions', Math.max(0, parseInt(e.target.value) || 0))}
+                                className="w-full bg-transparent font-medium text-primary text-end focus:outline-none text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
                         </div>
-                        <div className="bg-green-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
-                            <MessageCircle className="w-4 h-4 text-green-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.comments.toLocaleString()}</span>
+                        <div className="bg-green-50 border border-green-200 px-2 py-1 rounded-lg flex items-center justify-between gap-1" title={t("comments")}>
+                            <MessageCircle className="w-4 h-4 text-green-500 shrink-0" />
+                            <input
+                                type="number"
+                                min="0"
+                                value={editedAnalysis.statistics?.comments ?? 0}
+                                onChange={(e) => handleInputChange('statistics.comments', Math.max(0, parseInt(e.target.value) || 0))}
+                                className="w-full bg-transparent font-medium text-primary text-end focus:outline-none text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
                         </div>
-                        <div className="bg-blue-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
-                            <Share2 className="w-4 h-4 text-blue-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.shares.toLocaleString()}</span>
+                        <div className="bg-blue-50 border border-blue-200 px-2 py-1 rounded-lg flex items-center justify-between gap-1" title={t("shares")}>
+                            <Share2 className="w-4 h-4 text-blue-500 shrink-0" />
+                            <input
+                                type="number"
+                                min="0"
+                                value={editedAnalysis.statistics?.shares ?? 0}
+                                onChange={(e) => handleInputChange('statistics.shares', Math.max(0, parseInt(e.target.value) || 0))}
+                                className="w-full bg-transparent font-medium text-primary text-end focus:outline-none text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
                         </div>
-                        <div className="bg-purple-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
-                            <Eye className="w-4 h-4 text-purple-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.views.toLocaleString()}</span>
+                        <div className="bg-purple-50 border border-purple-200 px-2 py-1 rounded-lg flex items-center justify-between gap-1" title={t("views")}>
+                            <Eye className="w-4 h-4 text-purple-500 shrink-0" />
+                            <input
+                                type="number"
+                                min="0"
+                                value={editedAnalysis.statistics?.views ?? 0}
+                                onChange={(e) => handleInputChange('statistics.views', Math.max(0, parseInt(e.target.value) || 0))}
+                                className="w-full bg-transparent font-medium text-primary text-end focus:outline-none text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
                         </div>
-                        <div className="bg-orange-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
-                            <TrendingUp className="w-4 h-4 text-purple-500" />
-                            <span className="font-medium text-primary">{editedAnalysis.statistics.views.toLocaleString()}</span>
+                        <div className="bg-orange-50 border border-orange-200 px-2 py-1 rounded-lg flex items-center justify-between gap-1" title={t("appearance")}>
+                            <TrendingUp className="w-4 h-4 text-orange-500 shrink-0" />
+                            <input
+                                type="number"
+                                min="0"
+                                value={editedAnalysis.statistics?.appearance ?? 0}
+                                onChange={(e) => handleInputChange('statistics.appearance', Math.max(0, parseInt(e.target.value) || 0))}
+                                className="w-full bg-transparent font-medium text-primary text-end focus:outline-none text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
                         </div>
-                        <div className="bg-indigo-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
-                            <Calculator className="w-4 h-4 text-purple-500" />
-                            <span className="font-medium text-primary">{(editedAnalysis.statistics.reactions + editedAnalysis.statistics.comments + editedAnalysis.statistics.shares).toLocaleString()}</span>
+                        <div className="bg-indigo-50 border border-indigo-200 px-2 py-1 rounded-lg flex items-center justify-between gap-1" title={t("totalStatistics") || t("total")}>
+                            <Calculator className="w-4 h-4 text-indigo-500 shrink-0" />
+                            <span className="font-medium text-primary text-sm">
+                                {((Number(editedAnalysis.statistics?.reactions) || 0) + (Number(editedAnalysis.statistics?.comments) || 0) + (Number(editedAnalysis.statistics?.shares) || 0)).toLocaleString()}
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div className="border-t pt-1 flex justify-end gap-2">
-                <Link 
+                <Link
                     href={editedAnalysis.url}
                     target="_blank"
                     className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
@@ -853,10 +890,10 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                     disabled={updateAnalysisStatus === 'loading'}
                     className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
                 >
-                    { updateAnalysisStatus === 'loading' ? <Spinner />: <>
+                    {updateAnalysisStatus === 'loading' ? <Spinner /> : <>
                         {/* <Save className="w-4 h-4" /> */}
                         {t("save")}
-                    </> }
+                    </>}
                 </button>
                 <button
                     onClick={onCancel}

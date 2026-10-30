@@ -13,6 +13,7 @@ export const AVAILABLE_COLUMNS: Column[] = [
     { id: 'views', label: 'Views', selected: false },
     { id: 'appearance', label: 'Appearance', selected: false },
     { id: 'total', label: 'Total', selected: false },
+    { id: 'publishDate', label: 'Publish Date', selected: false },
     { id: 'createdAt', label: 'Created At', selected: false },
     { id: 'addedBy', label: 'Added By', selected: false },
     { id: 'tweetType', label: 'Tweet Type', selected: false },

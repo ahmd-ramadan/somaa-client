@@ -46,10 +46,25 @@ const DashboardLayout = () => {
 
     const [error, setError] = useState<string | null>(null);
 
+    const getInitialDates = () => {
+        const now = new Date();
+        const startOfToday = new Date(now);
+        startOfToday.setHours(0, 0, 0, 0);
+        const endOfToday = new Date(now);
+        endOfToday.setHours(23, 59, 59, 999);
+        const startInKSA = toZonedTime(startOfToday, timeZone);
+        const endInKSA = toZonedTime(endOfToday, timeZone);
+        const formatDate = (date: Date) => format(date, 'yyyy-MM-dd\'T\'HH:mm', { timeZone });
+        return {
+            start: formatDate(startInKSA),
+            end: formatDate(endInKSA)
+        };
+    };
+
     // Add refs to track animation positions
     const [isMounted, setIsMounted] = useState(false);
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [startDate, setStartDate] = useState(() => getInitialDates().start);
+    const [endDate, setEndDate] = useState(() => getInitialDates().end);
     const [pagenation, setPagenation] = useState<{ page: number, size: number }>({ page: 1, size: 500 });
     const [isFullscreen, setIsFullscreen] = useState(false);
     const dashboardRef = useRef<HTMLDivElement>(null);
@@ -58,31 +73,6 @@ const DashboardLayout = () => {
     useEffect(() => {
         setIsMounted(true);
     }, []);
-
-    useEffect(() => {
-        if(startDate || endDate) { return }
-
-        // console.log(startDate, "Start ....", endDate)
-
-        // Set default values: from = today 00:00, to = now
-        const now = new Date();
-
-        const startOfToday = new Date(now);
-        startOfToday.setHours(0, 0, 0, 0);
-        
-        const endOfToday = new Date(now);
-        endOfToday.setHours(23, 59, 59, 999);
-        
-        const startInKSA = toZonedTime(startOfToday, timeZone);
-        const endInKSA = toZonedTime(endOfToday, timeZone);
-        
-        const formatDate = (date: Date) => format(date, 'yyyy-MM-dd\'T\'HH:mm', { timeZone });
-        
-        setStartDate(formatDate(startInKSA));
-        setEndDate(formatDate(endInKSA));
-
-        // console.log(startDate, " *** ", endDate)
-    }, [isMounted]);
 
     useEffect(() => {
         if(!socket || !isConnected) {
@@ -106,7 +96,7 @@ const DashboardLayout = () => {
             setError(null);
         });
 
-        socket.emit('getAllAnalysis', { startDate: new Date(startDate), endDate: new Date(endDate) })
+        socket.emit('getAllAnalysis', { publishStartDate: new Date(startDate), publishEndDate: new Date(endDate) })
         socket.emit('getAllNews', { startDate: new Date(startDate), endDate: new Date(endDate) })
 
         return () => {
@@ -163,8 +153,8 @@ const DashboardLayout = () => {
     const dispatch = useAppDispatch();
     const handleShowMore = () => {
         dispatch(fetchAllAnalysis({
-            startDate: new Date(startDate),
-            endDate: new Date(endDate),
+            publishStartDate: new Date(startDate),
+            publishEndDate: new Date(endDate),
             pagenationQuery: { page: pagenation?.page + 1 },
             forDashboard: true
         }));
@@ -210,7 +200,7 @@ const DashboardLayout = () => {
                                     handleShowMore={handleShowMore}
                                     callData={() => {
                                         if (socket && isConnected && startDate && endDate) {
-                                            socket.emit('getAllAnalysis', { startDate: new Date(startDate), endDate: new Date(endDate) });
+                                            socket.emit('getAllAnalysis', { publishStartDate: new Date(startDate), publishEndDate: new Date(endDate) });
                                             socket.emit('getAllNews', { startDate: new Date(startDate), endDate: new Date(endDate) });
                                         }
                                     }}

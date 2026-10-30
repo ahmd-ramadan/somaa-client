@@ -30,6 +30,7 @@ export interface IAnalysisModel extends IDBModel {
     isFlagged: boolean;
     isHighlighted: boolean;
     isRelated: boolean;
+    publishDate?: string | Date;
     addedBy: string;
 }
 
@@ -106,6 +107,9 @@ export interface ICreateAnalysisQuery {
     isFlagged?: boolean;
     isHighlighted?: boolean;
     isRelated?: boolean;
+    publishDate?: string | Date;
+    tweetType?: TweetTypesEnum;
+    statistics?: Partial<IStatistics>;
 }
 
 export interface ICreateAnalysisData extends Omit<ICreateAnalysisQuery, 'contentType'> {

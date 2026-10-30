@@ -6,12 +6,14 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 export const fetchAllAnalysis = createAsyncThunk(
     'analysisSlice/fetchAnalysis',
     async(
-        { startDate, endDate, pagenationQuery, forDashboard = false }: 
-        {  startDate?: Date, endDate?: Date, pagenationQuery?: { page?: number, size?: number }, forDashboard?: boolean }
+        { startDate, endDate, publishStartDate, publishEndDate, pagenationQuery, forDashboard = false }: 
+        { startDate?: Date, endDate?: Date, publishStartDate?: Date, publishEndDate?: Date, pagenationQuery?: { page?: number, size?: number }, forDashboard?: boolean }
     ) => {
         let query: any = "?"
         if(startDate) query+= `startDate=${startDate}`;
         if(endDate) query+= `&endDate=${endDate}`;
+        if(publishStartDate) query+= `&publishStartDate=${publishStartDate}`;
+        if(publishEndDate) query+= `&publishEndDate=${publishEndDate}`;
         if(pagenationQuery) query+= `&page=${pagenationQuery.page}`;
         const response = await getData<IAnalysis[]>({
             endpoint: `/analysis/${query}`,

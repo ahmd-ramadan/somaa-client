@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { useLocale, useTranslations } from "next-intl";
 import { IAnalysis } from "@/interfaces/analysis.types";
-import { 
-    MapPin,  
+import {
+    MapPin,
     ExternalLink,
     MessageCircle,
     Share2,
@@ -31,85 +31,95 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
 
     return (
         <div className='grid grid-cols-1 gap-2'>
-            <div className="p-4 space-y-3">
-                <div className="grid grid-cols-2 gap-2">
-                    <div className="space-y-1">
+            <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="space-y-.5">
                         <h3 className="font-semibold text-primary flex items-center gap-1">
                             {/* <Globe className="w-5 h-5 text-primary" /> */}
                             {t("platform")}
                         </h3>
-                        <p className="text-primary px-3 py-1 bg-primary/10 rounded-lg">{t(analysis.platform)}</p>
+                        <p className="bg-gray-100 text-primary px-3 py-1 bg-primary/10 rounded-lg">{t(analysis.platform)}</p>
                     </div>
 
-                    <div className="space-y-1">
-                        <h4 className="font-semibold text-primary flex items-center gap-1">
-                            {/* <Calendar className="w-4 h-4" /> */}
-                            {t("createdAt")}
-                        </h4>
-                        <p className="text-primary px-3 py-1 bg-primary/10 rounded-lg">{formatDate({ locale, date: analysis.createdAt, withTime: true })}</p>
-                    </div>
-
-                    <div className="space-y-1">
+                    <div className="space-y-.5">
                         <h3 className="font-semibold text-primary flex items-center gap-1">
                             {/* <Building2 className="w-5 h-5 text-primary" /> */}
                             {t("sector")}
                         </h3>
-                        <p className="text-primary px-3 py-1 bg-primary/10 rounded-lg">{analysis.sectorData.name}</p>
+                        <p className="bg-gray-100 text-primary px-3 py-1 bg-primary/10 rounded-lg">{analysis.sectorData.name}</p>
                     </div>
 
-                    <div className="space-y-1">
+                    <div className="space-y-.5">
                         <h3 className="font-semibold text-primary flex items-center gap-1">
                             {/* <Tag className="w-5 h-5 text-primary" /> */}
                             {t("classify")}
                         </h3>
-                        <p className="text-primary px-3 py-1 bg-primary/10 rounded-lg">{t(analysis.classify)}</p>
+                        <p className="bg-gray-100 text-primary px-3 py-1 bg-primary/10 rounded-lg">{t(analysis.classify)}</p>
                     </div>
 
-                    <div className="space-y-1">
-                        <h3 className="font-semibold text-primary flex items-center gap-1">
-                            {/* <FileText className="w-5 h-5 text-primary" /> */}
-                            {t("subAnalysis")}
-                        </h3>
-                        <p className="text-primary px-3 py-1 bg-primary/10 rounded-lg">{analysis.subAnalysisData.body}</p>
-                    </div>
-
-                    <div className="space-y-1">
+                    <div className="space-y-.5">
                         <h3 className="font-semibold text-primary flex items-center gap-1">
                             {/* <Type className="w-5 h-5 text-primary" /> */}
                             {t("contentType")}
                         </h3>
-                        <p className="text-primary px-3 py-1 bg-primary/10 rounded-lg">{t(analysis.content?.type)}</p>
+                        <p className="bg-gray-100 text-primary px-3 py-1 bg-primary/10 rounded-lg">{t(analysis.content?.type)}</p>
+                    </div>
+
+                    <div className="space-y-.5">
+                        <h4 className="font-semibold text-primary flex items-center gap-1">
+                            {/* <Calendar className="w-4 h-4" /> */}
+                            {t("publishDate")}
+                        </h4>
+                        <p className="bg-gray-100 text-primary px-3 py-1 bg-primary/10 rounded-lg">{analysis.publishDate ? formatDate({ locale, date: analysis.publishDate as string, withTime: true }) : '—'}</p>
+                    </div>
+
+                    <div className="space-y-.5">
+                        <h4 className="font-semibold text-primary flex items-center gap-1">
+                            {/* <Calendar className="w-4 h-4" /> */}
+                            {t("createdAt")}
+                        </h4>
+                        <p className="bg-gray-100 text-primary px-3 py-1 bg-primary/10 rounded-lg">{formatDate({ locale, date: analysis.createdAt, withTime: true })}</p>
+                    </div>
+
+                    <div className="col-span-2 space-y-.5">
+                        <h3 className="font-semibold text-primary flex items-center gap-1">
+                            {/* <FileText className="w-5 h-5 text-primary" /> */}
+                            {t("subAnalysis")}
+                        </h3>
+                        <p className="bg-gray-100 text-primary px-3 py-1 bg-primary/10 rounded-lg">{analysis.subAnalysisData.body}</p>
                     </div>
                 </div>
 
-                {analysis.location && (
-                    <div className="space-y-1">
-                        <h4 className="font-medium text-primary flex items-center gap-1">
-                            <MapPin className="w-4 h-4 text-primary" />
-                            {t("location")}
-                        </h4>
-                        <div className="grid grid-cols-3 gap-4">
-                            {analysis.location.region && (
-                                <div className="bg-primary/10 px-3 py-1 rounded-lg flex justify-between items-center gap-1">
-                                    <p className="text-sm text-gray-600">{t("region")}</p>
-                                    <p className="text-primary">{analysis.location.region}</p>
-                                </div>
-                            )}
-                            {analysis.location.city && (
-                                <div className="bg-primary/10 px-3 py-1 rounded-lg flex justify-between items-center gap-1">
-                                    <p className="text-sm text-gray-600">{t("city")}</p>
-                                    <p className="text-primary">{analysis.location.city}</p>
-                                </div>
-                            )}
-                            {analysis.location.district && (
-                                <div className="bg-primary/10 px-3 py-1 rounded-lg flex justify-between items-center gap-1">
-                                    <p className="text-sm text-gray-600">{t("district")}</p>
-                                    <p className="text-primary">{analysis.location.district}</p>
-                                </div>
-                            )}
+                {
+                    analysis.location && (
+                        <div className="space-y-1">
+                            <h4 className="font-medium text-primary flex items-center gap-1">
+                                <MapPin className="w-4 h-4 text-primary" />
+                                {t("location")}
+                            </h4>
+                            <div className="grid grid-cols-3 gap-4">
+                                {analysis.location.region && (
+                                    <div className="bg-gray-100 px-3 py-1 rounded-lg flex justify-between items-center gap-1">
+                                        <p className="text-sm text-gray-600">{t("region")}</p>
+                                        <p className="text-primary">{analysis.location.region}</p>
+                                    </div>
+                                )}
+                                {analysis.location.city && (
+                                    <div className="bg-gray-100 px-3 py-1 rounded-lg flex justify-between items-center gap-1">
+                                        <p className="text-sm text-gray-600">{t("city")}</p>
+                                        <p className="text-primary">{analysis.location.city}</p>
+                                    </div>
+                                )}
+                                {analysis.location.district && (
+                                    <div className="bg-gray-100 px-3 py-1 rounded-lg flex justify-between items-center gap-1">
+                                        <p className="text-sm text-gray-600">{t("district")}</p>
+                                        <p className="text-primary">{analysis.location.district}</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )
+                }
 
                 <div className="border-t py-2 flex flex-col gap-3">
                     {/* <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
@@ -153,7 +163,7 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                                     // height={30}
                                     className="w-10 h-10 rounded-full"
                                 /> */}
-                                <CircleUserRound className='w-4 h-4 text-primary'/>
+                                <CircleUserRound className='w-4 h-4 text-primary' />
                                 <p className="text-primary px-3 py-1">{analysis.addedByData?.name}</p>
                             </div>
                         </div>
@@ -170,7 +180,7 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                                     // height={30}
                                     className="w-10 h-10 rounded-full"
                                 /> */}
-                                <Podcast className='w-4 h-4 text-primary'/>
+                                <Podcast className='w-4 h-4 text-primary' />
                                 <p className="text-primary px-3 py-1">{t(analysis.tweetType)}</p>
                             </div>
                         </div>
@@ -211,7 +221,7 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                 </div>
 
                 <div className="border-t pt-4">
-                    <Link 
+                    <Link
                         href={analysis.url}
                         target="_blank"
                         className="inline-flex items-center gap-1 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
@@ -220,11 +230,11 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                         {t("viewOriginalPost")}
                     </Link>
                 </div>
-            </div>
+            </div >
             {/* <div>
                 <PublisherEmbed analysis={analysis}/>
             </div> */}
-        </div>
+        </div >
     );
 };
 

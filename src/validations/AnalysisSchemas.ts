@@ -53,5 +53,8 @@ export const addAnalysisSchema = yup.object().shape({
     ishighlighted: yup
         .boolean()
         .optional(),
+    publishDate: yup
+        .date()
+        .optional(),
 });
 

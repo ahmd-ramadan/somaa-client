@@ -7,21 +7,23 @@ import { ApiResponse } from '@/utils/apiService';
 import { IPagenationResponse } from '@/interfaces/general.interface';
 
 interface IAnalysisState {
-   allAnalysis: IAnalysis[],
-   allAnalysisForDashboard: IAnalysis[],
-   analysis: IAnalysis,
-   pagenation: IPagenationResponse,
-   dashboardPagenation: IPagenationResponse,
-   datequery: {
-    startDate: Date | undefined,
-    endDate: Date | undefined,
-   },
-   allAnalysisStatus: IResponseStatus,
-   anslysisStatus: IResponseStatus,
-   addAnalysisStatus: IResponseStatus,
-   updateAnalysisStatus: IResponseStatus,
-   deleteAnalysisStatus: IResponseStatus,
-   updateGroupOfAnalysisStatus: IResponseStatus,
+    allAnalysis: IAnalysis[],
+    allAnalysisForDashboard: IAnalysis[],
+    analysis: IAnalysis,
+    pagenation: IPagenationResponse,
+    dashboardPagenation: IPagenationResponse,
+    datequery: {
+        startDate: Date | undefined,
+        endDate: Date | undefined,
+        publishStartDate?: Date | undefined,
+        publishEndDate?: Date | undefined,
+    },
+    allAnalysisStatus: IResponseStatus,
+    anslysisStatus: IResponseStatus,
+    addAnalysisStatus: IResponseStatus,
+    updateAnalysisStatus: IResponseStatus,
+    deleteAnalysisStatus: IResponseStatus,
+    updateGroupOfAnalysisStatus: IResponseStatus,
 }
 
 const initialState: IAnalysisState = {
@@ -34,6 +36,8 @@ const initialState: IAnalysisState = {
     datequery: {
         startDate: undefined,
         endDate: undefined,
+        publishStartDate: undefined,
+        publishEndDate: undefined,
     },
     anslysisStatus: 'idle',
     addAnalysisStatus: 'idle',
@@ -75,27 +79,29 @@ const analysisSlice = createSlice({
                     state.datequery = {
                         startDate: action.meta.arg.startDate || undefined,
                         endDate: action.meta.arg.endDate || undefined,
+                        publishStartDate: action.meta.arg.publishStartDate || undefined,
+                        publishEndDate: action.meta.arg.publishEndDate || undefined,
                     };
-                    if(action.meta.arg.forDashboard) {
+                    if (action.meta.arg.forDashboard) {
                         state.allAnalysisForDashboard = data;
                         state.dashboardPagenation = pagenation;
                     } else {
                         state.pagenation = pagenation;
-                        if(pagenation.page > 1) {
+                        if (pagenation.page > 1) {
                             state.allAnalysis = [...state.allAnalysis, ...data];
                         } else {
                             state.allAnalysis = data; // data.map((a: any) => ({ ... a, publisher: a?.publisher || a.publisherData }));
                         }
                     }
-                    
+
                 }
             })
             .addCase(fetchAllAnalysis.rejected, (state) => {
                 state.allAnalysisStatus = 'failed';
             });
 
-      
-        
+
+
         // Create Analysis
         builder
             .addCase(addAnalysis.pending, (state) => {
@@ -105,7 +111,7 @@ const analysisSlice = createSlice({
                 state.addAnalysisStatus = 'succeeded';
                 const { success, data } = action.payload as any;
                 if (success && data) {
-                    const newData = { ...data, publisher:   data?.publisher || data?.publisherData }
+                    const newData = { ...data, publisher: data?.publisher || data?.publisherData }
                     state.allAnalysis.unshift(newData);
                     state.analysis = newData;
                 }
@@ -123,7 +129,7 @@ const analysisSlice = createSlice({
                 const { success, data: analysis } = action.payload as any;
                 if (success && analysis) {
                     state.updateAnalysisStatus = 'succeeded'
-                    const newAnalysis = { ... analysis, publisher: analysis?.publisher || analysis?.publisherData }
+                    const newAnalysis = { ...analysis, publisher: analysis?.publisher || analysis?.publisherData }
                     state.allAnalysis = state.allAnalysis.map(
                         a => a._id.toString() === newAnalysis._id.toString() ? newAnalysis : a
                     );
@@ -145,8 +151,8 @@ const analysisSlice = createSlice({
                 const { success, data: groupOfAnalysis } = action.payload as ApiResponse<IAnalysis[]>;
                 if (success && groupOfAnalysis) {
                     state.updateGroupOfAnalysisStatus = 'succeeded'
-                    for(const analysis of groupOfAnalysis) {
-                        const newAnalysis = { ... analysis, publisher: analysis?.publisherData }
+                    for (const analysis of groupOfAnalysis) {
+                        const newAnalysis = { ...analysis, publisher: analysis?.publisher || analysis?.publisherData }
                         state.allAnalysis = state.allAnalysis.map(
                             a => a._id.toString() === newAnalysis._id.toString() ? newAnalysis : a
                         ) as any;

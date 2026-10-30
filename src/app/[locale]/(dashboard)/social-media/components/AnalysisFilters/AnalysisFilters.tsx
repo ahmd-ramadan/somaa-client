@@ -7,11 +7,11 @@ import FilterTypeMenu from './components/FilterTypeMenu';
 import ActiveFiltersDisplay from './components/ActiveFiltersDisplay';
 import { AnalysisFiltersProps } from './types';
 
-const AnalysisFilters: React.FC<AnalysisFiltersProps> = ({ 
-    filters, 
-    setFilters, 
-    showFilters, 
-    setShowFilters, 
+const AnalysisFilters: React.FC<AnalysisFiltersProps> = ({
+    filters,
+    setFilters,
+    showFilters,
+    setShowFilters,
     groupings = {},
     setGroupings,
     allAnalysis,
@@ -22,7 +22,7 @@ const AnalysisFilters: React.FC<AnalysisFiltersProps> = ({
     const dispatch = useAppDispatch();
 
     const toggleGrouping = (key: keyof typeof groupings) => {
-        setGroupings(prev => {
+        setGroupings((prev: any) => {
             const isActive = prev[key]?.active;
             if (isActive) {
                 return {
@@ -30,12 +30,29 @@ const AnalysisFilters: React.FC<AnalysisFiltersProps> = ({
                     [key]: { active: false }
                 };
             } else {
-                const maxOrder = Math.max(0, ...Object.values(prev).map(g => g.order || 0));
+                const maxOrder = Math.max(0, ...Object.values(prev).map((g: any) => g.order || 0));
                 return {
                     ...prev,
-                    [key]: { active: true, order: maxOrder + 1 }
+                    [key]: { active: true, order: maxOrder + 1, sort: 'normal' }
                 };
             }
+        });
+    };
+
+    const toggleGroupSort = (key: keyof typeof groupings) => {
+        setGroupings(prev => {
+            const current = prev[key];
+            if (!current?.active) return prev;
+            const nextSort: 'normal' | 'desc' | 'asc' =
+                current.sort === 'normal' || !current.sort ? 'desc' :
+                    current.sort === 'desc' ? 'asc' : 'normal';
+            return {
+                ...prev,
+                [key]: {
+                    ...current,
+                    sort: nextSort
+                }
+            };
         });
     };
 
@@ -59,6 +76,7 @@ const AnalysisFilters: React.FC<AnalysisFiltersProps> = ({
                 <GroupingMenu
                     groupings={groupings}
                     toggleGrouping={toggleGrouping}
+                    toggleGroupSort={toggleGroupSort}
                     t={t}
                 />
 
@@ -70,7 +88,7 @@ const AnalysisFilters: React.FC<AnalysisFiltersProps> = ({
                     t={t}
                 />
             </div>
-            
+
             {/* Active Filters Display */}
             <ActiveFiltersDisplay
                 filters={filters}
@@ -78,6 +96,7 @@ const AnalysisFilters: React.FC<AnalysisFiltersProps> = ({
                 groupings={groupings}
                 resetGrouping={resetGrouping}
                 toggleGrouping={toggleGrouping}
+                toggleGroupSort={toggleGroupSort}
                 t={t}
                 dispatch={dispatch}
             />

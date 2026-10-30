@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslations } from "next-intl";
-import { 
-    Heart, 
-    MessageCircle, 
-    Share2, 
-    Eye, 
+import {
+    Heart,
+    MessageCircle,
+    Share2,
+    Eye,
     ArrowUpDown,
     ArrowUp,
     ArrowDown,
@@ -87,7 +87,8 @@ const TableHeader: React.FC<TableHeaderProps> = ({
                         </button>
                     </div>
                 </th>
-                <th scope="col" className="px-2 py-1 text-start">{t("createdAt")}</th>
+                <th scope="col" className="px-2 py-1 text-start">{t("publishDate")}</th>
+                {/* <th scope="col" className="px-2 py-1 text-start">{t("createdAt")}</th> */}
                 <th scope="col" className="px-2 py-1 text-start">{t("addedBy")}</th>
                 <th scope="col" className="px-2 py-1 text-start">{t("actions")}</th>
             </tr>

@@ -1,4 +1,4 @@
-import { AlertCircle, X } from "lucide-react";
+import { AlertCircle, X, ArrowUpDown, ArrowDown, ArrowUp } from "lucide-react";
 import { isEnumValue } from "../../AllNewsTable/utils/tableUtils";
 import { ActiveFiltersDisplayProps } from "../types";
 import { fetchAllNews } from "@/lib/features/news/newsthunks";
@@ -9,6 +9,7 @@ const ActiveFiltersDisplay: React.FC<ActiveFiltersDisplayProps> = ({
     groupings,
     resetGrouping,
     toggleGrouping,
+    toggleGroupSort,
     t,
     dispatch
 }) => {
@@ -111,25 +112,61 @@ const ActiveFiltersDisplay: React.FC<ActiveFiltersDisplayProps> = ({
                 })}
 
                 {/* Display Active Groupings */}
-                {Object.entries(groupings || {}).map(([type, value]) => {
-                    if (value?.active) {
+                {Object.entries(groupings || {})
+                    .filter(([_, value]) => value?.active)
+                    .sort((a, b) => (a[1].order || 0) - (b[1].order || 0))
+                    .map(([type, value]) => {
+                        const currentSort = value?.sort || 'normal';
                         return (
-                            <div key={type} className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full text-xs shadow-sm border border-primary/20">
+                            <div key={type} className="flex items-center gap-1.5 bg-primary/10 px-2.5 py-1 rounded-full text-xs shadow-sm border border-primary/20">
                                 <span className="font-medium text-primary">{t("groupBy")}:</span>
-                                <span className="text-primary">{t(type)}</span>
+                                <span className="text-primary font-semibold">{t(type)}</span>
+                                
+                                {toggleGroupSort && (
+                                    <button
+                                        type="button"
+                                        onClick={() => toggleGroupSort(type as keyof typeof groupings)}
+                                        className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-white hover:bg-gray-100 text-primary border border-primary/30 transition-colors cursor-pointer"
+                                        title={
+                                            currentSort === 'normal'
+                                                ? (t("sortNormal") || "ترتيب عادي")
+                                                : currentSort === 'desc'
+                                                ? (t("sortDescCount") || "تنازلي حسب العدد")
+                                                : (t("sortAscCount") || "تصاعدي حسب العدد")
+                                        }
+                                    >
+                                        {currentSort === 'normal' && (
+                                            <>
+                                                <ArrowUpDown className="w-3 h-3 text-gray-500" />
+                                                <span className="text-[10px] text-gray-600 font-medium">{t("sortNormal") || "عادي"}</span>
+                                            </>
+                                        )}
+                                        {currentSort === 'desc' && (
+                                            <>
+                                                <ArrowDown className="w-3 h-3 text-primary font-bold" />
+                                                <span className="text-[10px] text-primary font-bold">{t("sortDesc") || "تنازلي"}</span>
+                                            </>
+                                        )}
+                                        {currentSort === 'asc' && (
+                                            <>
+                                                <ArrowUp className="w-3 h-3 text-secondary font-bold" />
+                                                <span className="text-[10px] text-secondary font-bold">{t("sortAsc") || "تصاعدي"}</span>
+                                            </>
+                                        )}
+                                    </button>
+                                )}
+
                                 <button 
                                     onClick={() => {
                                         toggleGrouping(type as keyof typeof groupings);
                                     }} 
-                                    className="text-primary/60 hover:text-primary transition-colors ml-1"
+                                    className="text-primary/60 hover:text-red-500 transition-colors ml-1 cursor-pointer"
                                     title={t("removeGrouping")}
                                 >
                                     <X className="w-3.5 h-3.5" />
                                 </button>
                             </div>
                         );
-                    }
-                    return null;
                 })}
 
                 {/* No Active Filters Message */}

@@ -52,13 +52,27 @@ export const useAnalysisTable = () => {
     const { isConnected, socket } = useSocket();
     const [error, setError] = useState<string | null>(null);
 
+    const initialFilters = React.useMemo(() => {
+        const today = new Date();
+        const startOfDay = new Date(today);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(today);
+        endOfDay.setHours(23, 59, 59, 999);
+        return {
+            publishDateRange: {
+                start: startOfDay,
+                end: endOfDay
+            }
+        };
+    }, []);
+
     const {
         filters,
         setFilters,
         showFilters,
         setShowFilters,
         filteredAnalysis
-    } = useAnalysisFilters(allAnalysis);
+    } = useAnalysisFilters(allAnalysis, initialFilters);
 
     // Fetch data on mount - only once
     useEffect(() => {
@@ -69,8 +83,8 @@ export const useAnalysisTable = () => {
             end.setHours(23, 59, 59, 999);
             
             dispatch(fetchAllAnalysis({
-                startDate: start,
-                endDate: end
+                publishStartDate: start,
+                publishEndDate: end
             }));
         }
     }, []); // Remove dependencies to prevent infinite calls
@@ -134,7 +148,7 @@ export const useAnalysisTable = () => {
                 const maxOrder = Math.max(0, ...Object.values(prev).map(g => g.order || 0));
                 return {
                     ...prev,
-                    [key]: { active: true, order: maxOrder + 1 }
+                    [key]: { active: true, order: maxOrder + 1, sort: 'normal' }
                 };
             }
         });
@@ -143,6 +157,23 @@ export const useAnalysisTable = () => {
         setTimeout(() => {
             setIsGroupingLoading(false);
         }, 300);
+    };
+
+    const toggleGroupSort = (key: string) => {
+        setGroupings(prev => {
+            const current = prev[key];
+            if (!current?.active) return prev;
+            const nextSort: 'normal' | 'desc' | 'asc' =
+                current.sort === 'normal' || !current.sort ? 'desc' :
+                current.sort === 'desc' ? 'asc' : 'normal';
+            return {
+                ...prev,
+                [key]: {
+                    ...current,
+                    sort: nextSort
+                }
+            };
+        });
     };
 
     const activeGroupingKeys = Object.entries(groupings)
@@ -212,10 +243,19 @@ export const useAnalysisTable = () => {
                 groups.get(value)!.push(item);
             }
 
-            // Convert to array and create groups - show all items
+            // Convert to array and sort groups based on sortMode
+            let entries = Array.from(groups.entries());
+            const sortMode = groupings[groupKeyName]?.sort || 'normal';
+
+            if (sortMode === 'desc') {
+                entries.sort((a, b) => b[1].length - a[1].length);
+            } else if (sortMode === 'asc') {
+                entries.sort((a, b) => a[1].length - b[1].length);
+            }
+
             const result: GroupedAnalysisData[] = [];
             
-            for (const [value, groupItems] of Array.from(groups.entries())) {
+            for (const [value, groupItems] of entries) {
                 const groupKey = `${parentPath ? parentPath + '/' : ''}${currentGrouping.key}-${value}`;
                 
                 const children = createNestedGroups(groupItems, level + 1, groupKey);
@@ -234,7 +274,7 @@ export const useAnalysisTable = () => {
         };
 
         return createNestedGroups(sorted, 0, '');
-    }, [getSortedAnalysis, activeGroupingKeys, activeGroupingsMap, currentPage, itemsPerPage, selectedItems]);
+    }, [getSortedAnalysis, activeGroupingKeys, activeGroupingsMap, groupings, currentPage, itemsPerPage, selectedItems]);
 
     // Update collapsedGroups when groupedAnalysis changes
     useEffect(() => {
@@ -446,6 +486,8 @@ export const useAnalysisTable = () => {
         dispatch(fetchAllAnalysis({
             startDate: datequery.startDate,
             endDate: datequery.endDate,
+            publishStartDate: datequery.publishStartDate,
+            publishEndDate: datequery.publishEndDate,
             pagenationQuery: { page: pagenation?.page + 1 }
        }));
     };
@@ -502,6 +544,7 @@ export const useAnalysisTable = () => {
 
         // Methods
         toggleGrouping,
+        toggleGroupSort,
         toggleGroup,
         expandAllGroups,
         collapseAllGroups,

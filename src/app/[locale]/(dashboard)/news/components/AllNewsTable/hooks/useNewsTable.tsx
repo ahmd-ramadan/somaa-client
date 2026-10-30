@@ -136,9 +136,26 @@ export const useNewsTable = () => {
                 const maxOrder = Math.max(0, ...Object.values(prev).map(g => g.order || 0));
                 return {
                     ...prev,
-                    [key]: { active: true, order: maxOrder + 1 }
+                    [key]: { active: true, order: maxOrder + 1, sort: 'normal' }
                 };
             }
+        });
+    };
+
+    const toggleGroupSort = (key: string) => {
+        setGroupings(prev => {
+            const current = prev[key];
+            if (!current?.active) return prev;
+            const nextSort: 'normal' | 'desc' | 'asc' =
+                current.sort === 'normal' || !current.sort ? 'desc' :
+                current.sort === 'desc' ? 'asc' : 'normal';
+            return {
+                ...prev,
+                [key]: {
+                    ...current,
+                    sort: nextSort
+                }
+            };
         });
     };
 
@@ -186,7 +203,17 @@ export const useNewsTable = () => {
                 groups[value].push(item);
             });
 
-            return Object.entries(groups).map(([value, groupItems]) => {
+            // Convert to array and sort groups based on sortMode
+            let entries = Object.entries(groups);
+            const sortMode = groupings[groupKeyName]?.sort || 'normal';
+
+            if (sortMode === 'desc') {
+                entries.sort((a, b) => b[1].length - a[1].length);
+            } else if (sortMode === 'asc') {
+                entries.sort((a, b) => a[1].length - b[1].length);
+            }
+
+            return entries.map(([value, groupItems]) => {
                 const groupKey = `${parentPath ? parentPath + '/' : ''}${currentGrouping.key}-${value}`;
                 const children = createNestedGroups(groupItems, level + 1, groupKey);
                 return {
@@ -201,7 +228,7 @@ export const useNewsTable = () => {
         };
 
         return createNestedGroups(sorted, 0, '');
-    }, [filteredNews, sortOrder, activeGroupingKeys, activeGroupingsMap, currentPage, itemsPerPage]);
+    }, [filteredNews, sortOrder, activeGroupingKeys, activeGroupingsMap, groupings, currentPage, itemsPerPage]);
 
     // Update collapsedGroups when News changes
     useEffect(() => {
@@ -393,6 +420,7 @@ export const useNewsTable = () => {
 
         // Methods
         toggleGrouping,
+        toggleGroupSort,
         toggleGroup,
         expandAllGroups,
         collapseAllGroups,

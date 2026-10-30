@@ -1,8 +1,10 @@
 import { FilterState } from "@/hooks/useNewsFilters";
 import { INews } from "@/interfaces/news.types";
 
+export type GroupSortOrder = 'normal' | 'asc' | 'desc';
+
 export type GroupingState = {
-    [key: string]: { active: boolean; order?: number }
+    [key: string]: { active: boolean; order?: number; sort?: GroupSortOrder }
 };
 
 export interface NewsFiltersProps {
@@ -15,6 +17,7 @@ export interface NewsFiltersProps {
     allNews: INews[];
     onNewsSelect?: (news: INews) => void;
     onNewsDelete?: (news: INews) => void;
+    toggleGroupSort?: (key: keyof GroupingState) => void;
 }
 
 export interface DateRange {
@@ -33,6 +36,7 @@ export interface GroupingMenuProps {
     groupings: GroupingState;
     // setGroupings: React.Dispatch<React.SetStateAction<GroupingState>>;
     toggleGrouping: (key: keyof GroupingState) => void;
+    toggleGroupSort?: (key: keyof GroupingState) => void;
     t: (key: string) => string;
 }
 
@@ -48,6 +52,7 @@ export interface ActiveFiltersDisplayProps {
     setFilters: (filters: FilterState) => void;
     groupings: GroupingState;
     toggleGrouping: (key: keyof GroupingState) => void;
+    toggleGroupSort?: (key: keyof GroupingState) => void;
     resetGrouping: () => void;
     t: (key: string) => string;
     dispatch: any;

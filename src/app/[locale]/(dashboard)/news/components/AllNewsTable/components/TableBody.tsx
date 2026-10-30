@@ -1,6 +1,6 @@
 import React from 'react';
 import { INews } from "@/interfaces/news.types";
-import { GroupedNewsData } from '../types';
+import { GroupedNewsData, GroupingState } from '../types';
 import TableRow from './TableRow';
 import GroupHeader from './GroupHeader';
 import { UserRoleTypes } from '@/types';
@@ -10,6 +10,8 @@ interface TableBodyProps {
     collapsedGroups: Record<string, boolean>;
     selectedItems: Set<string>;
     selectedGroups: Set<string>;
+    groupings?: GroupingState;
+    toggleGroupSort?: (key: string) => void;
     handleItemSelect: (itemId: string) => void;
     handleGroupSelect: (groupKey: string, items: INews[]) => void;
     isGroupFullySelected: (groupKey: string, items: INews[]) => boolean;
@@ -29,6 +31,8 @@ const TableBody: React.FC<TableBodyProps> = ({
     collapsedGroups,
     selectedItems,
     selectedGroups,
+    groupings,
+    toggleGroupSort,
     handleItemSelect,
     handleGroupSelect,
     isGroupFullySelected,
@@ -59,6 +63,8 @@ const TableBody: React.FC<TableBodyProps> = ({
                             collapsedGroups={collapsedGroups}
                             selectedItems={selectedItems}
                             selectedGroups={selectedGroups}
+                            groupings={groupings}
+                            toggleGroupSort={toggleGroupSort}
                             handleGroupSelect={handleGroupSelect}
                             isGroupFullySelected={isGroupFullySelected}
                             isGroupPartiallySelected={isGroupPartiallySelected}

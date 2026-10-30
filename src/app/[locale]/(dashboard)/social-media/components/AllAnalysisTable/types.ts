@@ -1,7 +1,9 @@
 import { AnalysisClassifyEnum, ContentTypesEnum, IAnalysis, PlatformsEnum, TweetTypesEnum } from "@/interfaces/analysis.types";
 
+export type GroupSortOrder = 'normal' | 'asc' | 'desc';
+
 export type GroupingState = {
-    [key: string]: { active: boolean; order?: number }
+    [key: string]: { active: boolean; order?: number; sort?: GroupSortOrder }
 };
 
 export interface GroupedAnalysisData {
@@ -41,5 +43,6 @@ export const groupingOrderMap: GroupingOrderMap = {
     classify: { key: 'classify', getValue: (item: IAnalysis) => item.classify },
     contentType: { key: 'contentType', getValue: (item: IAnalysis) => item.content?.type },
     tweetType: { key: 'tweetType', getValue: (item: IAnalysis) => item.tweetType },
-    isRelated: { key: 'isRelated', getValue: (item: IAnalysis) => item.isRelated === true ? 'internal' : 'external' }
+    isRelated: { key: 'isRelated', getValue: (item: IAnalysis) => item.isRelated === true ? 'internal' : 'external' },
+    publishDate: { key: 'publishDate', getValue: (item: IAnalysis) => item.publishDate ? new Date(item.publishDate).toISOString().split('T')[0] : 'No Date' }
 }; 

@@ -231,6 +231,8 @@
             "isRelated": "علاقة المنشور",
             "content": "المحتوي",
             "createdAt": "التاريخ",
+            "publishDate": "تاريخ النشر",
+            "publishDateRange": "تاريخ النشر",
             "classify": "التصنيف",
             "actions": "الإجراءات",
             "positive": "إيجابي",

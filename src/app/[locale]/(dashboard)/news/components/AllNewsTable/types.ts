@@ -1,7 +1,9 @@
 import { INews } from "@/interfaces/news.types";
 
+export type GroupSortOrder = 'normal' | 'asc' | 'desc';
+
 export type GroupingState = {
-    [key: string]: { active: boolean; order?: number }
+    [key: string]: { active: boolean; order?: number; sort?: GroupSortOrder }
 };
 
 export interface GroupedNewsData {

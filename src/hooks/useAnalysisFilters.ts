@@ -16,6 +16,10 @@ export interface FilterState {
         start?: Date;
         end?: Date;
     };
+    publishDateRange?: {
+        start?: Date;
+        end?: Date;
+    };
     statistics?: {
         [key in StatisticType]?: { min?: number; max?: number };
     };
@@ -26,12 +30,12 @@ export interface FilterState {
 }
 
 export interface GroupByState {
-    field: 'platform' | 'classify' | 'sector' | 'date' | null;
+    field: 'platform' | 'classify' | 'sector' | 'date' | 'publishDate' | null;
     dateUnit?: 'day' | 'week' | 'month';
 }
 
-export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
-    const [filters, setFilters] = useState<FilterState>({});
+export const useAnalysisFilters = (allAnalysis: IAnalysis[], initialFilters: FilterState = {}) => {
+    const [filters, setFilters] = useState<FilterState>(initialFilters);
     const [groupBy, setGroupBy] = useState<GroupByState>({ field: null });
     const [showFilters, setShowFilters] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -39,7 +43,7 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
     const [groupingOrder, setGroupingOrder] = useState<string[]>([]);
     
     // Debounced filters for better performance
-    const [debouncedFilters, setDebouncedFilters] = useState<FilterState>({});
+    const [debouncedFilters, setDebouncedFilters] = useState<FilterState>(initialFilters);
     
     // Debounce filter updates - reduced delay for better responsiveness
     const debouncedSetFilters = useDebounce((newFilters: FilterState) => {
@@ -55,7 +59,7 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
     const filterAnalysis = useCallback((analysis: IAnalysis): boolean => {
         // Early return if no filters are applied
         if (!debouncedFilters.platform?.length && !debouncedFilters.classify?.length && !debouncedFilters.contentType?.length && 
-            !debouncedFilters.sector?.length && !debouncedFilters.dateRange && !debouncedFilters.statistics && 
+            !debouncedFilters.sector?.length && !debouncedFilters.dateRange && !debouncedFilters.publishDateRange && !debouncedFilters.statistics && 
             !debouncedFilters.subAnalysis?.length && !debouncedFilters.addedBy?.length && !debouncedFilters.url?.length && 
             !debouncedFilters.publisher?.length && !debouncedFilters.tweetType?.length) {
             return true;
@@ -134,6 +138,20 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
             }
         }
 
+        // Publish date range filter - optimized with early return
+        if (debouncedFilters.publishDateRange) {
+            if (!analysis.publishDate) {
+                return false;
+            }
+            const publishDate = new Date(analysis.publishDate);
+            if (debouncedFilters.publishDateRange.start && publishDate < debouncedFilters.publishDateRange.start) {
+                return false;
+            }
+            if (debouncedFilters.publishDateRange.end && publishDate > debouncedFilters.publishDateRange.end) {
+                return false;
+            }
+        }
+
         // Statistics filter - optimized with early returns
         if (debouncedFilters.statistics) {
             const { reactions, comments, shares, views } = debouncedFilters.statistics;
@@ -176,25 +194,30 @@ export const useAnalysisFilters = (allAnalysis: IAnalysis[]) => {
     const groupedAnalysis = groupBy.field ? paginatedAnalysis.reduce((acc, analysis) => {
         let key: string;
         
-        if (groupBy.field === 'date' && groupBy.dateUnit) {
-            const date = new Date(analysis.createdAt);
-            switch (groupBy.dateUnit) {
-                case 'day':
-                    key = date.toISOString().split('T')[0];
-                    break;
-                case 'week':
-                    const weekStart = new Date(date);
-                    weekStart.setDate(date.getDate() - date.getDay());
-                    key = weekStart.toISOString().split('T')[0];
-                    break;
-                case 'month':
-                    key = `${date.getFullYear()}-${date.getMonth() + 1}`;
-                    break;
-                default:
-                    key = date.toISOString();
+        if ((groupBy.field === 'date' || groupBy.field === 'publishDate') && groupBy.dateUnit) {
+            const rawDate = groupBy.field === 'publishDate' ? analysis.publishDate : analysis.createdAt;
+            if (!rawDate) {
+                key = 'No Date';
+            } else {
+                const date = new Date(rawDate);
+                switch (groupBy.dateUnit) {
+                    case 'day':
+                        key = date.toISOString().split('T')[0];
+                        break;
+                    case 'week':
+                        const weekStart = new Date(date);
+                        weekStart.setDate(date.getDate() - date.getDay());
+                        key = weekStart.toISOString().split('T')[0];
+                        break;
+                    case 'month':
+                        key = `${date.getFullYear()}-${date.getMonth() + 1}`;
+                        break;
+                    default:
+                        key = date.toISOString();
+                }
             }
         } else {
-            key = analysis[groupBy.field as keyof IAnalysis] as string;
+            key = (analysis[groupBy.field as keyof IAnalysis] as string) || 'Other';
         }
 
         if (!acc[key]) {

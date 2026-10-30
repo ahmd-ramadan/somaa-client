@@ -84,6 +84,7 @@ export const getGroupingTypeLabel = (groupKey: string, level: number, t: (key: s
     if (currentLevel.startsWith('contentType-')) return t("contentType");
     if (currentLevel.startsWith('tweetType-')) return t("tweetType");
     if (currentLevel.startsWith('isRelated-')) return t("isRelated");
+    if (currentLevel.startsWith('publishDate-')) return t("publishDate");
     return t("group");
 };
 
@@ -100,6 +101,7 @@ export const getGroupingKey = (groupKey: string, level: number): string => {
     if (currentLevel.startsWith('contentType-')) return "contentType";
     if (currentLevel.startsWith('tweetType-')) return "tweetType";
     if (currentLevel.startsWith('isRelated-')) return "isRelated";
+    if (currentLevel.startsWith('publishDate-')) return "publishDate";
     return "";
 
 };

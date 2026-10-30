@@ -76,6 +76,7 @@ const TableRow: React.FC<TableRowProps> = ({
         classify,
         content,
         createdAt,
+        publishDate,
         platform,
         publisher,
         publisherData,
@@ -97,6 +98,12 @@ const TableRow: React.FC<TableRowProps> = ({
         date: createdAt,
         withTime: true
     });
+
+    const formattedPublishDate = publishDate ? formatDate({
+        locale,
+        date: publishDate as string,
+        withTime: true
+    }) : '—';
 
     const [copied, setCopied] = useState(false);
     const [imageError, setImageError] = useState(false);
@@ -131,10 +138,10 @@ const TableRow: React.FC<TableRowProps> = ({
                     {(analysis?.publisher?.avatar) && !imageError ? (
                         <img
                             src={analysis.publisher.avatar}
-			    referrerPolicy="no-referrer"
+                            referrerPolicy="no-referrer"
                             onError={(e) => {
-				setImageError(true)
-			    }}
+                                setImageError(true)
+                            }}
                             alt="Publisher avatar"
                             className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
                         />
@@ -159,7 +166,8 @@ const TableRow: React.FC<TableRowProps> = ({
             <td className="px-2 py-1">{views.toLocaleString()}</td>
             <td className="px-2 py-1">{appearance.toLocaleString()}</td>
             <td className="px-2 py-1">{(reactions + comments + shares).toLocaleString()}</td>
-            <td className="px-2 py-1 w-fit">{formattedDate}</td>
+            <td className="px-2 py-1 w-fit">{formattedPublishDate}</td>
+            {/* <td className="px-2 py-1 w-fit">{formattedDate}</td> */}
             <th scope="row" className="px-2 py-1 font-medium text-gray-900">
                 <div className="flex h-full justify-start gap-1 whitespace-nowrap">
                     <CircleUserRound className='w-4 h-4 text-primary' />

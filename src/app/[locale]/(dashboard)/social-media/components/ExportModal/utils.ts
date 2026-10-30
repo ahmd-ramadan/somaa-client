@@ -32,6 +32,8 @@ export const getCellValue = (item: IAnalysis, columnId: string, t: (key: string)
         case 'total':
             return (item.statistics.reactions + 
                    item.statistics.comments + item.statistics.shares)
+        case 'publishDate':
+            return item.publishDate ? new Date(item.publishDate).toLocaleString() : '';
         case 'createdAt':
             return new Date(item.createdAt).toLocaleString();
         case 'addedBy':

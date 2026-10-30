@@ -19,12 +19,16 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
     const [searchQuery, setSearchQuery] = React.useState('');
     const [showFilterMenu, setShowFilterMenu] = React.useState(false);
     const [dateRange, setDateRange] = React.useState({
-        from: (filters?.dateRange?.start || new Date()).toISOString().slice(0, 16),
-        to: (filters?.dateRange?.end || new Date()).toISOString().slice(0, 16)
+        from: (filters?.dateRange?.start ? new Date(filters.dateRange.start).toISOString().slice(0, 16) : ''),
+        to: (filters?.dateRange?.end ? new Date(filters.dateRange.end).toISOString().slice(0, 16) : '')
+    });
+    const [publishDateRange, setPublishDateRange] = React.useState({
+        from: (filters?.publishDateRange?.start ? new Date(filters.publishDateRange.start).toISOString().slice(0, 16) : ''),
+        to: (filters?.publishDateRange?.end ? new Date(filters.publishDateRange.end).toISOString().slice(0, 16) : '')
     });
 
     const menueRef = useRef<HTMLDivElement>(null)
-    
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (menueRef.current && !menueRef.current.contains(event.target as Node)) {
@@ -51,20 +55,25 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
 
         const startInKSA = toZonedTime(startOfDay, timeZone);
         const endInKSA = toZonedTime(endOfDay, timeZone);
-        
+
         const formatDate = (date: Date) => format(date, 'yyyy-MM-dd\'T\'HH:mm', { timeZone });
-        
+
 
         setDateRange({
             from: formatDate((filters?.dateRange?.start || startInKSA)),
             to: formatDate(filters?.dateRange?.end || endInKSA)
         });
 
-        // Only set initial filters if they don't exist
-        if (!filters.noDate && !filters.dateRange) {
+        setPublishDateRange({
+            from: formatDate((filters?.publishDateRange?.start || startInKSA)),
+            to: formatDate(filters?.publishDateRange?.end || endInKSA)
+        });
+
+        // Only set initial publishDateRange filter if no date filter was explicitly set and not noDate
+        if (!filters.noDate && !filters.publishDateRange && !filters.dateRange) {
             const newFilters = {
                 ...filters,
-                dateRange: {
+                publishDateRange: {
                     start: startOfDay,
                     end: endOfDay
                 }
@@ -100,8 +109,8 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
     };
 
     // Filter options based on search query
-    const filteredOptions = selectedFilterType 
-        ? getFilterOptions(selectedFilterType).filter(option => 
+    const filteredOptions = selectedFilterType
+        ? getFilterOptions(selectedFilterType).filter(option =>
             option.toLowerCase().includes(searchQuery.toLowerCase())
         )
         : [];
@@ -110,7 +119,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
         if (!selectedFilterType) return;
 
         const newFilters = { ...filters };
-        
+
         // Initialize array if it doesn't exist
         if (!newFilters[selectedFilterType]) {
             newFilters[selectedFilterType] = [] as any;
@@ -118,10 +127,10 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
 
         // For sector and subAnalysis, we want to find all items that contain the search value
         if (selectedFilterType === 'sector' || selectedFilterType === 'subAnalysis') {
-            const matchingValues = getFilterOptions(selectedFilterType).filter(option => 
+            const matchingValues = getFilterOptions(selectedFilterType).filter(option =>
                 option.toLowerCase().includes(value.toLowerCase())
             );
-            
+
             // Add all matching values to the filter array
             const currentValues = newFilters[selectedFilterType] as string[];
             matchingValues.forEach(match => {
@@ -140,7 +149,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                     return name.includes(searchValue) || handle.includes(searchValue);
                 })
                 .map(analysis => analysis.publisher.name);
-            
+
             const uniqueMatchingPublishers = Array.from(new Set(matchingPublishers));
             const currentValues = newFilters[selectedFilterType] as string[];
             uniqueMatchingPublishers.forEach(publisher => {
@@ -153,13 +162,13 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
             // For tweetType, add the exact value if it exists in options
             const matchingValues = getFilterOptions(selectedFilterType).filter(option => {
                 return !!(t(option)?.toLowerCase()?.includes(value?.toLowerCase())) ||
-                !!(option.toLowerCase().includes(value.toLowerCase()))
+                    !!(option.toLowerCase().includes(value.toLowerCase()))
             });
-            
+
             if (matchingValues.length > 0) {
-                for(const m of matchingValues) {    
+                for (const m of matchingValues) {
                     const currentValues = (newFilters[selectedFilterType] as string[]) || [];
-                    if(m && !currentValues.includes(m)) {
+                    if (m && !currentValues.includes(m)) {
                         (newFilters[selectedFilterType] as string[]) = [...currentValues, m];
                     }
                 }
@@ -186,13 +195,13 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
 
         const startInKSA = toZonedTime(startDate, timeZone);
         const endInKSA = toZonedTime(endDate, timeZone);
-        
+
         const formatDate = (date: Date) => format(date, 'yyyy-MM-dd\'T\'HH:mm', { timeZone });
         setDateRange({
             from: formatDate(startDate),
             to: formatDate(endDate)
         });
-        
+
         // Validate date range
         if (startDate > endDate) {
             alert(t("invalidDateRange"));
@@ -213,51 +222,106 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
         // Only fetch data if date range actually changed
         const currentStart = filters.dateRange?.start;
         const currentEnd = filters.dateRange?.end;
-        
-        if (!currentStart || !currentEnd || 
-            currentStart.getTime() !== startDate.getTime() || 
+
+        if (!currentStart || !currentEnd ||
+            currentStart.getTime() !== startDate.getTime() ||
             currentEnd.getTime() !== endDate.getTime()) {
             dispatch(fetchAllAnalysis({
                 startDate: startInKSA,
-                endDate: endInKSA
+                endDate: endInKSA,
+                publishStartDate: filters.publishDateRange?.start,
+                publishEndDate: filters.publishDateRange?.end
             }));
         }
     };
 
     const clearDateFilter = () => {
-        // Reset to today's date (12 AM to 12 PM)
+        setDateRange({
+            from: '',
+            to: ''
+        });
+
+        const newFilters = {
+            ...filters,
+            dateRange: undefined
+        };
+        setFilters(newFilters);
+
+        dispatch(fetchAllAnalysis({
+            publishStartDate: filters.publishDateRange?.start,
+            publishEndDate: filters.publishDateRange?.end
+        }));
+    };
+
+    const handlePublishDateFilterSubmit = () => {
+        if (!publishDateRange.from || !publishDateRange.to) return;
+        const startDate = new Date(publishDateRange.from);
+        const endDate = new Date(publishDateRange.to);
+
+        const startInKSA = toZonedTime(startDate, timeZone);
+        const endInKSA = toZonedTime(endDate, timeZone);
+
+        const formatDate = (date: Date) => format(date, 'yyyy-MM-dd\'T\'HH:mm', { timeZone });
+        setPublishDateRange({
+            from: formatDate(startDate),
+            to: formatDate(endDate)
+        });
+
+        if (startDate > endDate) {
+            alert(t("invalidDateRange"));
+            return;
+        }
+
+        const newFilters = {
+            ...filters,
+            publishDateRange: {
+                start: startInKSA,
+                end: endInKSA
+            }
+        };
+        setFilters(newFilters);
+        setShowFilterMenu(false);
+
+        dispatch(fetchAllAnalysis({
+            startDate: filters.dateRange?.start,
+            endDate: filters.dateRange?.end,
+            publishStartDate: startInKSA,
+            publishEndDate: endInKSA
+        }));
+    };
+
+    const clearPublishDateFilter = () => {
         const today = new Date();
         const startOfDay = new Date(today);
         startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date(today);
         endOfDay.setHours(23, 59, 59, 999);
 
-        setDateRange({
-            from: startOfDay.toISOString().slice(0, 16),
-            to: endOfDay.toISOString().slice(0, 16)
+        const startInKSA = toZonedTime(startOfDay, timeZone);
+        const endInKSA = toZonedTime(endOfDay, timeZone);
+
+        const formatDate = (date: Date) => format(date, 'yyyy-MM-dd\'T\'HH:mm', { timeZone });
+
+        setPublishDateRange({
+            from: formatDate(startInKSA),
+            to: formatDate(endInKSA)
         });
 
         const newFilters = {
             ...filters,
-            dateRange: {
+            publishDateRange: {
                 start: startOfDay,
                 end: endOfDay
             }
         };
         setFilters(newFilters);
 
-        // Only fetch data if date range actually changed
-        const currentStart = filters.dateRange?.start;
-        const currentEnd = filters.dateRange?.end;
-        
-        if (!currentStart || !currentEnd || 
-            currentStart.getTime() !== startOfDay.getTime() || 
-            currentEnd.getTime() !== endOfDay.getTime()) {
-            dispatch(fetchAllAnalysis({
-                startDate: startOfDay,
-                endDate: endOfDay
-            }));
-        }
+        dispatch(fetchAllAnalysis({
+            startDate: filters.dateRange?.start,
+            endDate: filters.dateRange?.end,
+            publishStartDate: startOfDay,
+            publishEndDate: endOfDay
+        }));
     };
 
     // Calculate active filters count
@@ -268,9 +332,12 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
         if (key === 'dateRange' && value?.start && value?.end) {
             return count + 1;
         }
+        if (key === 'publishDateRange' && value?.start && value?.end) {
+            return count + 1;
+        }
         if (key === 'statistics') {
-            return count + Object.values(value || {}).filter(stat => 
-                (stat as { min?: number; max?: number })?.min || 
+            return count + Object.values(value || {}).filter(stat =>
+                (stat as { min?: number; max?: number })?.min ||
                 (stat as { min?: number; max?: number })?.max
             ).length;
         }
@@ -312,7 +379,8 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                                 className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
                             >
                                 <option value="">{t("selectFilterType")}</option>
-                                <option value="dateRange">{t("timeRange")}</option>
+                                {/* <option value="dateRange">{t("timeRange")}</option> */}
+                                <option value="publishDateRange">{t("publishDate")}</option>
                                 <option value="sector">{t("sector")}</option>
                                 <option value="subAnalysis">{t("subAnalysis")}</option>
                                 <option value="classify">{t("classify")}</option>
@@ -368,6 +436,48 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                                     </button>
                                 </div>
                             </div>
+                        ) : selectedFilterType === 'publishDateRange' ? (
+                            <div className="space-y-3">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        {t("from")} *
+                                    </label>
+                                    <input
+                                        type="datetime-local"
+                                        value={publishDateRange.from}
+                                        onChange={(e) => setPublishDateRange({ ...publishDateRange, from: e.target.value })}
+                                        className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        {t("to")} *
+                                    </label>
+                                    <input
+                                        type="datetime-local"
+                                        value={publishDateRange.to}
+                                        onChange={(e) => setPublishDateRange({ ...publishDateRange, to: e.target.value })}
+                                        className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none bg-gray-50"
+                                        required
+                                    />
+                                </div>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={handlePublishDateFilterSubmit}
+                                        disabled={!publishDateRange.from || !publishDateRange.to}
+                                        className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                    >
+                                        {t("apply")}
+                                    </button>
+                                    <button
+                                        onClick={clearPublishDateFilter}
+                                        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+                                    >
+                                        {t("clear")}
+                                    </button>
+                                </div>
+                            </div>
                         ) : selectedFilterType ? (
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -411,7 +521,7 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                         )}
 
                         {/* Filter Options */}
-                        {selectedFilterType && selectedFilterType !== 'dateRange' && filteredOptions.length > 0 && (
+                        {selectedFilterType && selectedFilterType !== 'dateRange' && selectedFilterType !== 'publishDateRange' && filteredOptions.length > 0 && (
                             <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg bg-gray-50">
                                 {filteredOptions.map((option) => (
                                     <button
@@ -419,10 +529,10 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                                         onClick={() => handleFilterSelect(option)}
                                         className="w-full px-4 py-2.5 text-sm hover:bg-white border-b border-gray-200 last:border-b-0 transition-colors"
                                     >
-                                        { selectedFilterType === 'contentType' 
-                                            || selectedFilterType === 'classify' 
-                                            || selectedFilterType === 'tweetType' 
-                                            || selectedFilterType === 'platform' 
+                                        {selectedFilterType === 'contentType'
+                                            || selectedFilterType === 'classify'
+                                            || selectedFilterType === 'tweetType'
+                                            || selectedFilterType === 'platform'
                                             ? t(option) : option
                                         }
                                     </button>
@@ -430,13 +540,13 @@ const FilterMenu: React.FC<FilterMenuProps> = ({
                             </div>
                         )}
 
-                        {selectedFilterType && selectedFilterType !== 'dateRange' && filteredOptions.length === 0 && searchQuery && (
+                        {selectedFilterType && selectedFilterType !== 'dateRange' && selectedFilterType !== 'publishDateRange' && filteredOptions.length === 0 && searchQuery && (
                             <div className="text-sm text-gray-500 text-center py-3 bg-gray-50 rounded-lg">
                                 {t("noResultsFound")}
                             </div>
                         )}
 
-                        {selectedFilterType && selectedFilterType !== 'dateRange' && !searchQuery && (
+                        {selectedFilterType && selectedFilterType !== 'dateRange' && selectedFilterType !== 'publishDateRange' && !searchQuery && (
                             <div className="text-sm text-gray-500 text-center py-3 bg-gray-50 rounded-lg">
                                 {t("enterSearchTerm")}
                             </div>

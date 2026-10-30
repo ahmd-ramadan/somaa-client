@@ -31,8 +31,8 @@ interface MapComponentProps {
 const MAP_STYLE = "https://api.maptiler.com/maps/streets-v2-dark/style.json?key=jjuqtnTn5UotbKbLcuyo";
 
 const SAUDI_BOUNDS: [[number, number], [number, number]] = [
-  [34.4957, 16.3795], // جنوب غرب السعودية
-  [55.6667, 28.5], // شمال شرق السعودية (adjusted to exclude Israel)
+    [34.4957, 16.3795], // جنوب غرب السعودية
+    [55.6667, 28.5], // شمال شرق السعودية (adjusted to exclude Israel)
 ];
 
 const MapComponent = ({ center, analyses }: MapComponentProps) => {
@@ -60,16 +60,16 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
             mapRef.current = null;
         };
     }, []);
-    
+
     useEffect(() => {
         if (!mapRef.current) return;
         // Remove old markers
         markerRefs.current.forEach(marker => marker.remove());
         markerRefs.current = [];
-        
+
         analyses.forEach((analysis, idx) => {
             if (!analysis.location || typeof analysis.location.lat !== 'number' || typeof analysis.location.lng !== 'number') return;
-            
+
             // Create a custom marker container
             const el = document.createElement('div');
             el.style.width = '40px';
@@ -83,7 +83,7 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
             el.style.alignItems = 'center';
             el.style.justifyContent = 'center';
             el.style.cursor = 'pointer';
-            
+
             // Create the marker content
             const createMarkerContent = () => {
                 if (analysis?.publisher?.avatar) {
@@ -94,19 +94,19 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
                     img.style.height = '100%';
                     img.style.objectFit = 'cover';
                     img.style.borderRadius = '50%';
-                    
+
                     // Handle image load error
                     img.onerror = () => {
                         el.innerHTML = '';
                         createPlatformIcon();
                     };
-                    
+
                     return img;
                 } else {
                     return createPlatformIcon();
                 }
             };
-            
+
             // Create platform icon fallback
             const createPlatformIcon = () => {
                 const iconContainer = document.createElement('div');
@@ -116,48 +116,48 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
                 iconContainer.style.alignItems = 'center';
                 iconContainer.style.justifyContent = 'center';
                 iconContainer.style.color = '#3b82f6'; // text-primary color
-                
+
                 // Create SVG icon based on platform
                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.setAttribute('width', '24');
                 svg.setAttribute('height', '24');
                 svg.setAttribute('viewBox', '0 0 24 24');
                 svg.setAttribute('fill', 'currentColor');
-                
+
                 const getPlatformSVG = () => {
                     switch (analysis.platform) {
-                        case PlatformsEnum.X :
+                        case PlatformsEnum.X:
                             return <XIcon className='w-8 h-8 text-secondary' />
-                        case PlatformsEnum.FACEBOOK :
+                        case PlatformsEnum.FACEBOOK:
                             return <FacebookIcon className='w-8 h-8 text-secondary' />
-                        case PlatformsEnum.YOUTUBE :
+                        case PlatformsEnum.YOUTUBE:
                             return <YoutubeIcon className='w-8 h-8 text-secondary' />
-                        case PlatformsEnum.INSTAGRAM :
+                        case PlatformsEnum.INSTAGRAM:
                             return <InstagramIcon className='w-8 h-8 text-secondary' />
                         case PlatformsEnum.TIKTOK:
                             return <TikTokIcon className='w-8 h-8 text-secondary' />
                         case PlatformsEnum.LINKEDIN:
-                            return <LinkedInIcon className='w-8 h-8 text-secondary' /> 
+                            return <LinkedInIcon className='w-8 h-8 text-secondary' />
                     };
                 }
-                
+
                 svg.innerHTML = getPlatformSVG() as any;
                 iconContainer.appendChild(svg);
                 return iconContainer;
             };
-            
+
             // Add the marker content
             const markerContent = createMarkerContent();
             el.appendChild(markerContent);
-            
+
             // Add click handler
             el.onclick = () => setSelectedAnalysis(analysis);
-            
+
             // Create and add marker to map
             const marker = new maplibregl.Marker({ element: el })
                 .setLngLat([analysis.location.lng, analysis.location.lat])
                 .addTo(mapRef.current!);
-            
+
             markerRefs.current.push(marker);
         });
     }, [analyses]);
@@ -166,7 +166,7 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
         <div className="relative w-full h-full flex-1 rounded-lg overflow-hidden">
             <div ref={mapContainer} className="absolute inset-0 w-full h-full" />
             {selectedAnalysis && (
-                <motion.div          
+                <motion.div
                     className="absolute top-4 left-4 bg-white/90 rounded-lg shadow-lg p-4 z-10 min-w-[250px] max-w-[90vw]"
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
@@ -182,18 +182,18 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    { selectedAnalysis?.publisher?.avatar && !imageError.has(selectedAnalysis._id) ? (
-                                            <img
-                                                src={selectedAnalysis.publisher.avatar}
-                                                onError={() => setImageError(prev => new Map(prev).set(selectedAnalysis._id, true))}
-                                                alt="Publisher avatar"
-                                                className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
-                                            />
-                                        ) : (
-                                            <div className='bg-gray-100 w-10 h-10 flex items-center justify-center rounded-md'>
-                                                {getPlatformIcon(selectedAnalysis.platform)}
-                                            </div>
-                                        )
+                                    {selectedAnalysis?.publisher?.avatar && !imageError.has(selectedAnalysis._id) ? (
+                                        <img
+                                            src={selectedAnalysis.publisher.avatar}
+                                            onError={() => setImageError(prev => new Map(prev).set(selectedAnalysis._id, true))}
+                                            alt="Publisher avatar"
+                                            className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
+                                        />
+                                    ) : (
+                                        <div className='bg-gray-100 w-10 h-10 flex items-center justify-center rounded-md'>
+                                            {getPlatformIcon(selectedAnalysis.platform)}
+                                        </div>
+                                    )
                                     }
                                 </Link>
                                 <div className="flex flex-col justify-start items-start gap-1 mb-1">
@@ -206,20 +206,19 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
                                             <span className="text-xs font-medium text-gray-800">{selectedAnalysis.publisher.followers.toLocaleString()}</span>
                                         </div>
                                         <span className="text-xs text-gray-800">
-                                            { formatDistanceToNow({ locale, date: selectedAnalysis.createdAt })}
+                                            {formatDistanceToNow({ locale, date: selectedAnalysis.publishDate as string || selectedAnalysis.createdAt })}
                                         </span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Classification Badge */}
-                            <div className={`h-fit w-fit p-1 rounded-md text-xs ${
-                                selectedAnalysis.classify === AnalysisClassifyEnum.POSITIVE 
-                                    ? 'bg-green-500/20 text-green-400' 
-                                    : selectedAnalysis.classify === AnalysisClassifyEnum.NEUTRAL 
-                                    ? 'bg-gray-500/20 text-gray-600'
-                                    : 'bg-red-500/20 text-red-400'
-                            }`}>
+                            <div className={`h-fit w-fit p-1 rounded-md text-xs ${selectedAnalysis.classify === AnalysisClassifyEnum.POSITIVE
+                                    ? 'bg-green-500/20 text-green-400'
+                                    : selectedAnalysis.classify === AnalysisClassifyEnum.NEUTRAL
+                                        ? 'bg-gray-500/20 text-gray-600'
+                                        : 'bg-red-500/20 text-red-400'
+                                }`}>
                                 {t(selectedAnalysis.classify)}
                             </div>
                         </div>
@@ -233,23 +232,23 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
                             {/* Statistics */}
                             <div className="flex items-center justify-around text-xs text-gray-800">
                                 <div className="flex items-center gap-1">
-                                    <EyeIcon className="w-3 h-3 text-blue-500"/>
+                                    <EyeIcon className="w-3 h-3 text-blue-500" />
                                     {selectedAnalysis.statistics?.views.toLocaleString() || 0}
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <Share2 className="w-3 h-3 text-blue-500"/>
+                                    <Share2 className="w-3 h-3 text-blue-500" />
                                     {selectedAnalysis.statistics?.shares.toLocaleString() || 0}
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <Heart className="w-3 h-3 text-blue-500"/>
+                                    <Heart className="w-3 h-3 text-blue-500" />
                                     {selectedAnalysis.statistics?.reactions.toLocaleString() || 0}
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <MessageCircle className="w-3 h-3 text-blue-500"/>
+                                    <MessageCircle className="w-3 h-3 text-blue-500" />
                                     {selectedAnalysis.statistics?.comments.toLocaleString() || 0}
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <BarChart className="w-3 h-3 text-blue-500"/>
+                                    <BarChart className="w-3 h-3 text-blue-500" />
                                     {selectedAnalysis.statistics?.appearance.toLocaleString() || 0}
                                 </div>
                             </div>
@@ -265,7 +264,7 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
                                 className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center gap-1"
                                 target="_blank"
                             >
-                                <LinkIcon className='w-4 h-4'/>
+                                <LinkIcon className='w-4 h-4' />
                                 {t("showBtn")}
                             </Link>
                         </div>
