@@ -31,7 +31,7 @@ export const getCellValue = (item: IAnalysis, columnId: string, t: (key: string)
             return item.statistics.appearance; 
         case 'total':
             return (item.statistics.reactions + 
-                   item.statistics.comments + item.statistics.shares)
+                   item.statistics.comments + item.statistics.shares + item.statistics.views + item.statistics.appearance);
         case 'publishDate':
             return item.publishDate ? new Date(item.publishDate).toLocaleString() : '';
         case 'createdAt':
@@ -59,7 +59,10 @@ export const calculateStats = (data: IAnalysis[]): ExportStats => {
         totalAppearance: data.reduce((sum, item) => sum + item.statistics.appearance, 0),
         totalStatistics: data.reduce((sum, item) => 
             sum + item.statistics.reactions + 
-            item.statistics.comments + item.statistics.shares, 0
+            item.statistics.comments + 
+            item.statistics.shares + 
+            item.statistics.views + 
+            item.statistics.appearance, 0
         ),
     };
 };
@@ -69,9 +72,13 @@ export const sortData = (data: IAnalysis[], sortOrder: SortOrder): IAnalysis[] =
 
     return [...data].sort((a, b) => {
         const totalA = a.statistics.reactions + 
-                      a.statistics.comments + a.statistics.shares;
+                      a.statistics.comments + 
+                      a.statistics.shares + 
+                      a.statistics.appearance + a.statistics.views;
         const totalB = b.statistics.reactions + 
-                      b.statistics.comments + b.statistics.shares;
+                      b.statistics.comments + 
+                      b.statistics.shares + 
+                      b.statistics.appearance + b.statistics.views;
         
         return sortOrder === 'asc' ? totalA - totalB : totalB - totalA;
     });

@@ -101,7 +101,7 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
                                                 <div className="flex gap-2">
                                                     <div className="flex items-center gap-1">
                                                         <Users className="w-3 h-3 text-blue-300" />
-                                                        <span className="text-xs font-medium text-gray-300">{analysis.publisher.followers.toLocaleString()}</span>
+                                                        <span className="text-xs font-medium text-gray-300">{analysis?.publisher?.followers?.toLocaleString() || 0}</span>
                                                     </div>
                                                     <span className="text-xs text-gray-400">
                                                         {formatDistanceToNow({ locale, date: analysis.publishDate as string || analysis.createdAt })}
@@ -112,10 +112,10 @@ const LiveAnalysisSection = ({ allAnalysis }: ILiveAnalysisSectionProps) => {
 
                                         {/* Classification Badge */}
                                         <div className={`h-fit w-fit p-1 rounded-md text-xs ${analysis.classify === AnalysisClassifyEnum.POSITIVE
-                                                ? 'bg-green-500/20 text-green-400'
-                                                : analysis.classify === AnalysisClassifyEnum.NEUTRAL
-                                                    ? 'bg-gray-500/20 text-gray-400'
-                                                    : 'bg-red-500/20 text-red-400'
+                                            ? 'bg-green-500/20 text-green-400'
+                                            : analysis.classify === AnalysisClassifyEnum.NEUTRAL
+                                                ? 'bg-gray-500/20 text-gray-400'
+                                                : 'bg-red-500/20 text-red-400'
                                             }`}>
                                             {t(analysis.classify)}
                                         </div>

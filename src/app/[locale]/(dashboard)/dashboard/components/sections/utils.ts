@@ -1,7 +1,7 @@
 import { PlatformsEnum } from '@/types/platforms';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { arSA, enUS } from 'date-fns/locale';
-import { Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
+// import { Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
 
 // export const getPlatformIcon = (platform: PlatformsEnum) => {
 //     switch (platform) {
@@ -37,9 +37,9 @@ import { Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react';
 //     }
 // }; 
 
-export const formatDistanceToNow = ({ date, locale }: { date: string, locale: string }): string  => {
-    return formatDistanceToNowStrict(date, { 
+export const formatDistanceToNow = ({ date, locale }: { date: string, locale: string }): string => {
+    return formatDistanceToNowStrict(date, {
         addSuffix: true,
-        locale: locale === 'ar' ? arSA : enUS 
+        locale: locale === 'ar' ? arSA : enUS
     })
 }

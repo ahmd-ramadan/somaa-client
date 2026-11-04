@@ -42,7 +42,7 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
                 current.count++;
                 
                 // Calculate total engagement from statistics
-                const engagement = analysis.statistics.reactions + analysis.statistics.comments + analysis.statistics.shares;
+                const engagement = analysis.statistics.reactions + analysis.statistics.comments + analysis.statistics.shares + analysis.statistics.views + analysis.statistics.appearance;
                 current.totalEngagement += engagement;
                 
                 // Update classifications count
@@ -99,6 +99,16 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
                             { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
                             { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
                         ],
+                        newsClassifications: [
+                            { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
+                            { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
+                            { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
+                        ],
+                        analysisClassifications: [
+                            { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
+                            { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
+                            { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
+                        ],
                     });
                 }
 
@@ -116,7 +126,7 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
                 sectorData.comments += statistics.comments || 0;
                 sectorData.shares += statistics.shares || 0;
                 sectorData.views += statistics.views || 0;
-                sectorData.total = sectorData.reactions + sectorData.comments + sectorData.shares;
+                sectorData.total = sectorData.reactions + sectorData.comments + sectorData.shares + sectorData.appearances + sectorData.views;
 
                 const classificationEntry = sectorData.classifications.find(
                     (cls) => cls.type === classification
@@ -151,6 +161,16 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
                             linkedin: 0
                         },
                         classifications: [
+                            { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
+                            { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
+                            { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
+                        ],
+                        newsClassifications: [
+                            { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
+                            { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
+                            { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },
+                        ],
+                        analysisClassifications: [
                             { type: AnalysisClassifyEnum.POSITIVE, count: 0 },
                             { type: AnalysisClassifyEnum.NEUTRAL, count: 0 },
                             { type: AnalysisClassifyEnum.NEGATIVE, count: 0 },

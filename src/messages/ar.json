@@ -434,6 +434,8 @@
             "value": "القيمة",
             "notSelected": "غير محدد",
             "statistic": "الإحصائيات",
+            "publishDate": "تاريخ النشر",
+            "isRelated": "ذو صلة",
             "totalPosts": "إجمالي المنشورات",
             "totalReactions": "إجمالي الإعجابات",
             "totalComments": "إجمالي التعليقات",

@@ -442,6 +442,8 @@
             "totalStatistics": "Total Statistics",
             "totalAppearance": "Total Appearance",
             "selectTemplate": "Select Template",
+            "publishDate": "Publish Date",
+            "isRelated": "ذو صلة",
             "tweetType": "Post Type",
             "tweet": "Post",
             "reply": "Reply",

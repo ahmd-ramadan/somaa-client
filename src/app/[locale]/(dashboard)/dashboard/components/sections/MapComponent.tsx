@@ -203,7 +203,7 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
                                     <div className="flex gap-2">
                                         <div className="flex items-center gap-1">
                                             <Users className="w-3 h-3 text-blue-500" />
-                                            <span className="text-xs font-medium text-gray-800">{selectedAnalysis.publisher.followers.toLocaleString()}</span>
+                                            <span className="text-xs font-medium text-gray-800">{selectedAnalysis?.publisher?.followers?.toLocaleString() || 0}</span>
                                         </div>
                                         <span className="text-xs text-gray-800">
                                             {formatDistanceToNow({ locale, date: selectedAnalysis.publishDate as string || selectedAnalysis.createdAt })}
@@ -214,10 +214,10 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
 
                             {/* Classification Badge */}
                             <div className={`h-fit w-fit p-1 rounded-md text-xs ${selectedAnalysis.classify === AnalysisClassifyEnum.POSITIVE
-                                    ? 'bg-green-500/20 text-green-400'
-                                    : selectedAnalysis.classify === AnalysisClassifyEnum.NEUTRAL
-                                        ? 'bg-gray-500/20 text-gray-600'
-                                        : 'bg-red-500/20 text-red-400'
+                                ? 'bg-green-500/20 text-green-400'
+                                : selectedAnalysis.classify === AnalysisClassifyEnum.NEUTRAL
+                                    ? 'bg-gray-500/20 text-gray-600'
+                                    : 'bg-red-500/20 text-red-400'
                                 }`}>
                                 {t(selectedAnalysis.classify)}
                             </div>

@@ -165,7 +165,7 @@ const TableRow: React.FC<TableRowProps> = ({
             <td className="px-2 py-1">{shares.toLocaleString()}</td>
             <td className="px-2 py-1">{views.toLocaleString()}</td>
             <td className="px-2 py-1">{appearance.toLocaleString()}</td>
-            <td className="px-2 py-1">{(reactions + comments + shares).toLocaleString()}</td>
+            <td className="px-2 py-1">{(reactions + comments + shares + views + appearance).toLocaleString()}</td>
             <td className="px-2 py-1 w-fit">{formattedPublishDate}</td>
             {/* <td className="px-2 py-1 w-fit">{formattedDate}</td> */}
             <th scope="row" className="px-2 py-1 font-medium text-gray-900">

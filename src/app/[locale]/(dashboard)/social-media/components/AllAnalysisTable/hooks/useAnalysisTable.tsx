@@ -190,8 +190,8 @@ export const useAnalysisTable = () => {
         }
 
         return [...filteredAnalysis].sort((a, b) => {
-            const totalA = a.statistics.reactions + a.statistics.comments + a.statistics.shares;
-            const totalB = b.statistics.reactions + b.statistics.comments + b.statistics.shares;
+            const totalA = a.statistics.reactions + a.statistics.comments + a.statistics.shares + a.statistics.appearance + a.statistics.views;
+            const totalB = b.statistics.reactions + b.statistics.comments + b.statistics.shares + b.statistics.appearance + b.statistics.views;
             
             return sortOrder === 'asc' ? totalA - totalB : totalB - totalA;
         });

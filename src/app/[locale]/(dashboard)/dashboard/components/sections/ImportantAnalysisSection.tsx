@@ -116,7 +116,7 @@ const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProp
                                                 <div className="flex gap-2">
                                                     <div className="flex items-center gap-1">
                                                         <Users className="w-3 h-3 text-blue-300" />
-                                                        <span className="text-xs font-medium text-gray-300">{analysis.publisher.followers.toLocaleString()}</span>
+                                                        <span className="text-xs font-medium text-gray-300">{analysis?.publisher?.followers?.toLocaleString() || 0}</span>
                                                     </div>
                                                     <span className="text-xs text-gray-400">
                                                         {formatDistanceToNow({ date: analysis.publishDate as string || analysis.createdAt, locale })}
