@@ -183,7 +183,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                     <div className="w-full flex justify-between gap-1 items-center">
                         <h3 className="text-sm font-semibold text-gray-300 flex items-center gap-1">
                             <TrendingUp className="w-5 h-5 text-blue-400" />
-                            أعلى التفاعلات
+                            الأعلي تفاعل
                         </h3>
                         <div className="relative text-white">
                             <button

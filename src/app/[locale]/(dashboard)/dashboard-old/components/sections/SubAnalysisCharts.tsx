@@ -252,7 +252,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                     transition={{ duration: 0.2 }}
                 >
                     <TrendingUp className={`w-4 h-4`}/>
-                    <span className="text-sm text-gray-300">إجمالي التفاعلات</span>
+                    <span className="text-sm text-gray-300">إجمالي التفاعل</span>
                     <span className={`text-sm`}>
                         {allAnalysis.reduce((acc, curr) => (
                             acc + getTotalStatistics(curr?.statistics)

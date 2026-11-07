@@ -86,7 +86,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
                             </button>
                             <h3 className="text-sm font-semibold text-gray-300 flex items-center gap-1">
                                 <TrendingUp className="w-5 h-5" />
-                                أعلى التفاعلات
+                                الأعلي تفاعل
                             </h3>
                         </div>
                     </div>

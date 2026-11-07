@@ -4,7 +4,6 @@
 // import { formatDistanceToNow } from 'date-fns';
 // import { arSA, enUS } from 'date-fns/locale';
 
-
 // import { AnalysisClassifyEnum, IAnalysis, PlatformsEnum } from "@/interfaces/analysis.types";
 // import { INews } from "@/interfaces/news.types";
 // import { motion, AnimatePresence } from "framer-motion";
@@ -85,10 +84,10 @@
 // const DashboardLayout = () => {
 
 //     const locale = useLocale()
-    
+
 //     const { socket, isConnected } = useSocket();
-//     const [allAnalysis, setAllAnalysis] = useState<IAnalysis[]>([]); 
-//     const [allNews, setAllNews] = useState<INews[]>([]); 
+//     const [allAnalysis, setAllAnalysis] = useState<IAnalysis[]>([]);
+//     const [allNews, setAllNews] = useState<INews[]>([]);
 //     const [allCalssifications, setAllcassifications] = useState<IDashboardClassify[]>(DashboardClassificationsDefault)
 //     const [importantAnalysis, setImportantAnalysis] = useState<IAnalysis[]>([])
 //     const [lastAnalysisLocation, setLastAnalysisLocation] = useState<any>(null)
@@ -235,7 +234,7 @@
 //             socket.off('allNews');
 //         };
 //     }, [socket, isConnected])
-    
+
 //     const deriveClassifications = (analysisData: IAnalysis[]): IDashboardClassify[] => {
 //         const positiveAnalysis = analysisData.filter(a => a.classify === AnalysisClassifyEnum.POSITIVE).length
 //         const nuetralAnalysis = analysisData.filter(a => a.classify === AnalysisClassifyEnum.NEUTRAL).length
@@ -259,28 +258,28 @@
 
 //     const deriveSubAnalysis = (analysisData: IAnalysis[]): IDashboardSubAnalysis[] => {
 //         const analysisMap = new Map<string, { count: number, classifications: Map<AnalysisClassifyEnum, number> }>();
-        
+
 //         analysisData.forEach(analysis => {
 //             const name = analysis.subAnalysis.body;
 //             if (!name) return;
-            
+
 //             if (!analysisMap.has(name)) {
-//                 analysisMap.set(name, { 
+//                 analysisMap.set(name, {
 //                     count: 0,
 //                     classifications: new Map<AnalysisClassifyEnum, number>()
 //                 });
 //             }
-            
+
 //             const current = analysisMap.get(name)!;
 //             current.count++;
-            
+
 //             // Update classifications count
 //             if (analysis.classify) {
 //                 const currentCount = current.classifications.get(analysis.classify) || 0;
 //                 current.classifications.set(analysis.classify, currentCount + 1);
 //             }
 //         });
-        
+
 //         return Array.from(analysisMap.entries()).map(([name, data]) => ({
 //             name,
 //             count: data.count,
@@ -332,12 +331,12 @@
 //         const analysisMap = new Map<string, { total: number, avatar: string, shares: number, views: number, appearance: number, reactions: number, comments: number  }>();
 //         for(const { publisher: { name, avatar }, statistics: { shares, views, appearance, reactions, comments }} of analysisData) {
 //             const totalStatistics = shares + reactions + appearance + views + comments;
-            
+
 //             if(analysisMap.has(name)) {
 //                 const publisherObject = analysisMap.get(name)!;
-//                 analysisMap.set(name, { 
-//                     total: publisherObject?.total + totalStatistics, 
-//                     avatar, 
+//                 analysisMap.set(name, {
+//                     total: publisherObject?.total + totalStatistics,
+//                     avatar,
 //                     comments: publisherObject?.comments + comments,
 //                     appearance: publisherObject?.appearance + appearance,
 //                     reactions: publisherObject?.reactions + reactions,
@@ -347,8 +346,8 @@
 //             } else {
 //                 analysisMap.set(name, { total: totalStatistics, avatar, shares, views, appearance, reactions, comments })
 //             }
-//         } 
-        
+//         }
+
 //         return Array.from(analysisMap.entries()).map(([name, { total, avatar, shares, views, appearance, reactions, comments }]) => ({ name, avatar, total, shares, views, appearance, reactions, comments }));
 //     }
 
@@ -361,8 +360,8 @@
 //             } else {
 //                 analysisMap.set(platform, { total: 1 })
 //             }
-//         } 
-        
+//         }
+
 //         return Array.from(analysisMap.entries()).map(([platform, { total }]) => ({ platform, total }));
 //     }
 
@@ -373,7 +372,7 @@
 
 //         const maxCount = Math.max(positiveCount, negativeCount, nueturalCount);
 
-//         if(positiveCount === maxCount) return 'green-500' 
+//         if(positiveCount === maxCount) return 'green-500'
 //         if(nueturalCount === maxCount) return 'blue-500'
 //         if(negativeCount === maxCount) return 'red-500'
 //     }
@@ -430,16 +429,16 @@
 //     // Add new animation variants
 //     const scrollVariants = {
 //         hidden: { opacity: 0, y: 20 },
-//         visible: { 
-//             opacity: 1, 
+//         visible: {
+//             opacity: 1,
 //             y: 0,
 //             transition: {
 //                 duration: 0.5,
 //                 ease: "easeOut"
 //             }
 //         },
-//         exit: { 
-//             opacity: 0, 
+//         exit: {
+//             opacity: 0,
 //             y: -20,
 //             transition: {
 //                 duration: 0.3,
@@ -573,7 +572,7 @@
 //     //                 const date = new Date(now.getTime() - (labels.length - index - 1) * getTimeInterval(timeDiff));
 //     //                 return analysisData.filter(a => {
 //     //                     const analysisDate = new Date(a.createdAt);
-//     //                     return isWithinInterval(analysisDate, date, timeDiff) && 
+//     //                     return isWithinInterval(analysisDate, date, timeDiff) &&
 //     //                            a.classify === AnalysisClassifyEnum.POSITIVE;
 //     //                 }).length;
 //     //             }),
@@ -593,7 +592,7 @@
 //     //                 const date = new Date(now.getTime() - (labels.length - index - 1) * getTimeInterval(timeDiff));
 //     //                 return analysisData.filter(a => {
 //     //                     const analysisDate = new Date(a.createdAt);
-//     //                     return isWithinInterval(analysisDate, date, timeDiff) && 
+//     //                     return isWithinInterval(analysisDate, date, timeDiff) &&
 //     //                            a.classify === AnalysisClassifyEnum.NEUTRAL;
 //     //                 }).length;
 //     //             }),
@@ -613,7 +612,7 @@
 //     //                 const date = new Date(now.getTime() - (labels.length - index - 1) * getTimeInterval(timeDiff));
 //     //                 return analysisData.filter(a => {
 //     //                     const analysisDate = new Date(a.createdAt);
-//     //                     return isWithinInterval(analysisDate, date, timeDiff) && 
+//     //                     return isWithinInterval(analysisDate, date, timeDiff) &&
 //     //                            a.classify === AnalysisClassifyEnum.NEGATIVE;
 //     //                 }).length;
 //     //             }),
@@ -633,7 +632,7 @@
 //     // };
 
 //     // Helper function to get time interval in milliseconds
-    
+
 //     const getTimeInterval = (timeDiff: number): number => {
 //         const oneDay = 24 * 60 * 60 * 1000;
 //         const oneWeek = 7 * oneDay;
@@ -700,7 +699,7 @@
 //             {
 //                 label: 'Positive',
 //                 data: [
-//                     ...top3.map(item => 
+//                     ...top3.map(item =>
 //                         item.classifications.find(c => c.type === AnalysisClassifyEnum.POSITIVE)?.count || 0.1
 //                     ),
 //                     othersByType[AnalysisClassifyEnum.POSITIVE] || 0.1
@@ -713,7 +712,7 @@
 //             {
 //                 label: 'Neutral',
 //                 data: [
-//                     ...top3.map(item => 
+//                     ...top3.map(item =>
 //                         item.classifications.find(c => c.type === AnalysisClassifyEnum.NEUTRAL)?.count || 0.1
 //                     ),
 //                     othersByType[AnalysisClassifyEnum.NEUTRAL] || 0.1
@@ -726,7 +725,7 @@
 //             {
 //                 label: 'Negative',
 //                 data: [
-//                     ...top3.map(item => 
+//                     ...top3.map(item =>
 //                         item.classifications.find(c => c.type === AnalysisClassifyEnum.NEGATIVE)?.count || 0.1
 //                     ),
 //                     othersByType[AnalysisClassifyEnum.NEGATIVE] || 0.1
@@ -805,7 +804,7 @@
 //                 </div>
 //             )}
 //             {isMounted && (
-//                 <motion.div 
+//                 <motion.div
 //                     className="flex flex-col h-full gap-4"
 //                     variants={containerVariants}
 //                     initial="hidden"
@@ -821,8 +820,8 @@
 //                             <div className="flex items-center justify-center p-4 bg-gray-700/50 rounded-lg">
 //                                 <div className="flex items-center justify-between gap-6 w-full">
 //                                     {allCalssifications.map((cls, index) => (
-//                                         <motion.div 
-//                                             key={index} 
+//                                         <motion.div
+//                                             key={index}
 //                                             className="flex flex-col items-center"
 //                                             initial={{ opacity: 0, scale: 0.8 }}
 //                                             animate={{ opacity: 1, scale: 1 }}
@@ -830,15 +829,15 @@
 //                                             transition={{ duration: 0.3, delay: index * 0.1 }}
 //                                         >
 //                                             <div className={`w-16 h-16 rounded-xl border-2 ${
-//                                                 cls.type === AnalysisClassifyEnum.POSITIVE ? 'border-green-500 bg-green-500/10' : 
-//                                                 cls.type === AnalysisClassifyEnum.NEUTRAL ? 'border-blue-500 bg-blue-500/10' : 
+//                                                 cls.type === AnalysisClassifyEnum.POSITIVE ? 'border-green-500 bg-green-500/10' :
+//                                                 cls.type === AnalysisClassifyEnum.NEUTRAL ? 'border-blue-500 bg-blue-500/10' :
 //                                                 'border-red-500 bg-red-500/10'
 //                                             } flex items-center justify-center shadow-lg`}>
 //                                                 {getClassificationIcon(cls.type)}
 //                                             </div>
 //                                             <div className={`mt-2 px-3 py-1 rounded-full ${
-//                                                 cls.type === AnalysisClassifyEnum.POSITIVE ? 'bg-green-500/20 text-green-400' : 
-//                                                 cls.type === AnalysisClassifyEnum.NEUTRAL ? 'bg-blue-500/20 text-blue-400' : 
+//                                                 cls.type === AnalysisClassifyEnum.POSITIVE ? 'bg-green-500/20 text-green-400' :
+//                                                 cls.type === AnalysisClassifyEnum.NEUTRAL ? 'bg-blue-500/20 text-blue-400' :
 //                                                 'bg-red-500/20 text-red-400'
 //                                             } text-lg font-bold`}>
 //                                                 {cls.count}
@@ -852,7 +851,7 @@
 //                             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-2 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col">
 //                                 <div className="flex items-center justify-between mb-2">
 //                                     <div className="flex gap-1 items-center">
-//                                         <button 
+//                                         <button
 //                                             onClick={toggleImportantAnalysisAnimation}
 //                                             className="p-1 rounded-full hover:bg-gray-700 transition-colors"
 //                                         >
@@ -871,7 +870,7 @@
 //                                         <span className="text-lg font-bold text-gray-300">{importantAnalysis.length}</span>
 //                                     </div>
 //                                 </div>
-                                
+
 //                                 <div className="relative flex-1 overflow-hidden">
 //                                     <motion.div
 //                                         ref={importantTickerRef}
@@ -881,8 +880,8 @@
 //                                     >
 //                                         <div className="space-y-2">
 //                                             {importantAnalysis.map((analysis, index) => (
-//                                                 <motion.div 
-//                                                     key={index} 
+//                                                 <motion.div
+//                                                     key={index}
 //                                                     className="bg-gray-700/50 p-2 rounded-lg"
 //                                                     variants={liveAnalysisItemVariants}
 //                                                     initial="initial"
@@ -893,8 +892,8 @@
 //                                                         <div className="flex justify-between">
 //                                                             {/* UserInfo */}
 //                                                             <div className="flex gap-1">
-//                                                                 { analysis.publisher.avatar ? 
-//                                                                     <Image 
+//                                                                 { analysis.publisher.avatar ?
+//                                                                     <Image
 //                                                                         src={analysis.publisher.avatar}
 //                                                                         alt={analysis.publisher?.name?.charAt(0)}
 //                                                                         width={50}
@@ -915,7 +914,7 @@
 //                                                                             <span className="text-xs font-medium text-gray-300">{analysis.publisher.followers}</span>
 //                                                                         </div>
 //                                                                         <span className="text-xs text-gray-400">
-//                                                                             {formatDistanceToNow(analysis.createdAt, { 
+//                                                                             {formatDistanceToNow(analysis.createdAt, {
 //                                                                                 addSuffix: true,
 //                                                                                 locale: locale === 'ar' ? arSA : enUS }
 //                                                                             )}
@@ -926,15 +925,15 @@
 
 //                                                             {/* Classification Badge */}
 //                                                             <div className={`h-fit w-fit p-1 rounded-md text-xs ${
-//                                                                 analysis.classify === AnalysisClassifyEnum.POSITIVE 
-//                                                                     ? 'bg-green-500/20 text-green-400' 
-//                                                                     : analysis.classify === AnalysisClassifyEnum.NEUTRAL 
+//                                                                 analysis.classify === AnalysisClassifyEnum.POSITIVE
+//                                                                     ? 'bg-green-500/20 text-green-400'
+//                                                                     : analysis.classify === AnalysisClassifyEnum.NEUTRAL
 //                                                                     ? 'bg-blue-500/20 text-blue-400'
 //                                                                     : 'bg-red-500/20 text-red-400'
 //                                                             }`}>
-//                                                                 {analysis.classify === AnalysisClassifyEnum.POSITIVE 
-//                                                                     ? 'إيجابي' 
-//                                                                     : analysis.classify === AnalysisClassifyEnum.NEUTRAL 
+//                                                                 {analysis.classify === AnalysisClassifyEnum.POSITIVE
+//                                                                     ? 'إيجابي'
+//                                                                     : analysis.classify === AnalysisClassifyEnum.NEUTRAL
 //                                                                     ? 'محايد'
 //                                                                     : 'سلبي'}
 //                                                             </div>
@@ -987,9 +986,9 @@
 //                             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-2 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col">
 //                                 <div
 //                                     className="flex items-center justify-between mb-2"
-//                                 >    
+//                                 >
 //                                     <div className="flex justify-between items-center">
-//                                         <button 
+//                                         <button
 //                                             onClick={toggleLiveAnalysisAnimation}
 //                                             className="p-1 rounded-full hover:bg-gray-700 transition-colors"
 //                                         >
@@ -1003,7 +1002,7 @@
 //                                             <LineChart className="w-5 h-5" />
 //                                             الرصد المباشر
 //                                         </h3>
-                                        
+
 //                                     </div>
 //                                     <div className="p-1 flex items-center justify-center">
 //                                             <span className="text-lg font-semibold text-gray-300">{allAnalysis.length}</span>
@@ -1018,8 +1017,8 @@
 //                                     >
 //                                         <div className="space-y-2">
 //                                         {allAnalysis.map((analysis, index) => (
-//                                                 <motion.div 
-//                                                     key={index} 
+//                                                 <motion.div
+//                                                     key={index}
 //                                                     className="bg-gray-700/50 p-2 rounded-lg"
 //                                                     initial={{ x: -20, opacity: 0 }}
 //                                                     animate={{ x: 0, opacity: 1 }}
@@ -1030,8 +1029,8 @@
 //                                                         <div className="flex justify-between">
 //                                                             {/* UserInfo */}
 //                                                             <div className="flex gap-1">
-//                                                                 { analysis.publisher.avatar ? 
-//                                                                     <Image 
+//                                                                 { analysis.publisher.avatar ?
+//                                                                     <Image
 //                                                                         src={analysis.publisher.avatar}
 //                                                                         alt={analysis.publisher?.name?.charAt(0)}
 //                                                                         width={50}
@@ -1052,7 +1051,7 @@
 //                                                                             <span className="text-xs font-medium text-gray-300">{analysis.publisher.followers}</span>
 //                                                                         </div>
 //                                                                         <span className="text-xs text-gray-400">
-//                                                                             {formatDistanceToNow(analysis.createdAt, { 
+//                                                                             {formatDistanceToNow(analysis.createdAt, {
 //                                                                                 addSuffix: true,
 //                                                                                 locale: locale === 'ar' ? arSA : enUS }
 //                                                                             )}
@@ -1063,15 +1062,15 @@
 
 //                                                             {/* Classification Badge */}
 //                                                             <div className={`h-fit w-fit p-1 rounded-md text-xs ${
-//                                                                 analysis.classify === AnalysisClassifyEnum.POSITIVE 
-//                                                                     ? 'bg-green-500/20 text-green-400' 
-//                                                                     : analysis.classify === AnalysisClassifyEnum.NEUTRAL 
+//                                                                 analysis.classify === AnalysisClassifyEnum.POSITIVE
+//                                                                     ? 'bg-green-500/20 text-green-400'
+//                                                                     : analysis.classify === AnalysisClassifyEnum.NEUTRAL
 //                                                                     ? 'bg-blue-500/20 text-blue-400'
 //                                                                     : 'bg-red-500/20 text-red-400'
 //                                                             }`}>
-//                                                                 {analysis.classify === AnalysisClassifyEnum.POSITIVE 
-//                                                                     ? 'إيجابي' 
-//                                                                     : analysis.classify === AnalysisClassifyEnum.NEUTRAL 
+//                                                                 {analysis.classify === AnalysisClassifyEnum.POSITIVE
+//                                                                     ? 'إيجابي'
+//                                                                     : analysis.classify === AnalysisClassifyEnum.NEUTRAL
 //                                                                     ? 'محايد'
 //                                                                     : 'سلبي'}
 //                                                             </div>
@@ -1136,7 +1135,7 @@
 //                                     </h3> */}
 //                                     <div className="flex-1 relative">
 //                                         {isMounted && (
-//                                             <MapWithNoSSR 
+//                                             <MapWithNoSSR
 //                                                 center={mapCenter}
 //                                                 lastAnalysisLocation={lastAnalysisLocation}
 //                                                 key="dashboard-map"
@@ -1147,7 +1146,7 @@
 
 //                                 {/* News/Social Section */}
 //                                 <div className="w-1/4 bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-3 hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-around">
-//                                     <motion.div 
+//                                     <motion.div
 //                                         className="flex flex-col items-center gap-2"
 //                                         whileHover={{ scale: 1.05 }}
 //                                     >
@@ -1158,8 +1157,8 @@
 //                                         </div>
 //                                         <span className="text-sm text-gray-300">التواصل الإجتماعي</span>
 //                                     </motion.div>
-                                    
-//                                     <motion.div 
+
+//                                     <motion.div
 //                                         className="flex flex-col items-center gap-2"
 //                                         whileHover={{ scale: 1.05 }}
 //                                     >
@@ -1179,7 +1178,7 @@
 //                                 <div className="w-1/2 h-full p-1 overflow-hidden bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 hover:shadow-xl transition-all duration-300">
 //                                     <div className="flex items-center justify-between mb-2">
 //                                         <div className="flex gap-1 items-center">
-//                                             <button 
+//                                             <button
 //                                                 onClick={togglePlatformsAnimation}
 //                                                 className="p-1 rounded-full hover:bg-gray-700 transition-colors"
 //                                             >
@@ -1244,8 +1243,8 @@
 //                                                 variants={subAnalysisVariants}
 //                                             >
 //                                                 {allSubAnalysis.map((subAnalysis, index) => (
-//                                                     <motion.div 
-//                                                         key={index} 
+//                                                     <motion.div
+//                                                         key={index}
 //                                                         className="bg-gray-700/50 p-1 rounded-lg"
 //                                                         initial={{ x: -20, opacity: 0 }}
 //                                                         animate={{ x: 0, opacity: 1 }}
@@ -1277,7 +1276,7 @@
 //                             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-2 over:shadow-xl transition-all duration-300">
 //                                 {/* Statistics Row */}
 //                                 <div className="flex justify-between items-center mb-2">
-//                                     <motion.div 
+//                                     <motion.div
 //                                         className="flex items-center gap-2 bg-gray-700/30 backdrop-blur-sm p-1 rounded-lg"
 //                                         whileHover={{ scale: 1.02 }}
 //                                         transition={{ duration: 0.2 }}
@@ -1286,7 +1285,7 @@
 //                                         <span className="text-sm text-gray-300">إجمالي رصد المنشورات</span>
 //                                         <span className="text-sm font-semibold text-blue-400">{allAnalysis.length}</span>
 //                                     </motion.div>
-//                                     <motion.div 
+//                                     <motion.div
 //                                         className="flex items-center gap-2 bg-gray-700/30 backdrop-blur-sm p-2 rounded-lg"
 //                                         whileHover={{ scale: 1.02 }}
 //                                         transition={{ duration: 0.2 }}
@@ -1294,11 +1293,11 @@
 //                                         <TrendingUp className="w-4 h-4 text-green-400" />
 //                                         <span className="text-sm text-gray-300">إجمالي تفاعلات المنشورات</span>
 //                                         <span className="text-sm font-semibold text-green-400">
-//                                             {allAnalysis.reduce((acc, curr) => 
-//                                                 acc + (curr.statistics?.views || 0) + 
-//                                                 (curr.statistics?.shares || 0) + 
-//                                                 (curr.statistics?.reactions || 0) + 
-//                                                 (curr.statistics?.comments || 0) + 
+//                                             {allAnalysis.reduce((acc, curr) =>
+//                                                 acc + (curr.statistics?.views || 0) +
+//                                                 (curr.statistics?.shares || 0) +
+//                                                 (curr.statistics?.reactions || 0) +
+//                                                 (curr.statistics?.comments || 0) +
 //                                                 (curr.statistics?.appearance || 0), 0
 //                                             )}
 //                                         </span>
@@ -1588,8 +1587,8 @@
 //                                                 .sort((a, b) => b.total - a.total)
 //                                                 .slice(0, 4)
 //                                                 .map((sector, index) => (
-//                                                     <motion.div 
-//                                                         key={index} 
+//                                                     <motion.div
+//                                                         key={index}
 //                                                         className="bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-2 transition-all duration-300 mb-2 relative overflow-hidden hover:shadow-xl"
 //                                                         initial={{ x: 20, opacity: 0 }}
 //                                                         animate={{ x: 0, opacity: 1 }}
@@ -1597,7 +1596,7 @@
 //                                                         whileHover={{ scale: 1.02 }}
 //                                                     >
 //                                                         <div className="flex justify-between items-center gap-2 ">
-                                                           
+
 //                                                              {/* Name and Classifications */}
 //                                                              <div className="flex flex-col items-center ml-2">
 //                                                                 <span className="text-xs font-semibold text-gray-100 mb-1">{sector.name}</span>
@@ -1610,8 +1609,8 @@
 //                                                                                 'bg-red-500'
 //                                                                             }`} />
 //                                                                             <span className={`${
-//                                                                                 cls.type === AnalysisClassifyEnum.POSITIVE ? 'text-green-500' : 
-//                                                                                 cls.type === AnalysisClassifyEnum.NEUTRAL ? 'text-blue-500' : 
+//                                                                                 cls.type === AnalysisClassifyEnum.POSITIVE ? 'text-green-500' :
+//                                                                                 cls.type === AnalysisClassifyEnum.NEUTRAL ? 'text-blue-500' :
 //                                                                                 'text-red-500'
 //                                                                             }`}>
 //                                                                                 {cls.count}
@@ -1624,7 +1623,7 @@
 //                                                             {/* Chart */}
 //                                                             <div className="flex-grow h-14 w-20">
 //                                                                 {isMounted && (
-//                                                                     <Line 
+//                                                                     <Line
 //                                                                         data={{
 //                                                                             labels: ['إيجابي', 'محايد', 'سلبي'],
 //                                                                             datasets: [{
@@ -1671,7 +1670,7 @@
 //                                                                                 }
 //                                                                             },
 //                                                                             scales: {
-//                                                                                 x: { 
+//                                                                                 x: {
 //                                                                                     display: true,
 //                                                                                     grid: {
 //                                                                                         display: true,
@@ -1692,7 +1691,7 @@
 //                                                                                         display: false
 //                                                                                     }
 //                                                                                 },
-//                                                                                 y: { 
+//                                                                                 y: {
 //                                                                                     display: true,
 //                                                                                     grid: {
 //                                                                                         display: true,
@@ -1742,14 +1741,13 @@
 //                                                                 </p>
 //                                                             </div> */}
 
-                                                           
 //                                                         </div>
 //                                                     </motion.div>
 //                                                 ))}
 
 //                                             {/* Other Sectors Card */}
 //                                             {allSectors.length > 4 && (
-//                                                 <motion.div 
+//                                                 <motion.div
 //                                                     className="bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-2 transition-all duration-300"
 //                                                     initial={{ x: 20, opacity: 0 }}
 //                                                     animate={{ x: 0, opacity: 1 }}
@@ -1810,7 +1808,7 @@
 //                                     <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-2 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col overflow-hidden">
 //                                         <div className="flex items-center justify-between mb-2">
 //                                             <div className="flex gap-1 items-center">
-//                                                 <button 
+//                                                 <button
 //                                                     onClick={togglePublishersAnimation}
 //                                                     className="p-1 rounded-full hover:bg-gray-700 transition-colors"
 //                                                 >
@@ -1822,7 +1820,7 @@
 //                                                 </button>
 //                                                 <h3 className="text-sm font-semibold text-gray-300 flex items-center gap-1">
 //                                                     <TrendingUp className="w-5 h-5" />
-//                                                     أعلى التفاعلات
+//                                                     الأعلي تفاعل
 //                                                 </h3>
 //                                             </div>
 //                                         </div>
@@ -1838,8 +1836,8 @@
 //                                                         .sort((a, b) => (b.reactions || 0) - (a.reactions || 0))
 //                                                         .slice(0, 1)
 //                                                         .map((publisher, index) => (
-//                                                             <motion.div 
-//                                                                 key={`reactions-${index}`} 
+//                                                             <motion.div
+//                                                                 key={`reactions-${index}`}
 //                                                                 className="bg-gray-700/50 p-2 rounded-md w-fit min-w-[200px]"
 //                                                                 initial={{ x: 20, opacity: 0 }}
 //                                                                 animate={{ x: 0, opacity: 1 }}
@@ -1847,8 +1845,8 @@
 //                                                                 whileHover={{ scale: 1.02 }}
 //                                                             >
 //                                                                 <div className="flex items-center gap-2">
-//                                                                     {publisher.avatar ? 
-//                                                                         <Image 
+//                                                                     {publisher.avatar ?
+//                                                                         <Image
 //                                                                             src={publisher.avatar}
 //                                                                             alt={publisher.name?.charAt(0)}
 //                                                                             width={40}
@@ -1877,8 +1875,8 @@
 //                                                         .sort((a, b) => (b.comments || 0) - (a.comments || 0))
 //                                                         .slice(0, 1)
 //                                                         .map((publisher, index) => (
-//                                                             <motion.div 
-//                                                                 key={`comments-${index}`} 
+//                                                             <motion.div
+//                                                                 key={`comments-${index}`}
 //                                                                 className="bg-gray-700/50 p-2 rounded-md w-fit min-w-[200px]"
 //                                                                 initial={{ x: 20, opacity: 0 }}
 //                                                                 animate={{ x: 0, opacity: 1 }}
@@ -1886,8 +1884,8 @@
 //                                                                 whileHover={{ scale: 1.02 }}
 //                                                             >
 //                                                                 <div className="flex items-center gap-2">
-//                                                                     {publisher.avatar ? 
-//                                                                         <Image 
+//                                                                     {publisher.avatar ?
+//                                                                         <Image
 //                                                                             src={publisher.avatar}
 //                                                                             alt={publisher.name?.charAt(0)}
 //                                                                             width={40}
@@ -1916,8 +1914,8 @@
 //                                                         .sort((a, b) => (b.shares || 0) - (a.shares || 0))
 //                                                         .slice(0, 1)
 //                                                         .map((publisher, index) => (
-//                                                             <motion.div 
-//                                                                 key={`shares-${index}`} 
+//                                                             <motion.div
+//                                                                 key={`shares-${index}`}
 //                                                                 className="bg-gray-700/50 p-2 rounded-md w-fit min-w-[200px]"
 //                                                                 initial={{ x: 20, opacity: 0 }}
 //                                                                 animate={{ x: 0, opacity: 1 }}
@@ -1925,8 +1923,8 @@
 //                                                                 whileHover={{ scale: 1.02 }}
 //                                                             >
 //                                                                 <div className="flex items-center gap-2">
-//                                                                     {publisher.avatar ? 
-//                                                                         <Image 
+//                                                                     {publisher.avatar ?
+//                                                                         <Image
 //                                                                             src={publisher.avatar}
 //                                                                             alt={publisher.name?.charAt(0)}
 //                                                                             width={40}
@@ -1955,8 +1953,8 @@
 //                                                         .sort((a, b) => (b.appearance || 0) - (a.appearance || 0))
 //                                                         .slice(0, 1)
 //                                                         .map((publisher, index) => (
-//                                                             <motion.div 
-//                                                                 key={`appearance-${index}`} 
+//                                                             <motion.div
+//                                                                 key={`appearance-${index}`}
 //                                                                 className="bg-gray-700/50 p-2 rounded-md w-fit min-w-[200px]"
 //                                                                 initial={{ x: 20, opacity: 0 }}
 //                                                                 animate={{ x: 0, opacity: 1 }}
@@ -1964,8 +1962,8 @@
 //                                                                 whileHover={{ scale: 1.02 }}
 //                                                             >
 //                                                                 <div className="flex items-center gap-2">
-//                                                                     {publisher.avatar ? 
-//                                                                         <Image 
+//                                                                     {publisher.avatar ?
+//                                                                         <Image
 //                                                                             src={publisher.avatar}
 //                                                                             alt={publisher.name?.charAt(0)}
 //                                                                             width={40}
@@ -1994,8 +1992,8 @@
 //                                                         .sort((a, b) => (b.views || 0) - (a.views || 0))
 //                                                         .slice(0, 1)
 //                                                         .map((publisher, index) => (
-//                                                             <motion.div 
-//                                                                 key={`views-${index}`} 
+//                                                             <motion.div
+//                                                                 key={`views-${index}`}
 //                                                                 className="bg-gray-700/50 p-2 rounded-md w-fit min-w-[200px]"
 //                                                                 initial={{ x: 20, opacity: 0 }}
 //                                                                 animate={{ x: 0, opacity: 1 }}
@@ -2003,8 +2001,8 @@
 //                                                                 whileHover={{ scale: 1.02 }}
 //                                                             >
 //                                                                 <div className="flex items-center gap-2">
-//                                                                     {publisher.avatar ? 
-//                                                                         <Image 
+//                                                                     {publisher.avatar ?
+//                                                                         <Image
 //                                                                             src={publisher.avatar}
 //                                                                             alt={publisher.name?.charAt(0)}
 //                                                                             width={40}
@@ -2036,7 +2034,7 @@
 //                                     <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg shadow-lg border border-gray-700/50 p-2 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col overflow-hidden">
 //                                         <div className="flex items-center justify-between mb-2">
 //                                             <div className="flex gap-1 items-center">
-//                                                 <button 
+//                                                 <button
 //                                                     onClick={togglePublishersAnimation}
 //                                                     className="p-1 rounded-full hover:bg-gray-700 transition-colors"
 //                                                 >
@@ -2063,8 +2061,8 @@
 //                                                         .sort((a, b) => (b.total || 0) - (a.total || 0))
 //                                                         .slice(0, 5)
 //                                                         .map((publisher, index) => (
-//                                                             <motion.div 
-//                                                                 key={index} 
+//                                                             <motion.div
+//                                                                 key={index}
 //                                                                 className="bg-gray-700/50 p-2 rounded-md w-fit min-w-[200px]"
 //                                                                 initial={{ x: 20, opacity: 0 }}
 //                                                                 animate={{ x: 0, opacity: 1 }}
@@ -2072,8 +2070,8 @@
 //                                                                 whileHover={{ scale: 1.02 }}
 //                                                             >
 //                                                                 <div className="flex items-center gap-2">
-//                                                                     {publisher.avatar ? 
-//                                                                         <Image 
+//                                                                     {publisher.avatar ?
+//                                                                         <Image
 //                                                                             src={publisher.avatar}
 //                                                                             alt={publisher.name?.charAt(0)}
 //                                                                             width={40}
