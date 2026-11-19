@@ -83,7 +83,7 @@ export const generateAnalysisWhatsappMessage = (analysis: IAnalysis): string => 
 
     const publisher = analysis.publisher || analysis.publisherData;
     const publisherName = publisher?.name || '—';
-    const followers = publisher?.followers != null ? Number(publisher.followers).toLocaleString("en-US") : "0";
+    const followers = publisher?.followers != null ? Number(publisher?.followers || 0).toLocaleString("en-US") : "0";
 
     const reactions = statistics?.reactions || 0;
     const shares = statistics?.shares || 0;
@@ -99,7 +99,7 @@ export const generateAnalysisWhatsappMessage = (analysis: IAnalysis): string => 
     const locationText = [location?.region, location?.city, location?.district]
         .filter(Boolean)
         .join(" - ") || "غير محدد";
-
+    
     const cleanBody = cleanContentBody(content?.body);
 
     return `🔗 *الرابط:* ${url || ''}
