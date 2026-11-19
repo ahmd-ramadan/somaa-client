@@ -136,7 +136,8 @@ export const generateNewsWhatsappMessage = (news: INews): string => {
     return `${url || ''}
 ${title || ''}
 ${classifyWord}
-القطاع: ${sectorName}\n`;
+القطاع: ${sectorName}
+مصدر الخبر: ${news.newspaper}`;
 };
 
 export const copyTextToClipboard = async (text: string): Promise<boolean> => {
