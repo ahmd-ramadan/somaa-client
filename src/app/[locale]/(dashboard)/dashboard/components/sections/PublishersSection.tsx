@@ -116,7 +116,7 @@ const PublishersSection = ({ allAnalysis }: IPublishersSectionProps) => {
             if (!topShares || item.statistics.shares > topShares.statistics.shares) topShares = item;
             if (!topViews || item.statistics.views > topViews.statistics.views) topViews = item;
             if (!topAppearence || item.statistics.appearance > topAppearence.statistics.appearance) topAppearence = item;
-            if (!topFollowers || item.publisher.followers > topFollowers.publisher.followers) topFollowers = item;
+            if (!topFollowers || (item?.publisher?.followers || 0) > (topFollowers?.publisher?.followers || 0)) topFollowers = item;
         }
 
         if (analysisData.length == 0) return [];

@@ -1,6 +1,16 @@
 import { IAnalysis, PlatformsEnum, AnalysisClassifyEnum } from "@/interfaces/analysis.types";
 import { INews, NewsClassifyEnum } from "@/interfaces/news.types";
 
+const cleanContentBody = (body?: string): string => {
+    if (!body) return '';
+    return body
+        .replace(/https?:\/\/t\.co\/[a-zA-Z0-9_]+/gi, '')
+        .replace(/[ \t]{2,}/g, ' ')
+        .replace(/^[ \t]+|[ \t]+$/gm, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+}
+
 export const getPlatformArabicWord = (platform?: PlatformsEnum | string): string => {
     switch (platform) {
         case PlatformsEnum.FACEBOOK:
@@ -89,10 +99,12 @@ export const generateAnalysisWhatsappMessage = (analysis: IAnalysis): string => 
         .filter(Boolean)
         .join(" - ") || "غير محدد";
 
+    const cleanBody = cleanContentBody(content?.body);
+
     return `🔗 *الرابط:* ${url || ''}
 *المصدر:* ${getPlatformArabicWord(platform)}  
 ✍️ *المحتوى:*  
-${content?.body || '— لا يوجد محتوى —'}
+${cleanBody || '— لا يوجد محتوى —'}
 
 📌 *تفاصيل المنشور:*  
 👤 *الناشر:* ${publisherName}
