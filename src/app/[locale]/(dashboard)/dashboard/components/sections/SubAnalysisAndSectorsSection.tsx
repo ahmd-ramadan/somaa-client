@@ -113,7 +113,7 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
                 }
 
                 const sectorData = sectorsMap.get(sectorName)!;
-                sectorData.appearances++;
+                // sectorData.appearances++;
                 sectorData.totalMonitoringFromAnalysis++;
                 
                 // Update platform count
@@ -126,6 +126,7 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
                 sectorData.comments += statistics.comments || 0;
                 sectorData.shares += statistics.shares || 0;
                 sectorData.views += statistics.views || 0;
+                sectorData.appearances += statistics.appearance || 0;
                 sectorData.total = sectorData.reactions + sectorData.comments + sectorData.shares + sectorData.appearances + sectorData.views;
 
                 const classificationEntry = sectorData.classifications.find(
@@ -179,7 +180,7 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
                 }
 
                 const sectorData = sectorsMap.get(sectorName)!;
-                sectorData.appearances++;
+                // sectorData.appearances++;
                 sectorData.totalMonitoringFromNews++;
 
                 // Map NewsClassifyEnum to AnalysisClassifyEnum

@@ -5,5 +5,5 @@ export const formatNumbers = (num: number) => {
 }
 
 export const getTotalStatistics = (statistics: IStatistics): number => {
-    return statistics.comments + statistics.reactions + statistics.shares + statistics.shares + statistics.views + statistics.appearance;
+    return statistics.comments + statistics.reactions + statistics.shares + statistics.views + statistics.appearance;
 }

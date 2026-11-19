@@ -56,7 +56,7 @@ const ClassificationSection = ({ allAnalysis, allNews }: ClassificationSectionPr
                 {allCalssifications.map((cls, index) => (
                     <motion.div 
                         key={index} 
-                        className="flex flex-col md:flex-row items-center"
+                        className="flex flex-col items-center"
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         whileHover={{ scale: 1.1 }}

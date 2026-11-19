@@ -59,6 +59,14 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
     const [selectedSector, setSelectedSector] = useState<ISectorEngagement | null>(null);
     const [isMounted, setIsMounted] = useState(false);
     const [showSectorMenu, setShowSectorMenu] = useState(false);
+    const [totalEngagement, setTotalEngagement] = useState({
+        reactions: 0,
+        comments: 0,
+        views: 0,
+        shares: 0,
+        appearances: 0,
+        total: 0
+    })
 
     useEffect(() => {
         setIsMounted(true);
@@ -66,6 +74,14 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
 
     useEffect(() => {
         if (allAnalysis) {
+            setTotalEngagement({ 
+                reactions: 0,
+                comments: 0,
+                views: 0,
+                shares: 0,
+                appearances: 0,
+                total: 0
+            })
             const sectors = deriveSectors(allAnalysis);
             setAllSectors(sectors);
             const topEngagement = deriveTopSectorsByEngagement(allAnalysis, allNews);
@@ -150,6 +166,16 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                 }
 
                 const sectorData = sectorsMap.get(sectorName)!;
+
+                setTotalEngagement((prev) => ({
+                    reactions: prev.reactions + analysis.statistics.reactions,
+                    comments: prev.comments + analysis.statistics.comments,
+                    shares: prev.shares + analysis.statistics.shares,
+                    views: prev.views + analysis.statistics.views,
+                    appearances: prev.appearances + analysis.statistics.appearance,
+                    total: prev.total + analysis.statistics.appearance + analysis.statistics.reactions + analysis.statistics.comments + analysis.statistics.shares + analysis.statistics.views
+                }))
+                
                 sectorData.total++;
 
                 const classificationEntry = sectorData.classifications.find(
@@ -220,7 +246,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                 }
 
                 const sectorData = sectorsMap.get(sectorName)!;
-                sectorData.appearances++;
+                // sectorData.appearances++;
                 sectorData.totalMonitoringFromAnalysis++;
 
                 if (platform in sectorData.platforms) {
@@ -231,6 +257,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                 sectorData.comments += statistics.comments || 0;
                 sectorData.shares += statistics.shares || 0;
                 sectorData.views += statistics.views || 0;
+                sectorData.appearances += statistics.appearance || 0;
                 sectorData.total = sectorData.reactions + sectorData.comments + sectorData.shares + sectorData.appearances + sectorData.views;
 
                 let mappedClassification: AnalysisClassifyEnum;
@@ -272,7 +299,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                 }
 
                 const sectorData = sectorsMap.get(sectorName)!;
-                sectorData.appearances++;
+                // sectorData.appearances++;
                 sectorData.totalMonitoringFromNews++;
 
                 let mappedClassification: AnalysisClassifyEnum;
@@ -428,7 +455,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                                 <div className="flex items-center gap-1">
                                                     <span className="text-blue-300">{allAnalysis.length.toLocaleString()} {t("totalMonitoring")}</span>
                                                     <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 px-1 rounded border border-blue-500/30">
-                                                        <span className="text-white">{topSectors.reduce((acc, curr) => (acc + curr.reactions + curr.shares + curr.comments + curr.views + curr.appearances), 0).toLocaleString()} {t("totalStatistics")}</span>
+                                                        <span className="text-white">{totalEngagement.total.toLocaleString()} {t("totalStatistics")}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -485,19 +512,19 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                             <div className="flex justify-between gap-1 items-center">
                                                 <div className="flex-1 flex justify-between items-center gap-1 border border-gray-700 p-1 rounded-lg">
                                                     <Heart className="w-4 h-4 text-blue-300" />
-                                                    <span className="text-white">{topSectors.reduce((acc, curr) => (acc + curr.reactions), 0).toLocaleString()}</span>
+                                                    <span className="text-white">{totalEngagement.reactions.toLocaleString()}</span>
                                                 </div>
                                                 <div className="flex-1 flex justify-between gap-1 border border-gray-700 p-1 rounded-lg">
                                                     <MessageCircle className="w-4 h-4 text-blue-300" />
-                                                    <span className="text-white">{topSectors.reduce((acc, curr) => (acc + curr.comments), 0).toLocaleString()}</span>
+                                                    <span className="text-white">{totalEngagement.comments.toLocaleString()}</span>
                                                 </div>
                                                 <div className="flex-1 flex justify-between gap-1 border border-gray-700 p-1 rounded-lg">
                                                     <Share2 className="w-4 h-4 text-blue-300" />
-                                                    <span className="text-white">{topSectors.reduce((acc, curr) => (acc + curr.shares), 0).toLocaleString()}</span>
+                                                    <span className="text-white">{totalEngagement.shares.toLocaleString()}</span>
                                                 </div>
                                                 <div className="flex-1 flex justify-between gap-1 border border-gray-700 p-1 rounded-lg">
                                                     <Eye className="w-4 h-4 text-blue-300" />
-                                                    <span className="text-white">{topSectors.reduce((acc, curr) => (acc + curr.views), 0).toLocaleString()}</span>
+                                                    <span className="text-white">{(totalEngagement.views + totalEngagement.appearances).toLocaleString()}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -592,7 +619,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                             <div className="flex items-center gap-1">
                                                 <span className="text-blue-300">{sectorItem.totalMonitoringFromAnalysis.toLocaleString()} {t("totalMonitoring")}</span>
                                                 <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 px-1 rounded border border-blue-500/30">
-                                                    <span className="text-white">{sectorItem.total.toLocaleString()} {t("totalStatistics")}</span>
+                                                    <span className="text-white">{(sectorItem.appearances + sectorItem.comments + sectorItem.shares + sectorItem.reactions + sectorItem.views).toLocaleString()} {t("totalStatistics")}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -661,7 +688,7 @@ const SectorsSection = ({ allAnalysis, allNews }: ISectorsSectionProps) => {
                                             </div>
                                             <div className="flex-1 flex justify-between gap-1 border border-gray-700 p-1 rounded-lg">
                                                 <Eye className="w-4 h-4 text-blue-300" />
-                                                <span className="text-white">{sectorItem.views.toLocaleString()}</span>
+                                                <span className="text-white">{(sectorItem.views + sectorItem.appearances).toLocaleString()}</span>
                                             </div>
                                         </div>
                                     </div>
