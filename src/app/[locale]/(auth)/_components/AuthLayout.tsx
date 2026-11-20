@@ -66,7 +66,7 @@ const AuthLayout = ({ children }: IAuthLayoutProps) => {
                     <div className="relative h-20 w-64 mx-auto mb-2">
                         <Image 
                             src="/logo.png"
-                            alt="Sumaah Logo"
+                            alt="Somaa Logo"
                             fill
                             className="object-contain"
                             priority

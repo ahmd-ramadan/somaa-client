@@ -46,7 +46,7 @@ const DateSection = ({
             <div className="relative w-[70%] h-20 mx-auto">
                 <Image
                     src="/logo-2.png"
-                    alt="Sumaah Logo"
+                    alt="Somaa Logo"
                     fill
                     className="object-cover"
                 />

@@ -126,7 +126,7 @@ const Sidebar = () => {
                     <div className={`transition-opacity duration-200 ${isCompact ? 'opacity-0 w-0' : 'opacity-100'}`}>
                         <Image
                             src="/logo-2.png"
-                            alt="Sumaah Logo"
+                            alt="Somaa Logo"
                             width={180}
                             height={60}
                             className="rounded-3xl"

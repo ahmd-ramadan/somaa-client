@@ -164,7 +164,7 @@ const ResetPasswordForm= ({ params: { code } }: IResetPasswordProps) => {
                     <div className="relative h-20 w-64 mx-auto mb-2">
                         <Image 
                             src="/auth-image.png"
-                            alt="OSUS Solutions Logo"
+                            alt="Somaa Logo"
                             fill
                             className="object-cover"
                         />
@@ -192,7 +192,7 @@ const ResetPasswordForm= ({ params: { code } }: IResetPasswordProps) => {
                     <div className="relative h-20 w-64 mx-auto mb-2">
                         <Image 
                             src="/auth-image.png"
-                            alt="OSUS Solutions Logo"
+                            alt="Somaa Logo"
                             fill
                             className="object-cover"
                         />
@@ -222,7 +222,7 @@ const ResetPasswordForm= ({ params: { code } }: IResetPasswordProps) => {
                     <div className="relative h-20 w-64 mx-auto mb-2">
                         <Image 
                             src="/auth-image.png"
-                            alt="OSUS Solutions Logo"
+                            alt="Somaa Logo"
                             fill
                             className="object-cover"
                         />
@@ -250,7 +250,7 @@ const ResetPasswordForm= ({ params: { code } }: IResetPasswordProps) => {
                 {/* <div className="relative h-20 w-40 mx-auto">
                     <Image 
                         src={'/auth-image.png'}
-                        alt="OSUS Solutions Logo"
+                        alt="Somaa Logo"
                         objectFit="cover"
                         layout="fill"
                     />

@@ -7,7 +7,7 @@ import { copyTextToClipboard } from '@/utils/whatsappMessage';
 import { Check } from 'lucide-react';
 
 interface WhatsAppCopyButtonProps {
-    getMessage: () => Promise<string> | string;
+    getMessage: () => string;
     title?: string;
     className?: string;
 }
@@ -34,7 +34,7 @@ export const WhatsAppCopyButton: React.FC<WhatsAppCopyButtonProps> = ({
     const handleCopy = async (e: React.MouseEvent) => {
         e.stopPropagation();
         try {
-            const message = await getMessage();
+            const message = getMessage();
             const success = await copyTextToClipboard(message);
             if (success) {
                 setCopied(true);

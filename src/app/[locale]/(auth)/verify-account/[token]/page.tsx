@@ -50,7 +50,7 @@ const VerifyAccountPage = ({ params: { token }}: IVerifyAccountProps) => {
                     <div className="relative h-10 w-20 lg:h-20 lg:w-40 mx-auto">
                         <Image 
                             src="/logo.svg"
-                            alt="OSUS Solutions Logo"
+                            alt="Somaa Logo"
                             fill
                             className="object-cover"
                         />
@@ -79,7 +79,7 @@ const VerifyAccountPage = ({ params: { token }}: IVerifyAccountProps) => {
                 <div className="relative h-10 w-20 lg:h-20 lg:w-40 mx-auto">
                     <Image 
                         src="/logo.svg"
-                        alt="OSUS Solustions Logo"
+                        alt="Somaa Logo"
                         objectFit="cover"
                         layout="fill"
                     />

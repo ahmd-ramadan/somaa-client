@@ -1,6 +1,5 @@
 import { IAnalysis, PlatformsEnum, AnalysisClassifyEnum } from "@/interfaces/analysis.types";
 import { INews, NewsClassifyEnum } from "@/interfaces/news.types";
-import tinyurl from "tinyurl-api";
 
 const cleanContentBody = (body?: string): string => {
     if (!body) return '';
@@ -123,7 +122,7 @@ ${cleanBody || '— لا يوجد محتوى —'}
 📈 ${appearance.toLocaleString("en-US")}\n`;
 };
 
-export const generateNewsWhatsappMessage = async (news: INews): Promise<string> => {
+export const generateNewsWhatsappMessage = (news: INews): string => {
     const {
         url,
         title,
@@ -131,7 +130,7 @@ export const generateNewsWhatsappMessage = async (news: INews): Promise<string> 
         sectorData,
     } = news;
 
-    const shortUrl = await tinyurl(url);
+    // const shortUrl = await tinyurl(url);
     const classifyWord = getNewsClassifyArabicWord(classify);
     const sectorName = sectorData?.name || '';
 

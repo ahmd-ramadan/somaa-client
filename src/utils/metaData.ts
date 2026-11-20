@@ -1,6 +1,6 @@
 
 export enum TranslationsEn {
-    default = 'Sumaah - سًمعة',
+    default = 'Somaa - سًمعة',
     description = "Reputation allows you to see things from a different perspective. It doesn\'t just report; it reveals public opinion trends. It doesn\'t simply track what\'s being said, but analyzes why it was said, who said it, and how it will affect you.\nIt\'s a communication intelligence system that combines high-precision technology with human expertise in qualitative analysis to deliver proactive insights that enhance decision-making and professional reputation management.",          
     profile = "Profile",
     login = "Login",
@@ -38,9 +38,9 @@ export enum TranslationsAr {
     addMonitor = "إضافة رصد"
 };
 
-export const metaDataTitle = "Sumaah - سًمعة";
+export const metaDataTitle = "Somaa - سًمعة";
 export const metaDataKeywords = [
-    "Sumaah", "سًمعة", "الرصد", "رصد", "يرصد", "Monitoring", "Monitor", "Monitorings", "Monitors", "Monitored", "Monitoreds", "Monitoredings", "Monitoreds", "Monitoredings", "Monitoreds",
+    "Somaa", "سًمعة", "الرصد", "رصد", "يرصد", "Monitoring", "Monitor", "Monitorings", "Monitors", "Monitored", "Monitoreds", "Monitoredings", "Monitoreds", "Monitoredings", "Monitoreds",
     "مراقبة", "كلمات مفتاحية", "Keywords", "Keywords Monitoring", "Keywords Monitors", "Keywords Monitored", "Keywords Monitoreds", "Keywords Monitoredings", "Keywords Monitoreds", "Keywords Monitoredings", "Keywords Monitoreds",
     "الرصد المباشر", "رصد مباشر", "يرصد مباشر", "Monitoring Direct", "Monitor Direct", "Monitorings Direct", "Monitors Direct", "Monitored Direct", "Monitoreds Direct", "Monitoredings Direct", "Monitoreds Direct", "Monitoredings Direct", "Monitoreds Direct",
     "reputation", "communication", "intelligence", "decision-making", "professional reputation management", 
