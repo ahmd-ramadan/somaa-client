@@ -104,6 +104,8 @@ export interface ICreateAnalysisQuery {
     sectorId: string;
     subAnalysisId: string;
     note?: string;
+    content?: Partial<IContentData>;
+    publisher?: Partial<IPublisherData>;
     isFlagged?: boolean;
     isHighlighted?: boolean;
     isRelated?: boolean;

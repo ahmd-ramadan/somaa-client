@@ -13,7 +13,9 @@ import {
     CircleUserRound,
     Podcast,
     TrendingUp,
-    Calculator
+    Calculator,
+    Star,
+    Users
 } from 'lucide-react';
 import { formatDate } from '@/utils/formatDateAndTime';
 import Link from 'next/link';
@@ -88,6 +90,13 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                         </h3>
                         <p className="bg-gray-100 text-primary px-3 py-1 bg-primary/10 rounded-lg">{analysis.subAnalysisData.body}</p>
                     </div>
+
+                    <div className="col-span-2 space-y-.5">
+                        <h3 className="font-semibold text-primary flex items-center gap-1">
+                            {t("contentBody")}
+                        </h3>
+                        <p className="bg-gray-100 text-primary px-3 py-1 bg-primary/10 rounded-lg whitespace-pre-wrap">{analysis.content?.body || '—'}</p>
+                    </div>
                 </div>
 
                 {
@@ -138,6 +147,7 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                                     <img
                                         src={analysis.publisher.avatar}
                                         onError={() => setImageError(true)}
+                                        referrer-policy="no-referrer"
                                         alt="Publisher avatar"
                                         className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
                                     />
@@ -146,7 +156,18 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                                         {getPlatformIcon(analysis.platform)}
                                     </div>
                                 )}
-                                <p className="text-primary">{analysis.publisher?.name}</p>
+                                <div className="flex flex-col">
+                                    <p className="text-primary">{analysis.publisher?.name}</p>
+                                    {analysis.publisher?.handle && (
+                                        <p className="text-[10px] text-gray-600">{analysis.publisher.handle}</p>
+                                    )}
+                                    {typeof analysis.publisher?.followers === 'number' && (
+                                        <p className="text-[10px] text-gray-500 flex items-center gap-1">
+                                            <Users className="w-3 h-3" />
+                                            {analysis.publisher.followers.toLocaleString()} {t("followers")}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
@@ -161,6 +182,7 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                                     alt="Added By"
                                     // width={30}
                                     // height={30}
+                                    referrerpolicy="no-referrer"
                                     className="w-10 h-10 rounded-full"
                                 /> */}
                                 <CircleUserRound className='w-4 h-4 text-primary' />
@@ -178,12 +200,18 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                                     alt="Added By"
                                     // width={30}
                                     // height={30}
+                                    referrerpolicy="no-referrer"
                                     className="w-10 h-10 rounded-full"
                                 /> */}
                                 <Podcast className='w-4 h-4 text-primary' />
                                 <p className="text-primary px-3 py-1">{t(analysis.tweetType)}</p>
                             </div>
                         </div>
+                    </div>
+
+                    <div className={`mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${analysis.isHighlighted ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-500'}`}>
+                        <Star className={`w-3 h-3 ${analysis.isHighlighted ? 'fill-yellow-500' : ''}`} />
+                        {analysis.isHighlighted ? t("highlighted") : t("notHighlighted")}
                     </div>
 
                     <div className="flex flex-col gap-1">
@@ -214,7 +242,7 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                             </div>
                             <div className="bg-indigo-100 px-3 py-1 rounded-lg flex items-center justify-between gap-1">
                                 <Calculator className="w-4 h-4 text-purple-500" />
-                                <span className="font-medium text-primary">{(analysis.statistics.reactions + analysis.statistics.comments + analysis.statistics.shares).toLocaleString()}</span>
+                                <span className="font-medium text-primary">{(analysis.statistics.reactions + analysis.statistics.comments + analysis.statistics.shares + analysis.statistics.views + analysis.statistics.appearance).toLocaleString()}</span>
                             </div>
                         </div>
                     </div>

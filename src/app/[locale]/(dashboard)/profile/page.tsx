@@ -6,7 +6,7 @@ import { formatDate } from '@/utils/formatDateAndTime'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { RootState } from '@/lib/store';
 import { getUserProfile } from '@/lib/features/user/userThunks';
-import { setPageTitle, toggleProfile } from '@/lib/features/layout/layoutSlice';
+import { selectSideBarLink, setPageTitle, toggleProfile } from '@/lib/features/layout/layoutSlice';
 import CalenderIcon from '@/components/icons/Calender';
 import ProfileGeneralInfoSection from '@/components/profile/GeneralInfo';
 import ProfilePasswordSection from '@/components/profile/Password';
@@ -19,6 +19,10 @@ const ProfilePage = () => {
     useEffect(() => {
         dispatch(setPageTitle(t("profilePageTitle")));
     }, [dispatch, t]);
+
+    useEffect(() => {
+        dispatch(selectSideBarLink("profile"));
+    }, [dispatch]);
 
     useEffect(() => {
         toggleProfile();

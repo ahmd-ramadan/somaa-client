@@ -14,14 +14,14 @@ const AddMonitorPage = () => {
         dispatch(setPageTitle(t("addMonitorPageTitle")));
     }, [dispatch, t]);
     useEffect(() => {
-        dispatch(selectSideBarLink("add-monitor"));
+        dispatch(selectSideBarLink("addMonitor"));
     }, [dispatch]);
 
     // const { loggedInUser: { role, permissions } } = useAppSelector((state: RootState) => state.authUser);
 
     return (
         <div className="backround-pattern">
-            <div className="bg-white w-full border shadow-md rounded-md h-screen">
+            <div className="bg-white w-full border shadow-md rounded-md min-h-screen">
                 <div className="p-4 flex items-center justify-between">
                     <div className='flex flex-col gap-1'>
                         <h2 className="text-lg font-semibold text-secondary">{t("addMonitorPageTitle")}</h2>

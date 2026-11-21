@@ -56,5 +56,36 @@ export const addAnalysisSchema = yup.object().shape({
     publishDate: yup
         .date()
         .optional(),
+    // Manual data for platforms that can't be scraped (facebook, linkedin)
+    contentBody: yup
+        .string()
+        .optional(),
+    publisherName: yup
+        .string()
+        .optional(),
+    publisherHandle: yup
+        .string()
+        .optional(),
+    publisherAvatar: yup
+        .string()
+        .optional(),
+    publisherFollowers: yup
+        .string()
+        .optional(),
+    reactions: yup
+        .string()
+        .optional(),
+    comments: yup
+        .string()
+        .optional(),
+    shares: yup
+        .string()
+        .optional(),
+    views: yup
+        .string()
+        .optional(),
+    appearance: yup
+        .string()
+        .optional(),
 });
 

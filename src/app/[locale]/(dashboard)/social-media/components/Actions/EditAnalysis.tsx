@@ -15,7 +15,10 @@ import {
     CircleUserRound,
     Calculator,
     TrendingUp,
-    Podcast
+    Podcast,
+    Star,
+    Users,
+    User
 } from 'lucide-react';
 import toast from "react-hot-toast";
 import { handleError } from "@/utils/errorUtils";
@@ -95,6 +98,10 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
     const districtDropdownRef = React.useRef<HTMLDivElement>(null);
     const [imageError, setImageError] = useState(false);
 
+    useEffect(() => {
+        setImageError(false);
+    }, [editedAnalysis.publisher?.avatar]);
+
 
     // Add click outside handler
     useEffect(() => {
@@ -170,6 +177,14 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                         ...prev,
                         statistics: {
                             ...(prev.statistics || {}),
+                            [child]: value
+                        }
+                    };
+                } else if (parent === 'publisher') {
+                    newValue = {
+                        ...prev,
+                        publisher: {
+                            ...(prev.publisher || {}),
                             [child]: value
                         }
                     };
@@ -623,6 +638,19 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                     </div>
                 </div>
 
+                <div className="space-y-.2 col-span-2">
+                    <h3 className="font-semibold text-primary flex items-center gap-2">
+                        {t("contentBody")}
+                    </h3>
+                    <textarea
+                        value={editedAnalysis.content?.body || ""}
+                        onChange={(e) => handleInputChange('content.body', e.target.value)}
+                        rows={3}
+                        className="w-full rounded-lg border border-primary px-3 py-1 resize-none focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                        placeholder={t("contentBody")}
+                    />
+                </div>
+
                 <div className="space-y-.2">
                     <h4 className="font-semi-bold text-primary flex items-center gap-1">
                         {/* <Calendar className="w-4 h-4" /> */}
@@ -756,49 +784,83 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                     {t("additionalInformation")}
                 </h3> */}
 
-                <div className="grid grid-cols-3 gap-4">
-                    <div className="space-y-1">
-                        {/* <h3 className="font-semibold text-primary flex items-center gap-2">
-                            <User className="w-4 h-4 text-primary" />
-                            {t("publisher")}
-                        </h3> */}
-                        <div className="flex items-center gap-2">
-                            {analysis?.publisher?.avatar && !imageError ? (
-                                <img
-                                    src={analysis.publisher.avatar}
-                                    onError={() => setImageError(true)}
-                                    alt="Publisher avatar"
-                                    className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
+                {/* Publisher section */}
+                <div className="space-y-2 border-b pb-2">
+                    <h3 className="font-semibold text-primary flex items-center gap-2">
+                        <User className="w-4 h-4 text-primary" />
+                        {t("publisher")}
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div className="space-y-0.5 sm:col-span-3">
+                            <label className="text-xs text-gray-600">{t("avatarUrl")}</label>
+                            <div className="flex items-center gap-2">
+                                {editedAnalysis.publisher?.avatar && !imageError ? (
+                                    <img
+                                        src={editedAnalysis.publisher.avatar}
+                                        onError={() => setImageError(true)}
+                                        referrer-policy="no-referrer"
+                                        alt="Publisher avatar"
+                                        className="h-10 w-10 rounded-md object-cover shrink-0 text-xs"
+                                    />
+                                ) : (
+                                    <div className='bg-gray-100 w-10 h-10 flex items-center justify-center rounded-md shrink-0'>
+                                        {getPlatformIcon(analysis.platform)}
+                                    </div>
+                                )}
+                                <input
+                                    type="text"
+                                    value={editedAnalysis.publisher?.avatar || ""}
+                                    onChange={(e) => handleInputChange('publisher.avatar', e.target.value)}
+                                    className="w-full rounded-md border border-primary px-2 py-1 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                                    placeholder="https://..."
                                 />
-                            ) : (
-                                <div className='bg-gray-100 w-10 h-10 flex items-center justify-center rounded-md'>
-                                    {getPlatformIcon(analysis.platform)}
-                                </div>
-                            )}
-                            <p className="text-primary">{editedAnalysis.publisher?.name}</p>
+                            </div>
+                        </div>
+                        <div className="space-y-0.5">
+                            <label className="text-xs text-gray-600">{t("publisherName")}</label>
+                            <input
+                                type="text"
+                                value={editedAnalysis.publisher?.name || ""}
+                                onChange={(e) => handleInputChange('publisher.name', e.target.value)}
+                                className="w-full rounded-md border border-primary px-2 py-1 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                                placeholder={t("publisherName")}
+                            />
+                        </div>
+                        <div className="space-y-0.5">
+                            <label className="text-xs text-gray-600">{t("handle")}</label>
+                            <input
+                                type="text"
+                                value={editedAnalysis.publisher?.handle || ""}
+                                onChange={(e) => handleInputChange('publisher.handle', e.target.value)}
+                                className="w-full rounded-md border border-primary px-2 py-1 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                                placeholder={t("handle")}
+                            />
+                        </div>
+                        <div className="space-y-0.5 mt-2">
+                            <label className="text-xs text-gray-600 flex items-center gap-1">
+                                <Users className="w-3 h-3" />
+                                {t("followers")}
+                            </label>
+                            <input
+                                type="number"
+                                min="0"
+                                value={editedAnalysis.publisher?.followers ?? 0}
+                                onChange={(e) => handleInputChange('publisher.followers', Math.max(0, parseInt(e.target.value) || 0))}
+                                className="w-full rounded-md border border-primary px-2 py-1 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
                         </div>
                     </div>
+                </div>
 
-                    <div className="space-y-1">
-                        {/* <h4 className="font-medium text-primary flex items-center gap-2">
-                            <User className="w-4 h-4" />
-                            {t("addedBy")}
-                        </h4> */}
-                        <div className="flex items-center gap-2">
-                            {/* <img
-                                src={editedAnalysis.addedByData?.avatar?.secure_url || '/logo.png'}
-                                alt="Added By"
-                                // width={30}
-                                // height={30}
-                                className="w-10 h-10 rounded-full"
-                            /> */}
-                            <CircleUserRound className='w-4 h-4 text-primary' />
-                            <p className="text-primary px-3 py-1">{editedAnalysis.addedByData?.name}</p>
-                        </div>
-                    </div>
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                            <Podcast className='w-4 h-4 text-primary shrink-0' />
+                {/* Post section */}
+                <div className="space-y-2">
+                    <h3 className="font-semibold text-primary flex items-center gap-2">
+                        <Podcast className="w-4 h-4 text-primary" />
+                        {t("postDetails")}
+                    </h3>
+                    <div className="grid grid-cols-2 gap-2 items-end">
+                        <div className="space-y-0.5">
+                            <label className="text-xs text-gray-600">{t("tweetType")}</label>
                             <select
                                 value={editedAnalysis.tweetType || TweetTypesEnum.TWEET}
                                 onChange={(e) => handleInputChange('tweetType', e.target.value)}
@@ -811,8 +873,42 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                                 ))}
                             </select>
                         </div>
+                        <div className="space-y-0.5">
+                            <label className="text-xs text-gray-600">{t("highlighted")}</label>
+                            <button
+                                type="button"
+                                onClick={() => handleInputChange('isHighlighted', !editedAnalysis.isHighlighted)}
+                                className={`w-full inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-md border transition-colors ${
+                                    editedAnalysis.isHighlighted
+                                        ? 'bg-yellow-100 border-yellow-300 text-yellow-600'
+                                        : 'bg-gray-100 border-gray-200 text-gray-500 hover:bg-gray-200'
+                                }`}
+                            >
+                                <Star className={`w-4 h-4 ${editedAnalysis.isHighlighted ? 'fill-yellow-500' : ''}`} />
+                                {editedAnalysis.isHighlighted ? t("highlighted") : t("notHighlighted")}
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+                    {/* <div className="space-y-1">
+                        <h4 className="font-medium text-primary flex items-center gap-2">
+                            <User className="w-4 h-4" />
+                            {t("addedBy")}
+                        </h4> 
+                        <div className="flex items-center gap-2">
+                            <img
+                                src={editedAnalysis.addedByData?.avatar?.secure_url || '/logo.png'}
+                                alt="Added By"
+                                width={30}
+                                height={30}
+                                referrerpolicy="no-referrer"
+                                className="w-10 h-10 rounded-full"
+                            /> 
+                            <CircleUserRound className='w-4 h-4 text-primary' />
+                            <p className="text-primary px-3 py-1">{editedAnalysis.addedByData?.name}</p>
+                        </div>
+                    </div> */}
 
                 <div className="flex flex-col gap-1">
                     <div className="grid grid-cols-6 gap-2">
@@ -869,7 +965,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                         <div className="bg-indigo-50 border border-indigo-200 px-2 py-1 rounded-lg flex items-center justify-between gap-1" title={t("totalStatistics") || t("total")}>
                             <Calculator className="w-4 h-4 text-indigo-500 shrink-0" />
                             <span className="font-medium text-primary text-sm">
-                                {((Number(editedAnalysis.statistics?.reactions) || 0) + (Number(editedAnalysis.statistics?.comments) || 0) + (Number(editedAnalysis.statistics?.shares) || 0)).toLocaleString()}
+                                {((Number(editedAnalysis.statistics?.reactions) || 0) + (Number(editedAnalysis.statistics?.comments) || 0) + (Number(editedAnalysis.statistics?.shares) || 0) + (Number(editedAnalysis.statistics?.views)|| 0) + (Number(editedAnalysis.statistics?.appearance) || 0)).toLocaleString()}
                             </span>
                         </div>
                     </div>
@@ -880,7 +976,7 @@ const EditAnalysis = ({ analysis, onSave, onCancel }: EditAnalysisProps) => {
                 <Link
                     href={editedAnalysis.url}
                     target="_blank"
-                    className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                    className="inline-flex items-center gap-2 px-3 py-1 mr-auto bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
                 >
                     {/* <ExternalLink className="w-4 h-4" /> */}
                     {t("viewOriginalPost")}

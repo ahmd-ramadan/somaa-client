@@ -91,6 +91,7 @@ const TableRow: React.FC<TableRowProps> = ({
         url,
         addedBy,
         addedByData,
+        isHighlighted
     } = analysis;
 
     const formattedDate = formatDate({
@@ -118,7 +119,7 @@ const TableRow: React.FC<TableRowProps> = ({
     };
 
     return (
-        <tr className="hover:bg-primary/20">
+        <tr className={`hover:bg-primary/20 cursor-pointer ${isHighlighted ? 'bg-lime-200 animate-pulse' : ''}`}>
             <td className="px-2 py-1">
                 <Checkbox
                     checked={selectedItems.has(analysis._id)}
@@ -142,6 +143,8 @@ const TableRow: React.FC<TableRowProps> = ({
                             onError={(e) => {
                                 setImageError(true)
                             }}
+                            height={200}
+                            width={200}
                             alt="Publisher avatar"
                             className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
                         />

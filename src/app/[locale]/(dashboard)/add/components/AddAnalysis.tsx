@@ -20,7 +20,7 @@ import {
 import { ISector } from "@/interfaces/sector.types";
 import { addAnalysis } from "@/lib/features/socialMedia/analysisThunks";
 import { addSector } from "@/lib/features/sector/sectorThunks";
-import { Link, Globe, Tag, FileText, Building2, MapPin, MessageSquare, Star, Flag, CheckCircle } from 'lucide-react';
+import { Link, Globe, Tag, FileText, Building2, MapPin, MessageSquare, Star, Flag, CheckCircle, User, Users, Activity, Calendar } from 'lucide-react';
 import { saudiLocations, ISaudiLocation } from '@/data/saudiLocations';
 import { fetchAllSectors } from "@/lib/features/sector/sectorThunks";
 import { fetchAllSubAnalysis, addSubAnalysis } from "@/lib/features/subAnalysis/subAnalysisThunks";
@@ -45,7 +45,7 @@ const detectPlatformFromUrl = (url: string): PlatformsEnum | null => {
         return PlatformsEnum.YOUTUBE;
     } else if (urlLower.includes('tiktok.com')) {
         return PlatformsEnum.TIKTOK;
-    } else if (urlLower.includes('linkedin.com')) {
+    } else if (urlLower.includes('linkedin.com') || urlLower.includes('lnkd.in')) {
         return PlatformsEnum.LINKEDIN;
     }
     return null;
@@ -63,6 +63,18 @@ export interface IFormInputs  {
     note?: string;
     // isFlagged?: boolean;
     isHighlighted?: boolean;
+    // Manual data (facebook & linkedin can't be scraped)
+    contentBody?: string;
+    publisherName?: string;
+    publisherHandle?: string;
+    publisherAvatar?: string;
+    publisherFollowers?: string;
+    reactions?: string;
+    comments?: string;
+    shares?: string;
+    views?: string;
+    appearance?: string;
+    publishDate?: string;
 }
 
 const AddAnalysis = () => {
@@ -96,6 +108,10 @@ const AddAnalysis = () => {
     });
 
     const urlInput = watch('url');
+    const selectedPlatform = watch('platform');
+    // Facebook & LinkedIn can't be scraped for now, so the user enters the data manually
+    const isManualPlatform =
+        selectedPlatform === PlatformsEnum.FACEBOOK || selectedPlatform === PlatformsEnum.LINKEDIN;
     
     // Add effect to detect platform from URL
     useEffect(() => {
@@ -283,6 +299,11 @@ const AddAnalysis = () => {
 
     const onSubmit = async (data: IFormInputs) => {
         try {
+            if (isManualPlatform && !data.publisherHandle?.trim()) {
+                toast.error(t("publisherHandleRequired"));
+                return;
+            }
+
             const formData: ICreateAnalysisQuery = {
                 url: data.url,
                 platform: data.platform,
@@ -297,6 +318,28 @@ const AddAnalysis = () => {
             };
 
             if(data.location) formData.location = data.location;
+
+            if (isManualPlatform) {
+                const handle = data.publisherHandle?.trim() || "";
+                formData.content = {
+                    body: data.contentBody?.trim() || "",
+                    type: data.contentType,
+                };
+                formData.publisher = {
+                    name: data.publisherName?.trim() || handle,
+                    handle,
+                    avatar: data.publisherAvatar?.trim() || "",
+                    followers: Number(data.publisherFollowers) || 0,
+                };
+                formData.statistics = {
+                    reactions: Number(data.reactions) || 0,
+                    comments: Number(data.comments) || 0,
+                    shares: Number(data.shares) || 0,
+                    views: Number(data.views) || 0,
+                    appearance: Number(data.appearance) || 0,
+                };
+                if (data.publishDate) formData.publishDate = data.publishDate;
+            }
             
             const action = await dispatch(addAnalysis({ 
                 token: token as string, 
@@ -704,6 +747,132 @@ const AddAnalysis = () => {
                 </div> */}
 
             </div>
+
+            {/* Manual Data (Facebook & LinkedIn) */}
+            {isManualPlatform && (
+                <div className="flex flex-col gap-5 rounded-lg border border-gray-200 bg-gray-50/60 p-4">
+                    <p className="text-sm text-gray-600">{t("manualDataNote")}</p>
+
+                    {/* Post Content */}
+                    <div className="flex flex-col gap-1">
+                        <label htmlFor="contentBody" className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                            <FileText className="w-4 h-4 text-primary" />
+                            {t("contentBody")}
+                        </label>
+                        <textarea
+                            id="contentBody"
+                            rows={3}
+                            {...register("contentBody")}
+                            className="rounded-lg border border-gray-400 px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all resize-y"
+                            placeholder={t("contentBodyPlaceholder")}
+                        />
+                    </div>
+
+                    {/* Publisher Data */}
+                    <div className="flex flex-col gap-3">
+                        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                            <User className="w-4 h-4 text-primary" />
+                            {t("publisher")}
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="publisherName" className="text-sm font-medium text-gray-700">
+                                    {t("publisherName")}
+                                </label>
+                                <input
+                                    type="text"
+                                    id="publisherName"
+                                    {...register("publisherName")}
+                                    className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                                    placeholder={t("publisherName")}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="publisherHandle" className="text-sm font-medium text-gray-700">
+                                    {t("publisherHandle")}
+                                </label>
+                                <input
+                                    type="text"
+                                    id="publisherHandle"
+                                    {...register("publisherHandle")}
+                                    className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                                    placeholder={t("publisherHandle")}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="publisherAvatar" className="text-sm font-medium text-gray-700">
+                                    {t("avatarUrl")}
+                                </label>
+                                <input
+                                    type="url"
+                                    id="publisherAvatar"
+                                    {...register("publisherAvatar")}
+                                    className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                                    placeholder="https://..."
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="publisherFollowers" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                                    <Users className="w-4 h-4 text-primary" />
+                                    {t("followers")}
+                                </label>
+                                <input
+                                    type="number"
+                                    min={0}
+                                    id="publisherFollowers"
+                                    {...register("publisherFollowers")}
+                                    className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                                    placeholder="0"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Statistics */}
+                    <div className="flex flex-col gap-3">
+                        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                            <Activity className="w-4 h-4 text-primary" />
+                            {t("statistics")}
+                        </h3>
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="reactions" className="text-sm font-medium text-gray-700">{t("reactions")}</label>
+                                <input type="number" min={0} id="reactions" {...register("reactions")} className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all" placeholder="0" />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="comments" className="text-sm font-medium text-gray-700">{t("comments")}</label>
+                                <input type="number" min={0} id="comments" {...register("comments")} className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all" placeholder="0" />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="shares" className="text-sm font-medium text-gray-700">{t("shares")}</label>
+                                <input type="number" min={0} id="shares" {...register("shares")} className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all" placeholder="0" />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="views" className="text-sm font-medium text-gray-700">{t("views")}</label>
+                                <input type="number" min={0} id="views" {...register("views")} className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all" placeholder="0" />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="appearance" className="text-sm font-medium text-gray-700">{t("appearance")}</label>
+                                <input type="number" min={0} id="appearance" {...register("appearance")} className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all" placeholder="0" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Publish Date */}
+                    <div className="flex flex-col gap-1 sm:max-w-xs">
+                        <label htmlFor="publishDate" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-primary" />
+                            {t("publishDate")}
+                        </label>
+                        <input
+                            type="date"
+                            id="publishDate"
+                            {...register("publishDate")}
+                            className="rounded-lg border border-gray-400 px-3 py-1 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* Submit Button */}
             <div className="flex justify-center items-center gap-2 mt-8">
