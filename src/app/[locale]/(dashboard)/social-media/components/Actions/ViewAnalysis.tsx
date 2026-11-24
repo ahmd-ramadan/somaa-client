@@ -20,6 +20,7 @@ import {
 import { formatDate } from '@/utils/formatDateAndTime';
 import Link from 'next/link';
 import { getPlatformIcon } from '../AllAnalysisTable/components/TableRow';
+import UpdateHistory from '@/components/ui/UpdateHistory';
 
 interface ViewAnalysisProps {
     analysis: IAnalysis;
@@ -32,8 +33,8 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
     const [imageError, setImageError] = useState(false);
 
     return (
-        <div className='grid grid-cols-1 gap-2'>
-            <div className="space-y-3">
+        <div className='grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-4 items-start'>
+            <div className="space-y-3 min-w-0">
                 <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="space-y-.5">
                         <h3 className="font-semibold text-primary flex items-center gap-1">
@@ -95,7 +96,7 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                         <h3 className="font-semibold text-primary flex items-center gap-1">
                             {t("contentBody")}
                         </h3>
-                        <p className="bg-gray-100 text-primary px-3 py-1 bg-primary/10 rounded-lg whitespace-pre-wrap">{analysis.content?.body || '—'}</p>
+                        <p className="bg-gray-100 text-primary px-3 py-1 bg-primary/10 rounded-lg whitespace-pre-wrap text[8px] h-24 overflow-auto">{analysis.content?.body || '—'}</p>
                     </div>
                 </div>
 
@@ -259,9 +260,8 @@ const ViewAnalysis = ({ analysis }: ViewAnalysisProps) => {
                     </Link>
                 </div>
             </div >
-            {/* <div>
-                <PublisherEmbed analysis={analysis}/>
-            </div> */}
+
+            <UpdateHistory entityType="analysis" entityId={String(analysis._id)} />
         </div >
     );
 };

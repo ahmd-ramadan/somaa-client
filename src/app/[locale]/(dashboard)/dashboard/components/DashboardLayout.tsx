@@ -1,28 +1,29 @@
 'use client'
 
-import { useSocket } from "@/hooks/useSocket";
 import { IAnalysis } from "@/interfaces/analysis.types";
 import { INews } from "@/interfaces/news.types";
 import { motion } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
 import ClassificationSection from "./sections/ClassificationSection";
 import ImportantAnalysisSection from "./sections/ImportantAnalysisSection";
 import LiveAnalysisSection from "./sections/LiveAnalysisSection";
 import MapSection from "./sections/MapSection";
-import SubAnalysisCharts from "./sections/SubAnalysisCharts";
-import SectorsSection from "./sections/SectorsSection";
-import PublishersSection from "./sections/PublishersSection";
-import { Maximize2, Minimize2 } from "lucide-react";
-import SubAnalysisAndSectorsSection from "./sections/SubAnalysisAndSectorsSection";
-import { toZonedTime, format } from 'date-fns-tz'
-import { useTranslations } from "next-intl";
 import DateSection from "./sections/DateSection";
+import KpiStrip from "./sections/KpiStrip";
+import ActivityTimelineChart from "./sections/ActivityTimelineChart";
+import PlatformShareChart from "./sections/PlatformShareChart";
+import TopPublishersSection from "./sections/TopPublishersSection";
+import SentimentBreakdownChart from "./sections/SentimentBreakdownChart";
+import { useDashboardInsights, useLabels } from "./sections/insights";
+import { ListTree, Maximize2, Minimize2 } from "lucide-react";
+import { toZonedTime, fromZonedTime, format } from 'date-fns-tz'
 import { fetchAllAnalysis } from "@/lib/features/socialMedia/analysisThunks";
+import { fetchAllNews } from "@/lib/features/news/newsthunks";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { RootState } from "@/lib/store";
+import SocialAndNewsEngagements from "./sections/SocialAndNewsEngagements";
 
-// Register Chart.js components
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -36,224 +37,288 @@ ChartJS.register(
 );
 
 const timeZone = 'Asia/Riyadh';
+const WALL_PATTERN = "yyyy-MM-dd'T'HH:mm";
+
+/** 0 = off. Set e.g. 60_000 to re-fetch page 1 of the APPLIED range every minute (the old socket made this "live"). */
+const AUTO_REFRESH_MS = 0;
+
+// stable reference, so `allAnalysis = []` can't create a new array every render
+const EMPTY_ANALYSIS: IAnalysis[] = [];
+
+/**
+ * Today 00:00 → 23:59 as Riyadh wall-clock strings (what the datetime-local inputs hold).
+ * The old version converted to Riyadh time twice, which is why a browser outside Saudi time showed 01:00 / 12:59.
+ */
+const getInitialDates = () => {
+    const nowKSA = toZonedTime(new Date(), timeZone); // its local fields = Riyadh wall time
+    const start = new Date(nowKSA);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(nowKSA);
+    end.setHours(23, 59, 0, 0);
+    return { start: format(start, WALL_PATTERN), end: format(end, WALL_PATTERN) };
+};
+
+/** Riyadh wall-clock string from the inputs → the real instant, whatever the browser's timezone is. */
+const toInstant = (wall: string) => fromZonedTime(wall, timeZone);
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
+};
+
+const itemVariants = {
+    hidden: { y: 12, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.4 } }
+};
+
+/** Column shell: on lg+ each column fills the viewport height and scrolls internally only if it must. */
+const colClass = "flex min-h-0 flex-col gap-2 lg:overflow-y-auto custom-scrollbar";
 
 const DashboardLayout = () => {
-
-    const t = useTranslations("DashboardPage")
-    const { socket, isConnected } = useSocket();
-    const [allAnalysis, setAllAnalysis] = useState<IAnalysis[]>([]); 
-    const [allNews, setAllNews] = useState<INews[]>([]); 
-
+    const L = useLabels();
+    const dispatch = useAppDispatch();
+    const [allNews, setAllNews] = useState<INews[]>([]);
     const [error, setError] = useState<string | null>(null);
+    /** the range the chart buckets by — set when "تطبيق" runs, so the axis does not jump with the data */
+    const [appliedWindow, setAppliedWindow] = useState<{ from: number; to: number } | null>(null);
 
-    const getInitialDates = () => {
-        const now = new Date();
-        const startOfToday = new Date(now);
-        startOfToday.setHours(0, 0, 0, 0);
-        const endOfToday = new Date(now);
-        endOfToday.setHours(23, 59, 59, 999);
-        const startInKSA = toZonedTime(startOfToday, timeZone);
-        const endInKSA = toZonedTime(endOfToday, timeZone);
-        const formatDate = (date: Date) => format(date, 'yyyy-MM-dd\'T\'HH:mm', { timeZone });
-        return {
-            start: formatDate(startInKSA),
-            end: formatDate(endInKSA)
-        };
-    };
-
-    // Add refs to track animation positions
     const [isMounted, setIsMounted] = useState(false);
     const [startDate, setStartDate] = useState(() => getInitialDates().start);
     const [endDate, setEndDate] = useState(() => getInitialDates().end);
-    const [pagenation, setPagenation] = useState<{ page: number, size: number }>({ page: 1, size: 500 });
     const [isFullscreen, setIsFullscreen] = useState(false);
     const dashboardRef = useRef<HTMLDivElement>(null);
-    const { allAnalysisForDashboard } = useAppSelector((state: RootState) => state.analysis);
-  
+
+    const { allAnalysisForDashboard: allAnalysis = EMPTY_ANALYSIS, dashboardPagenation: pagenation, allAnalysisStatus } =
+        useAppSelector((state: RootState) => state.analysis);
+    const isLoading = allAnalysisStatus === 'loading';
+
+    // ✅ A hook is called at the top level — never inside useEffect/useState(...). It already memoizes itself.
+    const insights = useDashboardInsights(allAnalysis, allNews, appliedWindow);
+    const tl = insights.timeline;
+    const loadedRange = tl.length ? { from: tl[0].ts, to: tl[tl.length - 1].ts } : null;
+
+    /** The range that was actually requested. "Show more" and auto-refresh use THIS, not whatever is typed in the inputs. */
+    const appliedRange = useRef<{ from: Date; to: Date } | null>(null);
+    /** Lets a slow older news response be ignored when a newer Apply was clicked. */
+    const newsRequestId = useRef(0);
+
     useEffect(() => {
         setIsMounted(true);
     }, []);
 
+    // auto-dismiss the error toast
     useEffect(() => {
-        if(!socket || !isConnected) {
+        if (!error) return;
+        const id = setTimeout(() => setError(null), 6000);
+        return () => clearTimeout(id);
+    }, [error]);
+
+    /** First page of analysis + the news for a range. Matches posts published OR added inside the range. */
+    const loadRange = useCallback((from: Date, to: Date) => {
+        const reqId = ++newsRequestId.current;
+
+        // News feeds the KPIs, sectors and classification, so it must follow the same range.
+        dispatch(fetchAllNews({ startDate: from, endDate: to }))
+            .then((res: any) => {
+                if (reqId !== newsRequestId.current) return; // superseded by a newer Apply
+                if (res?.meta?.requestStatus === 'rejected') {
+                    // keep what is on screen instead of wiping it, and say why
+                    setError(res?.error?.message || 'تعذر تحميل الأخبار');
+                    return;
+                }
+                const payload = res?.payload;
+                const list = Array.isArray(payload) ? payload : payload?.data;
+                setAllNews(Array.isArray(list) ? list : []);
+            })
+            .catch((e: any) => reqId === newsRequestId.current && setError(e?.message || 'تعذر تحميل الأخبار'));
+
+        return dispatch(fetchAllAnalysis({
+            startDate: from,
+            endDate: to,
+            publishStartDate: from,
+            publishEndDate: to,
+            matchAnyDate: true,
+            pagenationQuery: { page: 1 },
+            forDashboard: true
+        }))
+            .then((res: any) => {
+                // createAsyncThunk never rejects the promise — it resolves with a "rejected" action
+                if (res?.meta?.requestStatus === 'rejected') setError(res?.error?.message || 'تعذر تحميل البيانات');
+                return res;
+            })
+            .catch((e: any) => setError(e?.message || 'تعذر تحميل البيانات'));
+    }, [dispatch]);
+
+    /** The "تطبيق" button. */
+    const requestData = useCallback(() => {
+        if (!startDate || !endDate) return;
+        const from = toInstant(startDate);
+        const to = toInstant(endDate);
+        if (!(from < to)) {
+            setError('تاريخ البداية يجب أن يسبق تاريخ النهاية');
             return;
         }
+        appliedRange.current = { from, to };
+        setAppliedWindow({ from: from.getTime(), to: to.getTime() });
+        return loadRange(from, to);
+    }, [startDate, endDate, loadRange]);
 
-        const handleError = (error: any) => {
-            console.error('Socket error:', error);
-            setError(error.message || 'An error occurred');
-        };
+    // Load the current day once the dashboard mounts (the socket used to do this).
+    const didInitialFetch = useRef(false);
+    useEffect(() => {
+        if (!isMounted || didInitialFetch.current) return;
+        didInitialFetch.current = true;
+        requestData();
+    }, [isMounted, requestData]);
 
-        socket.on('error', handleError);
-        socket.on('allAnalysis', (analysisData: IAnalysis[]) => {
-            setAllAnalysis(analysisData);
-            setError(null);
-        });
-
-        socket.on('allNews', (newsData: INews[]) => {
-            // console.log("newsData: ", newsData)
-            setAllNews(newsData);
-            setError(null);
-        });
-
-        socket.emit('getAllAnalysis', { publishStartDate: new Date(startDate), publishEndDate: new Date(endDate) })
-        socket.emit('getAllNews', { startDate: new Date(startDate), endDate: new Date(endDate) })
-
-        return () => {
-            socket.off('error');
-            socket.off('allAnalysis');
-            socket.off('allNews');
-        };
-    }, [socket, isConnected])
+    // Optional polling. NOTE: re-fetching page 1 resets any pages added with "show more".
+    useEffect(() => {
+        if (!AUTO_REFRESH_MS) return;
+        const id = setInterval(() => {
+            const r = appliedRange.current;
+            if (r) loadRange(r.from, r.to);
+        }, AUTO_REFRESH_MS);
+        return () => clearInterval(id);
+    }, [loadRange]);
 
     useEffect(() => {
-        setAllAnalysis([ ...allAnalysis, ...allAnalysisForDashboard ]);
-    }, [allAnalysisForDashboard]);
-    
-    useEffect(() => {
+        const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+        document.addEventListener('fullscreenchange', onChange);
         return () => {
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
-            }
+            document.removeEventListener('fullscreenchange', onChange);
+            if (document.fullscreenElement) document.exitFullscreen();
         };
     }, []);
 
-    // Animation variants
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1
-            }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
-        visible: {
-            y: 0,
-            opacity: 1,
-            transition: {
-                duration: 0.5
-            }
-        }
-    };
-
     const handleToggleFullscreen = () => {
-        if (!document.fullscreenElement) {
-            dashboardRef.current?.requestFullscreen();
-            setIsFullscreen(true);
-        } else {
-            document.exitFullscreen();
-            setIsFullscreen(false);
-        }
+        if (!document.fullscreenElement) dashboardRef.current?.requestFullscreen();
+        else document.exitFullscreen();
     };
 
-    const dispatch = useAppDispatch();
+    // Next page of the APPLIED range (not of unapplied input edits), appended by the reducer.
+    // Returns the dispatch promise so DateSection's spinner is real.
     const handleShowMore = () => {
-        dispatch(fetchAllAnalysis({
-            publishStartDate: new Date(startDate),
-            publishEndDate: new Date(endDate),
-            pagenationQuery: { page: pagenation?.page + 1 },
+        const r = appliedRange.current;
+        if (!r || isLoading) return;
+        return dispatch(fetchAllAnalysis({
+            startDate: r.from,
+            endDate: r.to,
+            publishStartDate: r.from,
+            publishEndDate: r.to,
+            matchAnyDate: true,
+            pagenationQuery: { page: (pagenation?.page ?? 1) + 1 },
             forDashboard: true
         }));
     };
 
-    // console.log("Date ", startDate, endDate)
-    
     return (
         <div className="backround-pattern-2">
             <div
                 ref={dashboardRef}
-                className="bg-[#2e3537] dark:bg-[#2e3537] w-full h-screen p-2 overflow-y-auto overflow-x-hidden"
+                className="relative flex min-h-screen w-full flex-col gap-2 bg-[#2e3537] dark:bg-[#2e3537] lg:h-screen lg:overflow-hidden"
             >
                 {error && (
-                    <div className="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+                    <div
+                        role="alert"
+                        onClick={() => setError(null)}
+                        className="fixed top-4 right-4 z-50 cursor-pointer rounded-lg bg-red-500 px-4 py-2 text-sm text-white shadow-lg"
+                    >
                         {error}
                     </div>
                 )}
-                {!isConnected && (
-                    <div className="fixed top-4 right-4 bg-gray-100 text-xs text-black-700 px-4 py-2 rounded-lg shadow-lg z-50">
-                        الاتصال بالسيرفر ...
-                    </div>
-                )}
+
                 {isMounted && (
-                    <motion.div 
-                        className="flex flex-col h-full gap-4"
+                    <motion.div
+                        className="flex min-h-0 flex-1 flex-col gap-2"
                         variants={containerVariants}
                         initial="hidden"
                         animate="visible"
                     >
-                        <div className="grid lg:grid-cols-4 grid-cols-1 gap-2">
-                            {/* Side #1 */}
-                            <motion.div
-                                variants={itemVariants}
-                                className="flex flex-col gap-3 lg:gap-1 min-h-svh w-full"
+                        {/* KPI strip + fullscreen toggle */}
+                        <motion.div variants={itemVariants} className="flex shrink-0 items-stretch gap-2">
+                            <div className="min-w-0 flex-1">
+                                <KpiStrip insights={insights} />
+                            </div>
+                            <button
+                                onClick={handleToggleFullscreen}
+                                className="shrink-0 rounded-lg border border-gray-700/50 bg-gray-900/40 px-2 transition hover:bg-gray-800"
+                                title={isFullscreen ? "خروج من ملء الشاشة" : "ملء الشاشة"}
+                                aria-label={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
                             >
-                                {/* Date Input */}
-                                <DateSection 
+                                {isFullscreen ? <Minimize2 className="h-4 w-4 text-white" /> : <Maximize2 className="h-4 w-4 text-white" />}
+                            </button>
+                        </motion.div>
+
+                        {/* One-screen board: 25% | 50% | 25% */}
+                        <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 lg:grid-cols-4">
+                            {/* ───── Column 1 (right in RTL): filters + the two tickers ───── */}
+                            <motion.div variants={itemVariants} className={colClass}>
+                                <DateSection
                                     startDate={startDate}
                                     endDate={endDate}
                                     setStartDate={setStartDate}
                                     setEndDate={setEndDate}
                                     handleShowMore={handleShowMore}
-                                    callData={() => {
-                                        if (socket && isConnected && startDate && endDate) {
-                                            socket.emit('getAllAnalysis', { publishStartDate: new Date(startDate), publishEndDate: new Date(endDate) });
-                                            socket.emit('getAllNews', { startDate: new Date(startDate), endDate: new Date(endDate) });
-                                        }
-                                    }}
+                                    callData={requestData}
+                                    isLoading={isLoading}
+                                    loadedCount={allAnalysis.length}
+                                    loadedRange={loadedRange}
                                 />
-
-                                {/* Section 1.2 Important Analysis Section */}
-                                <ImportantAnalysisSection allAnalysis={allAnalysis}/>
-
-                                {/* Section 1.3 Analysis Section */}
+                                <ImportantAnalysisSection allAnalysis={allAnalysis} />
                                 <LiveAnalysisSection allAnalysis={allAnalysis} />
                             </motion.div>
 
-                            {/* Side #2 */}
-                            <motion.div
-                                variants={itemVariants}
-                                className="lg:col-span-2 flex flex-col gap-3 lg:gap-2 min-h-svh"
-                            >
-                                {/* Section 2.1 Map and News/Social */}
-                                <div className="flex flex-col lg:flex-row gap-1 flex-1">
-                                    {/* Map Track */}
+                            {/* ───── Column 2: map + publishers, tables, timeline, breakdowns ───── */}
+                            <motion.div variants={itemVariants} className={`${colClass} lg:col-span-2 h-full`}>
+                                <div className="flex flex-col gap-2 lg:h-[clamp(280px,36vh,420px)] lg:shrink-0 lg:flex-row">
                                     <MapSection allAnalysis={allAnalysis} />
-
-                                    <PublishersSection allAnalysis={allAnalysis} />
+                                    <TopPublishersSection insights={insights}/>
+                                    {/* <PublishersSection allAnalysis={allAnalysis} /> */}
+                                    {/* <PlatformShareChart insights={insights} /> */}
                                 </div>
 
-                                {/* Section 2.2 SubAnalysis & Sectors Data */}
-                                <SubAnalysisAndSectorsSection allAnalysis={allAnalysis} allNews={allNews}/>
+                                {/* <div className="shrink-0">
+                                    <SubAnalysisAndSectorsSection allAnalysis={allAnalysis} allNews={allNews} />
+                                </div> */}
 
-                                {/* Section 2.3 New Statistics and Charts Section */}
-                                <div className="h-1/3">
-                                    <SubAnalysisCharts allAnalysis={allAnalysis}/>
+                                <div className="grid shrink-0 grid-cols-1 gap-2 lg:grid-cols-3">
+                                    <div className="h-[200px] lg:col-span-3">
+                                        <ActivityTimelineChart insights={insights} />
+                                    </div>
+                                    {/* <div className="h-[200px] lg:h-full">
+                                        <PlatformShareChart insights={insights} />
+                                    </div> */}
+                                </div>
+
+                                {/* breakdown grows into whatever height the column has left */}
+                                <div className="grid min-h-0 flex-1 grid-cols-1 gap-2">
+                                    {/* <SentimentBreakdownChart
+                                        title={L.sectorsSentiment}
+                                        icon={<Layers className="h-4 w-4" />}
+                                        rows={insights.sectorRows.slice(0, 5)}
+                                    /> */}
+                                    <SentimentBreakdownChart
+                                        title={L.subAnalysisSentiment}
+                                        icon={<ListTree className="h-4 w-4" />}
+                                        rows={insights.subAnalysisRows.slice(0, 20)}
+                                        className="h-full"
+                                    />
+                                    {/* <PlatformShareChart insights={insights} /> */}
                                 </div>
                             </motion.div>
 
-                            {/* Side #3 */}
-                            <motion.div
-                                variants={itemVariants}
-                                className="flex flex-col gap-3 lg:gap-2 h-full"
-                            >
+                            {/* ───── Column 3 (left in RTL): sentiment, sectors, people ───── */}
+                            <motion.div variants={itemVariants} className={colClass}>
                                 <ClassificationSection allAnalysis={allAnalysis} allNews={allNews} />
-                                
-                                {/* Section 3.1 Sectors Data */}
-                                <SectorsSection allAnalysis={allAnalysis} allNews={allNews}/>
-
+                                <div className="shrink-0">
+                                    <SocialAndNewsEngagements allAnalysis={allAnalysis} allNews={allNews} />
+                                </div>
+                                <div className="max-h-[500px] flex-1">
+                                    {/* <TopPublishersSection insights={insights} /> */}
+                                    <PlatformShareChart insights={insights} />
+                                </div>
                             </motion.div>
                         </div>
-                        <button
-                            onClick={handleToggleFullscreen}
-                            className="absolute top-2 end-2 z-50 bg-gray-800/30 hover:bg-gray-800/80 p-1 rounded transition"
-                            title={isFullscreen ? "خروج من ملء الشاشة" : "ملء الشاشة"}
-                        >
-                            {isFullscreen ? <Minimize2 className="w-5 h-5 text-white" /> : <Maximize2 className="w-5 h-5 text-white" />}
-                        </button>
                     </motion.div>
                 )}
             </div>
@@ -262,4 +327,3 @@ const DashboardLayout = () => {
 };
 
 export default DashboardLayout;
-  

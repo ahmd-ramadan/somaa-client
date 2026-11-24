@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { fetchAllSectors, updateSector, addSector } from '@/lib/features/sector/sectorThunks';
 import { RootState } from '@/lib/store';
 import { Edit, FilterX, Plus, SearchX } from 'lucide-react';
 import EditModal from './EditModal';
 import AddSectorModal from './AddSectorModal';
+import SettingsPagination from './SettingsPagination';
+import SettingsToolbar from './SettingsToolbar';
 import { ISector } from '@/interfaces/sector.types';
 import { useLocale, useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
@@ -13,6 +15,7 @@ import Spinner from '@/components/ui/Spinner';
 
 const SectorsTable = () => {
   const t = useTranslations("SettingsPage.SectorsPage")
+  const tf = useTranslations("SettingsPage.filters");
   const locale = useLocale();
 
   const dispatch = useAppDispatch();
@@ -22,16 +25,48 @@ const SectorsTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [search, setSearch] = useState('');
+  const [monitoringFilter, setMonitoringFilter] = useState<'all' | 'social' | 'news'>('all');
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'nameAsc' | 'nameDesc'>('newest');
 
   useEffect(() => {
     if(allSectorsStatus !== 'succeeded') dispatch(fetchAllSectors());
   }, [dispatch]);
 
+  const filteredSectors = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    const list = allSectors.filter((sector) => {
+      const matchesSearch = !term || sector.name?.toLowerCase().includes(term);
+      const matchesFilter = monitoringFilter === 'all'
+        || (monitoringFilter === 'social' ? (sector.socialMediaMonitoringCount || 0) > 0 : (sector.newsMonitoringCount || 0) > 0);
+      return matchesSearch && matchesFilter;
+    });
+
+    return [...list].sort((a, b) => {
+      switch (sortBy) {
+        case 'oldest':
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case 'nameAsc':
+          return (a.name || '').localeCompare(b.name || '', locale === 'en' ? 'en' : 'ar');
+        case 'nameDesc':
+          return (b.name || '').localeCompare(a.name || '', locale === 'en' ? 'en' : 'ar');
+        default:
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+    });
+  }, [allSectors, search, monitoringFilter, sortBy, locale]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, monitoringFilter, sortBy]);
+
+  const isFiltered = search.trim() !== '' || monitoringFilter !== 'all';
+
   // Calculate pagination
-  const totalPages = Math.ceil(allSectors.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredSectors.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentSectors = allSectors.slice(startIndex, endIndex);
+  const currentSectors = filteredSectors.slice(startIndex, endIndex);
 
   const handleEdit = (sector: ISector) => {
     setEditingSector(sector);
@@ -78,7 +113,7 @@ const SectorsTable = () => {
     <>
       <div className="flex gap-1 justify-between items-center mb-4 px-2">
         <h2 className="text-lg lg:text-xl font-semibold text-primary">
-         {t("totalShowedSectors")}: <strong className='text-secondary'>{allSectors.length}</strong>
+         {t("totalShowedSectors")}: <strong className='text-secondary'>{filteredSectors.length}</strong>
         </h2>
         <button
           onClick={() => setIsAddModalOpen(true)}
@@ -88,6 +123,41 @@ const SectorsTable = () => {
           { t("addSector") }
         </button>
       </div>
+
+      <SettingsToolbar
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder={tf("searchPlaceholder")}
+        filters={[
+          {
+            value: monitoringFilter,
+            onChange: (value) => setMonitoringFilter(value as 'all' | 'social' | 'news'),
+            ariaLabel: tf("filterBy"),
+            options: [
+              { value: 'all', label: tf("allRecords") },
+              { value: 'social', label: tf("withSocialMonitoring") },
+              { value: 'news', label: tf("withNewsMonitoring") },
+            ],
+          },
+        ]}
+        sort={{
+          value: sortBy,
+          onChange: (value) => setSortBy(value as 'newest' | 'oldest' | 'nameAsc' | 'nameDesc'),
+          ariaLabel: tf("sortBy"),
+          options: [
+            { value: 'newest', label: tf("newestFirst") },
+            { value: 'oldest', label: tf("oldestFirst") },
+            { value: 'nameAsc', label: tf("nameAsc") },
+            { value: 'nameDesc', label: tf("nameDesc") },
+          ],
+        }}
+        isDirty={isFiltered}
+        onClear={() => {
+          setSearch('');
+          setMonitoringFilter('all');
+        }}
+        clearLabel={tf("clear")}
+      />
 
       { allSectorsStatus === 'loading' && 
         <div 
@@ -166,40 +236,13 @@ const SectorsTable = () => {
         </table>
       }
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 py-4">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {t("prev")}
-          </button>
-          
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => handlePageChange(page)}
-              className={`px-3 py-1 text-sm border rounded-md ${
-                currentPage === page
-                  ? 'bg-primary text-white border-primary'
-                  : 'border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-          
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {t("next")}
-          </button>
-        </div>
-      )}
+      <SettingsPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={filteredSectors.length}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+      />
 
       { editingSector && <EditModal
         isOpen={!!editingSector}

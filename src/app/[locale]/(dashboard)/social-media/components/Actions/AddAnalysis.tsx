@@ -45,7 +45,7 @@ const detectPlatformFromUrl = (url: string): PlatformsEnum | null => {
         return PlatformsEnum.YOUTUBE;
     } else if (urlLower.includes('tiktok.com')) {
         return PlatformsEnum.TIKTOK;
-    } else if (urlLower.includes('linkedin.com') || urlLower.includes('lnkd.in')) {
+    } else if (urlLower.includes('linkedin.com')) {
         return PlatformsEnum.LINKEDIN;
     }
     return null;
@@ -109,8 +109,8 @@ const AddAnalysis = () => {
     const urlInput = watch('url');
     const selectedPlatform = watch('platform');
     // Facebook & LinkedIn can't be scraped for now, so the user enters the data manually
-    const isManualPlatform =
-        selectedPlatform === PlatformsEnum.FACEBOOK || selectedPlatform === PlatformsEnum.LINKEDIN;
+    const isManualPlatform = false
+        // selectedPlatform === PlatformsEnum.FACEBOOK || selectedPlatform === PlatformsEnum.LINKEDIN;
     
     // Add effect to detect platform from URL
     useEffect(() => {

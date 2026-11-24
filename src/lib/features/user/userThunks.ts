@@ -105,6 +105,32 @@ export const createNewUserRole = createAsyncThunk(
     }
 );
 
+// update user data (name, email, phone, role, permissions)
+export const updateRoleUser = createAsyncThunk(
+    'userSlice/updateRoleUser',
+    async ({ token, data }: { token: string; data: { userId: string; name?: string; email?: string; phone?: string; role?: 'user' | 'moderator' | 'monitor' | 'admin' | 'super_admin'; permissions?: UserPermissions[] } }) => {
+        const response = await putData<IUser>({
+            endpoint: `/user/role/user`,
+            token,
+            data
+        });
+        return response;
+    }
+);
+
+// block / unblock user
+export const setUserBlocked = createAsyncThunk(
+    'userSlice/setUserBlocked',
+    async ({ token, userId, isBlocked }: { token: string; userId: string; isBlocked: boolean }) => {
+        const response = await patchData<IUser>({
+            endpoint: `/user/role/block`,
+            token,
+            data: { userId, isBlocked }
+        });
+        return response;
+    }
+);
+
 // update user permissions
 export const updateUserPermissions = createAsyncThunk(
     'userSlice/updateUserPermissions',

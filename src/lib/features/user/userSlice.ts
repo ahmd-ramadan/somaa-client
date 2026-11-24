@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { IResponseStatus } from '@/types';
-import { approveOnUser, createNewUserRole, deleteUser, fetchAllUsersRoles, fetchUsers, getUserProfile, updateUserPermissions, updateUserProfile } from './userThunks';
+import { approveOnUser, createNewUserRole, deleteUser, fetchAllUsersRoles, fetchUsers, getUserProfile, setUserBlocked, updateRoleUser, updateUserPermissions, updateUserProfile } from './userThunks';
 import { ILoggedInUser, IUser } from '@/interfaces';
 
 interface IUserState {
@@ -17,7 +17,9 @@ interface IUserState {
     allUserRoles: IUser[];
     getAllUserRolesStatus: IResponseStatus;
     createNewUserRoleStatus: IResponseStatus;
-    updateUserPermissionsStatus: IResponseStatus;   
+    updateUserPermissionsStatus: IResponseStatus;
+    updateRoleUserStatus: IResponseStatus;
+    setUserBlockedStatus: IResponseStatus;
 }
 
 const initialState: IUserState = {
@@ -33,6 +35,8 @@ const initialState: IUserState = {
     getAllUserRolesStatus: 'idle',
     createNewUserRoleStatus: 'idle',
     updateUserPermissionsStatus: 'idle',
+    updateRoleUserStatus: 'idle',
+    setUserBlockedStatus: 'idle',
 };
 
 const userSlice = createSlice({
@@ -171,6 +175,40 @@ const userSlice = createSlice({
             })
             .addCase(updateUserPermissions.rejected, (state) => {
                 state.updateUserPermissionsStatus = 'failed';
+            });
+
+        builder
+            .addCase(updateRoleUser.pending, (state) => {
+                state.updateRoleUserStatus = 'loading';
+            })
+            .addCase(updateRoleUser.fulfilled, (state, action) => {
+                const { success, data } = action.payload as any;
+                if(success && data) {
+                    state.updateRoleUserStatus = 'succeeded';
+                    state.allUserRoles = state.allUserRoles.map(user => user._id.toString() === data._id.toString() ? data : user);
+                } else {
+                    state.updateRoleUserStatus = 'failed';
+                }
+            })
+            .addCase(updateRoleUser.rejected, (state) => {
+                state.updateRoleUserStatus = 'failed';
+            });
+
+        builder
+            .addCase(setUserBlocked.pending, (state) => {
+                state.setUserBlockedStatus = 'loading';
+            })
+            .addCase(setUserBlocked.fulfilled, (state, action) => {
+                const { success, data } = action.payload as any;
+                if(success && data) {
+                    state.setUserBlockedStatus = 'succeeded';
+                    state.allUserRoles = state.allUserRoles.map(user => user._id.toString() === data._id.toString() ? data : user);
+                } else {
+                    state.setUserBlockedStatus = 'failed';
+                }
+            })
+            .addCase(setUserBlocked.rejected, (state) => {
+                state.setUserBlockedStatus = 'failed';
             });
     }
 });

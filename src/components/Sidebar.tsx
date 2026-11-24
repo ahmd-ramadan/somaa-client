@@ -68,13 +68,13 @@ const Sidebar = () => {
     };
 
     const renderDataList = (data: ISideBarLinks[]) => {
-        return data.map(({ name, link, permission }: ISideBarLinks): ReactNode => {
+        return data.map(({ name, link, permission, isNew }: ISideBarLinks): ReactNode => {
             let hasPermission =
                 (permission === 'forAll') ||
                 (loggedInUser?.role === 'admin' && permission !== 'isOnlySuperAdmin') ||
                 (loggedInUser?.role === 'super_admin');
 
-            if (loggedInUser?.role === 'user' && link === 'add') hasPermission = false;
+            // if (loggedInUser?.role === 'user' && link === 'add') hasPermission = false;
 
             if (!hasPermission) {
                 return null;
@@ -97,14 +97,25 @@ const Sidebar = () => {
                     `}
                 >
                     <div className="flex-shrink-0">{SideBarIcons[name] || null}</div>
-                    <span
-                        className={`
-                            text-medium whitespace-nowrap transition-all duration-300
-                            ${isCompact ? 'w-0 opacity-0 overflow-hidden' : 'w-auto opacity-100'}
-                        `}
-                    >
-                        {t(name)}
-                    </span>
+                    <div className="flex items-center">
+                        <span
+                            className={`
+                                text-medium whitespace-nowrap transition-all duration-300
+                                ${isCompact ? 'w-0 opacity-0 overflow-hidden' : 'w-auto opacity-100'}
+                            `}
+                        >
+                            {t(name)}
+                        </span>
+                        {isNew && !isCompact &&
+                            <span
+                                className={`
+                                    text-[8px] text-orange-500 border border-orange-500 rounded-lg px-[1px] mt-3 ms-[1px] animate-pulse transition-all duration-300
+                                `}
+                            >
+                                {t("new")}
+                            </span>
+                        }
+                    </div>
                 </Link>
             );
         });
@@ -113,7 +124,7 @@ const Sidebar = () => {
     return (
         <aside
             className={`
-                flex h-screen flex-col bg-primary shadow-xl
+                flex h-screen flex-col bg-tertiary shadow-xl
                 transition-all duration-300 ease-in-out
                 ${isCompact ? 'w-12 md:w-20' : 'w-64'}
             `}

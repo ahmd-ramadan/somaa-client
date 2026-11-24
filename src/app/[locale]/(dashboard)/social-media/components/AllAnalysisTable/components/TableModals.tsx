@@ -99,6 +99,8 @@ const TableModals: React.FC<TableModalsProps> = ({
                 isOpen={isViewModalOpen}
                 closeModal={closeViewModal}
                 title={t("viewAnalysisModalTitle")}
+                size="wide"
+                maxHeight="max-h-[70vh] lg:max-h-[80vh]"
             >
                 { selectedAnalysis && <ViewAnalysis analysis={selectedAnalysis} /> }
             </Modal>

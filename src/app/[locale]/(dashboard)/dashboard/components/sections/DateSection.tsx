@@ -1,9 +1,14 @@
+'use client'
+
 import { useAppSelector } from "@/lib/hooks"
 import { RootState } from "@/lib/store"
 import { IterationCcw } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import Image from "next/image"
-import { useState } from "react"
+import { useMemo, useState } from "react"
+import { useLabels } from "./insights"
+import DateTimePicker from "./DateTimePicker"
+import { formatDate } from "@/utils/formatDateAndTime"
 
 export interface IDateSectionProps {
     startDate: string
@@ -11,7 +16,13 @@ export interface IDateSectionProps {
     setStartDate: (date: string) => void
     setEndDate: (date: string) => void
     callData: () => void
-    handleShowMore: () => void
+    /** Return the dispatch promise so the spinner reflects the real request */
+    handleShowMore: () => void | Promise<unknown>
+    isLoading?: boolean
+    /** How many analyses are on screen right now */
+    loadedCount?: number
+    /** Oldest / newest item actually loaded (ms) — makes it obvious what range the data really covers */
+    loadedRange?: { from: number; to: number } | null
 }
 
 const DateSection = ({
@@ -20,18 +31,30 @@ const DateSection = ({
     setStartDate,
     setEndDate,
     callData,
-    handleShowMore
+    handleShowMore,
+    isLoading = false,
+    loadedCount = 0,
+    loadedRange = null,
 }: IDateSectionProps) => {
-
     const t = useTranslations("DashboardPage")
+    const L = useLabels()
+    const locale = useLocale()
     const [isSpinning, setIsSpinning] = useState(false)
+    const { dashboardPagenation } = useAppSelector((state: RootState) => state.analysis) as any
 
-    const { dashboardPagenation } = useAppSelector((state: RootState) => state.analysis);
+    // supports both store shapes (old: dashboardPagenation, new: pagenation)
+    const pg = dashboardPagenation
+    const hasMore = (pg?.totalPages ?? 0) > (pg?.page ?? 0)
+
+    const dayFmt = useMemo(
+        () => new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', timeZone: 'Asia/Riyadh' }),
+        [locale]
+    )
 
     const handleShowMoreClick = async () => {
+        setIsSpinning(true)
         try {
-            setIsSpinning(true)
-            handleShowMore()
+            await handleShowMore()
         } catch (error) {
             console.error(error)
         } finally {
@@ -39,59 +62,52 @@ const DateSection = ({
         }
     }
 
+    const busy = isLoading || isSpinning
+
     return (
-        <div
-            className="flex flex-col gap-2 mb-1 w-full mx-1"
-        >
-            <div className="relative w-[70%] h-20 mx-auto">
-                <Image
-                    src="/logo-2.png"
-                    alt="Somaa Logo"
-                    fill
-                    className="object-cover"
-                />
-            </div>
-            <div className="flex items-center gap-1 ">
-                <div className="w-[40%] flex flex-col gap-1">
-                    {/* <label className="absolute top-0 start-0 text-[10px] text-secondary flex items-center gap-0.5 whitespace-nowrap">
-                        {t("from")}
-                    </label> */}
-                    <input
-                        type="datetime-local"
-                        value={startDate}
-                        onChange={e => setStartDate(e.target.value.slice(0, 16))}
-                        className="w-full text-[10px] bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition outline-none text-xs"
-                    />
+        <div className="flex flex-col gap-1.5 rounded-lg border border-gray-700/50 bg-gray-900/40 p-2 backdrop-blur-sm">
+            <div className="flex items-center justify-between gap-2">
+                <div className="relative h-9 w-36">
+                    <Image src="/dash-logo.png" alt="Somaa Logo" fill sizes="144px" className="object-contain" />
+                    <p className="text-[10px] tabular-nums text-gray-400">
+                        {/* {L.loaded} {loadedCount.toLocaleString()} {L.items} */}
+                        {/* {loadedRange && ` · ${formatDate({ date: loadedRange.from as any,  locale, withTime: true })} – ${formatDate({ date: loadedRange.to as any, locale, withTime: true })}`} */}
+                    </p>
                 </div>
-                <div className="w-[40%] flex flex-col gap-1">
-                    {/* <label className="absolute top-0 start-0 text-[10px] text-secondary flex items-center gap-0.5 whitespace-nowrap">
-                        {t("to")}
-                    </label> */}
-                    <input
-                        type="datetime-local"
-                        value={endDate}
-                        onChange={e => setEndDate(e.target.value.slice(0, 16))}
-                        className="w-full text-[10px] bg-gray-800 text-gray-200 rounded px-1 py-0.5 border border-gray-700 focus:ring-1 focus:ring-green-500 focus:border-green-500 transition outline-none text-xs"
-                    />
-                </div>
-                <div className="w-[20%] flex items-center gap-1">
+
+                <div className="flex items-center gap-1.5">
                     <button
                         onClick={callData}
-                        className={`h-full ${dashboardPagenation?.totalPages > dashboardPagenation?.page ? 'w-[70%]' : 'w-[100%]'} bg-gradient-to-r from-primary to-secondary text-white px-2 py-0.5 rounded shadow hover:from-secondary hover:to-primary transition font-semibold text-xs whitespace-nowrap ${dashboardPagenation?.totalPages > dashboardPagenation?.page ? 'opacity-100' : 'opacity-50'}`}
-                    // className="flex-1 bg-gray-700 text-white px-2 py-0.5 rounded shadow hover:from-blue-700 hover:to-green-600 transition font-semibold text-xs whitespace-nowrap"
+                        disabled={isLoading}
+                        className="rounded bg-gradient-to-r from-primary to-secondary px-3 py-1 text-xs font-semibold whitespace-nowrap text-white shadow transition hover:from-secondary hover:to-primary disabled:cursor-wait disabled:opacity-60"
                     >
-                        {t("updateTime")}
+                        {isLoading ? L.applying : t("updateTime")}
                     </button>
-                    {dashboardPagenation?.totalPages > dashboardPagenation?.page && <div
-                        onClick={handleShowMoreClick}
-                        title={t("showMore")}
-                        className="size-[30%] p-.5 rounded-sm text-secondary font-bold cursor-pointer"
-                    >
-                        <IterationCcw className={`w-full h-full transition-transform duration-200 ${isSpinning ? 'animate-spin' : ''}`} />
-                    </div>
-                    }
+                    {hasMore && (
+                        <button
+                            onClick={handleShowMoreClick}
+                            disabled={busy}
+                            title={t("showMore")}
+                            aria-label={t("showMore")}
+                            className="rounded p-1 text-secondary transition-colors hover:bg-gray-700/50 disabled:opacity-50"
+                        >
+                            <IterationCcw className={`h-4 w-4 ${busy ? 'animate-spin' : ''}`} />
+                        </button>
+                    )}
                 </div>
             </div>
+
+            <div className="grid grid-cols-2 gap-1.5">
+                <DateTimePicker value={startDate} onChange={setStartDate} ariaLabel="Start date" />
+                <DateTimePicker value={endDate} onChange={setEndDate} ariaLabel="End date" />
+            </div>
+
+            {/* {loadedCount > 0 && (
+                <p className="text-[10px] tabular-nums text-gray-400">
+                    {L.loaded} {loadedCount.toLocaleString()} {L.items}
+                    {loadedRange && ` · ${dayFmt.format(loadedRange.from)} – ${dayFmt.format(loadedRange.to)}`}
+                </p>
+            )} */}
         </div>
     )
 }

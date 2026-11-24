@@ -1,179 +1,27 @@
 'use client'
 
-import { motion } from "framer-motion";
-import { AnalysisClassifyEnum, IAnalysis } from "@/interfaces/analysis.types";
-import { BarChart, EyeIcon, Heart, MessageCircle, Pause, Play, Share2, Users } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { createTickerVariants } from "./animations";
-import { formatDistanceToNow } from "./utils";
-import { useLocale, useTranslations } from "next-intl";
-import { getPlatformIcon } from "../../../social-media/components/AllAnalysisTable/components/TableRow";
+import { useMemo } from "react";
+import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { IAnalysis } from "@/interfaces/analysis.types";
+import AnalysisTicker from "./AnalysisTicker";
 
 interface IImportantAnalysisSectionProps {
     allAnalysis: IAnalysis[]
 }
+
 const ImportantAnalysisSection = ({ allAnalysis }: IImportantAnalysisSectionProps) => {
-
-    const t = useTranslations("DashboardPage")
-    const locale = useLocale();
-
-    const [importantAnalysis, setImportantAnalysis] = useState<IAnalysis[]>([])
-    const [isImportantAnalysisAnimating, setIsImportantAnalysisAnimating] = useState(true);
-    const importantTickerRef = useRef<HTMLDivElement>(null);
-    const [importantTickerPosition, setImportantTickerPosition] = useState(0);
-    const [imageError, setImageError] = useState<Map<string, boolean>>(new Map());
-
-
-    useEffect(() => {
-        if (allAnalysis) setImportantAnalysis(deriveImportantAnalysis(allAnalysis));
-    }, [allAnalysis]);
-
-    const deriveImportantAnalysis = (analysisData: IAnalysis[]): IAnalysis[] => {
-        return analysisData.filter(a => a.isHighlighted === true)
-    }
-
-    const toggleImportantAnalysisAnimation = () => {
-        if (importantTickerRef.current) {
-            const transform = window.getComputedStyle(importantTickerRef.current).transform;
-            const matrix = new DOMMatrix(transform);
-            const currentY = matrix.m42;
-            setImportantTickerPosition(currentY);
-        }
-        setIsImportantAnalysisAnimating(prev => !prev);
-    };
+    const t = useTranslations("DashboardPage");
+    const important = useMemo(() => (allAnalysis || []).filter((a) => a.isHighlighted === true), [allAnalysis]);
 
     return (
-        <div
-            className={
-                "rounded-lg bg-transparent/20 shadow-secondary shadow-md border border-gray-700/50 p-1 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col " +
-                (importantAnalysis.length === 0
-                    // ? "bg-gradient-to-br from-primary via-blue-800 to-blue-700"
-                    ? "bg-gradient-to-r from-secondary to-primary"
-                    : "bg-gradient-to-r from-secondary to-primary")
-            }
-        >
-            <div className="p-1 flex items-center justify-between">
-                <div className="flex gap-1 items-center">
-                    <button
-                        onClick={toggleImportantAnalysisAnimation}
-                        className="rounded-full hover:bg-gray-700 transition-colors"
-                    >
-                        {isImportantAnalysisAnimating ? (
-                            <Pause className="h-4 w-4 text-blue-300" />
-                        ) : (
-                            <Play className="h-4 w-4 text-blue-300" />
-                        )}
-                    </button>
-                    <h3 className="text-sm text-gray-300 flex items-center gap-1">
-                        {/* <Bell className="w-5 h-5 text-blue-300" /> */}
-                        {t("importantMonitoring")}
-                    </h3>
-                </div>
-                <div className="flex items-center justify-center">
-                    <span className="text-sm text-gray-300">{importantAnalysis.length.toLocaleString()}</span>
-                </div>
-            </div>
+        <AnalysisTicker
+            title={t("importantMonitoring")}
+            icon={<Star className="h-4 w-4" />}
+            items={important}
+            className="min-h-[240px] flex-1 transition bg-blend-color-burn bg-gradient-to-l from-primary to-secondary"
+        />
+    );
+};
 
-            <div className="relative flex-1 overflow-hidden">
-                <motion.div
-                    ref={importantTickerRef}
-                    className="absolute inset-0"
-                    variants={createTickerVariants(importantTickerPosition, importantAnalysis.length)}
-                    animate={!isImportantAnalysisAnimating ? "pause" : "animate"}
-                >
-                    <div className="space-y-2">
-                        {importantAnalysis.slice(0, 50).map((analysis, index) => (
-                            <motion.div
-                                key={analysis._id || index}
-                                className="bg-gray-600 p-2 rounded-lg animate-pulse"
-                                initial={{ x: -20, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: index * 0.1 }}
-                                whileHover={{ scale: 1.02 }}
-                            >
-                                <div className="flex flex-col gap-1">
-                                    <div className="flex justify-between">
-                                        {/* UserInfo */}
-                                        <div className="flex gap-1">
-                                            {analysis?.publisher?.avatar && !imageError.has(analysis._id) ? (
-                                                <img
-                                                    src={analysis.publisher.avatar}
-                                                    referrerPolicy="no-referrer"
-                                                    onError={() => setImageError(prev => new Map(prev).set(analysis._id, true))}
-                                                    alt="Publisher avatar"
-                                                    className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
-                                                />
-                                            ) : (
-                                                <div className='bg-gray-100 w-10 h-10 flex items-center justify-center rounded-md'>
-                                                    {getPlatformIcon(analysis.platform)}
-                                                </div>
-                                            )
-                                            }
-                                            <div className="flex flex-col justify-start items-start gap-1 mb-1">
-                                                <span className="text-xs font-medium text-gray-300">
-                                                    {analysis.publisher?.name || 'Unknown Publisher'}
-                                                </span>
-                                                <div className="flex gap-2">
-                                                    <div className="flex items-center gap-1">
-                                                        <Users className="w-3 h-3 text-blue-300" />
-                                                        <span className="text-xs font-medium text-gray-300">{analysis?.publisher?.followers?.toLocaleString() || 0}</span>
-                                                    </div>
-                                                    <span className="text-xs text-gray-400">
-                                                        {formatDistanceToNow({ date: analysis.publishDate as string || analysis.createdAt, locale })}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Classification Badge */}
-                                        <div className={`h-fit w-fit p-1 rounded-md text-xs ${analysis.classify === AnalysisClassifyEnum.POSITIVE
-                                            ? 'bg-green-500/20 text-green-400'
-                                            : analysis.classify === AnalysisClassifyEnum.NEUTRAL
-                                                ? 'bg-gray-500/20 text-gray-400'
-                                                : 'bg-red-500/20 text-red-400'
-                                            }`}>
-                                            {t(analysis.classify)}
-                                        </div>
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="">
-                                        <p className="text-xs text-gray-400 my-2 px-2 line-clamp-2">
-                                            {analysis.content?.body || analysis.subAnalysisData?.body || 'No content available'}
-                                        </p>
-
-                                        {/* Statistics */}
-                                        <div className="flex items-center justify-around text-xs text-gray-400">
-                                            <div className="flex items-center gap-1">
-                                                <EyeIcon className="w-3 h-3 text-blue-300" />
-                                                {analysis.statistics?.views.toLocaleString() || 0}
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <Share2 className="w-3 h-3 text-blue-300" />
-                                                {analysis.statistics?.shares.toLocaleString() || 0}
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <Heart className="w-3 h-3 text-blue-300" />
-                                                {analysis.statistics?.reactions.toLocaleString() || 0}
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <MessageCircle className="w-3 h-3 text-blue-300" />
-                                                {analysis.statistics?.comments.toLocaleString() || 0}
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <BarChart className="w-3 h-3 text-blue-300" />
-                                                {analysis.statistics?.appearance.toLocaleString() || 0}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </motion.div>
-            </div>
-        </div>
-    )
-}
-
-export default ImportantAnalysisSection
+export default ImportantAnalysisSection;

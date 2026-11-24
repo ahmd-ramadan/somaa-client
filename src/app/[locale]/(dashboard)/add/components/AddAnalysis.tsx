@@ -45,7 +45,7 @@ const detectPlatformFromUrl = (url: string): PlatformsEnum | null => {
         return PlatformsEnum.YOUTUBE;
     } else if (urlLower.includes('tiktok.com')) {
         return PlatformsEnum.TIKTOK;
-    } else if (urlLower.includes('linkedin.com') || urlLower.includes('lnkd.in')) {
+    } else if (urlLower.includes('linkedin.com')) {
         return PlatformsEnum.LINKEDIN;
     }
     return null;

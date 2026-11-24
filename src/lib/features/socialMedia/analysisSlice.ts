@@ -83,8 +83,12 @@ const analysisSlice = createSlice({
                         publishEndDate: action.meta.arg.publishEndDate || undefined,
                     };
                     if (action.meta.arg.forDashboard) {
-                        state.allAnalysisForDashboard = data;
                         state.dashboardPagenation = pagenation;
+                        if (pagenation.page > 1) {
+                            state.allAnalysisForDashboard = [...state.allAnalysisForDashboard, ...data];
+                        } else {
+                            state.allAnalysisForDashboard = data; // data.map((a: any) => ({ ... a, publisher: a?.publisher || a.publisherData }));
+                        }
                     } else {
                         state.pagenation = pagenation;
                         if (pagenation.page > 1) {

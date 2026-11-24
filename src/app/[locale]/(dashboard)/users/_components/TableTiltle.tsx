@@ -13,8 +13,8 @@ const TableTitle = ({ allUserCount, setIsAddUserModalOpen }: TableTitleProps) =>
     const t = useTranslations("UsersPage");
     
     return (
-        <div className="mb-6 w-full border shadow-xl rounded-md bg-white">
-            <div className="p-2 flex items-center justify-between">
+        <div className="mb-3 w-full border shadow-xl rounded-md bg-white">
+            <div className="p-3 flex items-center justify-between">
                 <div className='flex flex-col gap-1'>
                     <h2 className="text-xl font-semibold text-secondary">{t("usersTableTitle")}</h2>
                     <p className="text-sm text-primary flex items-center gap-2">

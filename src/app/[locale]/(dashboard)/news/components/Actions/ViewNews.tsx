@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { formatDate } from '@/utils/formatDateAndTime';
+import UpdateHistory from '@/components/ui/UpdateHistory';
 import { INews } from '@/interfaces/news.types';
 
 interface ViewNewsProps {
@@ -23,7 +24,8 @@ const ViewNews = ({ news }: ViewNewsProps) => {
     const locale = useLocale();
 
     return (
-        <div className="p-2 space-y-3">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-4 items-start p-2">
+            <div className="space-y-3 min-w-0">
             <div className="grid grid-cols-2 gap-2">
                 <div className="col-span-2 space-y-1">
                     <h3 className="font-semibold text-primary flex items-center gap-2">
@@ -118,6 +120,10 @@ const ViewNews = ({ news }: ViewNewsProps) => {
                     {t("viewOriginalPost")}
                 </Link>
             </div>
+
+            </div>
+
+            <UpdateHistory entityType="news" entityId={String(news._id)} />
         </div>
     );
 };

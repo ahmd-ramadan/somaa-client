@@ -11,6 +11,7 @@ interface ModalProps {
     closeColor?: string;
     children: React.ReactNode;
     maxHeight?: string;
+    size?: 'default' | 'wide';
 }
 
 const Modal = ({ 
@@ -18,7 +19,8 @@ const Modal = ({
         title, children, bgColor="#fff", 
         titleColor="var(--color-secondary)", 
         closeColor="#030712",
-        maxHeight="max-h-96 lg:max-h-[500px]"
+        maxHeight="max-h-96 lg:max-h-[500px]",
+        size="default"
     }: ModalProps
 ) => {
     const modalRef = useRef<HTMLDivElement>(null);
@@ -29,7 +31,7 @@ const Modal = ({
         <div className={`mx-auto fixed inset-0 bg-transparent backdrop-blur-sm flex items-center justify-center z-50`}>
             <div
                 ref={modalRef}
-                className={`p-6 rounded-lg shadow-2xl w-[90%] md:w-[60%] relative`}
+                className={`p-6 rounded-lg shadow-2xl relative ${size === 'wide' ? 'p-3 w-[95%] md:w-[88%] lg:w-[82%] max-w-6xl h-[95%]' : 'w-[90%] md:w-[60%]'}`}
                 style={{ backgroundColor: bgColor }}
                 role="dialog"
                 aria-modal="true"

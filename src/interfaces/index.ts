@@ -14,7 +14,7 @@ export interface ICreateRoleUserQuery {
     email: string;
     phone?: string;
     password: string;
-    role: 'user' | 'moderator' | 'monitor';
+    role: 'user' | 'moderator' | 'monitor' | 'admin' | 'super_admin';
     permissions: UserPermissions[];
 }
 
@@ -26,6 +26,7 @@ export interface IUser {
     role: UserRoleTypes;
     permissions: IAdminPermissions[];
     isDeleted: boolean;
+    isBlocked?: boolean;
     isVerified: boolean;
     avatar?: ICloudinaryIMage;
     socialMediaMonitoringCount: number;
@@ -516,6 +517,7 @@ export interface ISideBarLinks {
     name: SideBarLinksTypes;
     link: string;
     permission: IAdminPermissions | 'isOnlySuperAdmin' | 'forAll';
+    isNew?: boolean
 }
 
 export interface ILoggedInUser extends IDBModel {

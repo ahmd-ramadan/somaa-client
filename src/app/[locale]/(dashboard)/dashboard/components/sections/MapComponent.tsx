@@ -163,7 +163,7 @@ const MapComponent = ({ center, analyses }: MapComponentProps) => {
     }, [analyses]);
 
     return (
-        <div className="relative w-full h-full flex-1 rounded-lg overflow-hidden">
+        <div className="relative w-full h-full flex-1 overflow-hidden rounded-lg">
             <div ref={mapContainer} className="absolute inset-0 w-full h-full" />
             {selectedAnalysis && (
                 <motion.div

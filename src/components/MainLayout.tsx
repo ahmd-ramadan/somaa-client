@@ -49,7 +49,7 @@ const MainLayout = ({ cookiesData, children }: IProps) => {
     }
 
     return (
-        <div className="w-full flex bg-primary h-svh">
+        <div className="w-full flex h-svh">
             <div className="flex flex-col h-full">
                 <Sidebar />
             </div>

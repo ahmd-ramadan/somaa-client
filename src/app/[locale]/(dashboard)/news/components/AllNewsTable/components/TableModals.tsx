@@ -69,6 +69,8 @@ const TableModals: React.FC<TableModalsProps> = ({
                 isOpen={isViewModalOpen}
                 closeModal={closeViewModal}
                 title={t("viewNewsModalTitle")}
+                size="wide"
+                maxHeight="max-h-[70vh] lg:max-h-[80vh]"
             >
                 { selectedNews && <ViewNews news={selectedNews} /> }
             </Modal>

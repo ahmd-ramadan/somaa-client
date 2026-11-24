@@ -119,7 +119,7 @@ const TableRow: React.FC<TableRowProps> = ({
     };
 
     return (
-        <tr className={`hover:bg-primary/20 cursor-pointer ${isHighlighted ? 'bg-lime-200 animate-pulse' : ''}`}>
+        <tr className={`text-[8px] hover:bg-primary/20 cursor-pointer ${isHighlighted ? 'bg-lime-200 animate-pulse' : ''}`}>
             <td className="px-2 py-1">
                 <Checkbox
                     checked={selectedItems.has(analysis._id)}
@@ -134,7 +134,7 @@ const TableRow: React.FC<TableRowProps> = ({
                     {t(platform)}
                 </button>
             </td>
-            <th scope="row" className="px-2 py-1 font-medium text-gray-900 whitespace-nowrap flex justify-start gap-2 items-center">
+            <th scope="row" className="px-2 font-medium text-gray-900 whitespace-nowrap flex justify-start gap-2 items-center">
                 <div className="relative group">
                     {(analysis?.publisher?.avatar) && !imageError ? (
                         <img
@@ -146,35 +146,35 @@ const TableRow: React.FC<TableRowProps> = ({
                             height={200}
                             width={200}
                             alt="Publisher avatar"
-                            className="h-10 w-10 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-xs"
+                            className="h-8 w-8 rounded-md cursor-pointer transition-transform duration-200 group-hover:scale-105 text-[10px]"
                         />
                     ) : (
-                        <div className='bg-gray-100 w-10 h-10 flex items-center justify-center rounded-md'>
+                        <div className='bg-gray-100 w-8 h-8 flex items-center justify-center rounded-md'>
                             {getPlatformIcon(platform)}
                         </div>
                     )}
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity duration-200 rounded-md" />
                 </div>
-                <div className='flex flex-col justify-start items-start gap-1'>
-                    <p className="text-sm">{publisher.name}</p>
-                    <p className="text-xs text-gray-600">@{publisher?.handle}</p>
+                <div className='flex flex-col justify-start items-start gap-0'>
+                    <p className="text-[10px] font-semibold">{publisher.name}</p>
+                    <p className="text-gray-600">@{publisher?.handle}</p>
                 </div>
             </th>
             <td className="px-2 py-1">{sectorData?.name}</td>
             <td className={`px-2 py-1 ${getClassificationColor(classify)}`}>{t(classify)}</td>
-            <td className={`px-2 py-1`}>{subAnalysisData?.body}</td>
+            <td className={`px-2 py-1 text[8px] w-56`}>{subAnalysisData?.body}</td>
             <td className="px-2 py-1">{reactions.toLocaleString()}</td>
             <td className="px-2 py-1">{comments.toLocaleString()}</td>
             <td className="px-2 py-1">{shares.toLocaleString()}</td>
             <td className="px-2 py-1">{views.toLocaleString()}</td>
             <td className="px-2 py-1">{appearance.toLocaleString()}</td>
             <td className="px-2 py-1">{(reactions + comments + shares + views + appearance).toLocaleString()}</td>
-            <td className="px-2 py-1 w-fit">{formattedPublishDate}</td>
+            <td className="px-2 py-1 w-48 text-[8px]">{formattedPublishDate}</td>
             {/* <td className="px-2 py-1 w-fit">{formattedDate}</td> */}
             <th scope="row" className="px-2 py-1 font-medium text-gray-900">
                 <div className="flex h-full justify-start gap-1 whitespace-nowrap">
                     <CircleUserRound className='w-4 h-4 text-primary' />
-                    <p className="text-xs">{addedByData?.name}</p>
+                    <p className="">{addedByData?.name}</p>
                 </div>
             </th>
             <td className="px-2 py-1">

@@ -13,6 +13,7 @@ import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { AddUserSchema } from "@/validations/UsersSchemas";
 import { createNewUserRole } from "@/lib/features/user/userThunks";
+import { EditableRole } from "../_types/users";
 
 interface IFormInputs {
     name: string;
@@ -20,7 +21,7 @@ interface IFormInputs {
     phone?: string;
     password: string;
     confirmPassword: string;
-    role: 'user' | 'moderator' | 'monitor';
+    role: EditableRole;
     permissions: UserPermissions[];
 }
 
@@ -29,7 +30,7 @@ interface IReqData {
     email: string;
     phone?: string;
     password: string;
-    role: 'user' | 'moderator' | 'monitor';
+    role: EditableRole;
     permissions: UserPermissions[];
 }
 
@@ -72,6 +73,7 @@ const AddUser = () => {
                 permissions: data.permissions,
                 role: data.role
             };
+            if (data.role === 'super_admin') formData.permissions = [];
             if (data?.phone) formData.phone = data.phone;
             console.log(formData)
             const action = await dispatch(createNewUserRole({ token: token as string, data: formData }));
@@ -123,6 +125,8 @@ const AddUser = () => {
                                 <option value="user">{t('user')}</option>
                                 <option value="moderator">{t('moderator')}</option>
                                 <option value="monitor">{t('monitor')}</option>
+                                <option value="admin">{t('admin')}</option>
+                                <option value="super_admin">{t('super_admin')}</option>
                             </select>
                         ) : (
                             <input
@@ -148,7 +152,7 @@ const AddUser = () => {
                     {renderInputsSignUpForm}
                 </div>
                 
-                { role !== 'user' && 
+                { role !== 'user' && role !== 'super_admin' && 
                     <div className="w-full">
                         <fieldset>
                             <legend className="block text-lg font-medium text-gray-700">

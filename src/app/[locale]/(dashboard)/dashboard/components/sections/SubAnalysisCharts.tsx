@@ -144,7 +144,6 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
         return null;
     }, [allSubAnalysis]);
 
-
     // Animated dot
     const AnimatedDot = useCallback((props: any) => {
         const { cx, cy, stroke, key, value, onMouseOver, onMouseOut } = props;
@@ -220,9 +219,9 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
     );
 
     return (
-        <div className="min-w-full overflow-x-auto flex-1 backdrop-blur-sm rounded-lg bg-transparent/20 shadow-secondary shadow-md border border-gray-700/50 p-1 over:shadow-xl transition-all duration-300">
+        <div className="min-w-full overflow-x-auto flex-1 backdrop-blur-sm rounded-lg bg-transparent/20 border border-gray-700/50 p-1 over:shadow-xl transition-all duration-300">
             {/* Statistics Row */}
-            <div className="flex justify-between items-center mb-1">
+            {/*<div className="flex justify-between items-center mb-1">
                 <motion.div 
                     className="flex items-center gap-2 bg-gray-700/30 backdrop-blur-sm p-1 rounded-lg"
                     whileHover={{ scale: 1.02 }}
@@ -232,6 +231,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                     <span className="text-sm text-gray-300">{t("totalMonitoring")}</span>
                     <span className="text-sm font-semibold text-gray-300">{allAnalysis.length}</span>
                 </motion.div>
+                
                 <motion.div 
                     className={`flex items-center gap-1 bg-gray-700/30 backdrop-blur-sm p-1 rounded-lg 
                         ${maxClassificationsType === AnalysisClassifyEnum.POSITIVE ? 'text-green-400' : maxClassificationsType === AnalysisClassifyEnum.NEUTRAL ? 'text-gray-400' : 'text-red-400'}`}
@@ -246,6 +246,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                         ), 0).toLocaleString()}
                     </span>
                 </motion.div>
+                
                 <motion.div 
                     className={`flex items-center gap-1 bg-gray-700/30 backdrop-blur-sm p-1 rounded-lg`}
                     whileHover={{ scale: 1.02 }}
@@ -264,7 +265,7 @@ const SubAnalysisCharts = ({ allAnalysis }: ISubAnalysischarts) => {
                         ) : t("uploadImage")}
                     </button>
                 </motion.div>
-            </div>
+            </div>*/}
 
             {/* Charts Row */}
             <div className="w-full">

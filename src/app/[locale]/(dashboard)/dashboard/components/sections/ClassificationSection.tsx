@@ -1,86 +1,77 @@
-import { motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
-import { DashboardClassificationsDefault, IDashboardClassify } from "./types";
-import { AnalysisClassifyEnum, IAnalysis } from "@/interfaces/analysis.types";
-import { INews, NewsClassifyEnum } from "@/interfaces/news.types";
+'use client'
+
+import { useMemo } from "react";
 import { Frown, Meh, Smile } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { IAnalysis } from "@/interfaces/analysis.types";
+import { INews } from "@/interfaces/news.types";
+import { SENTIMENT_COLOR, Sentiment, analysisSentiment, newsSentiment } from "./insights";
 
 interface ClassificationSectionProps {
     allAnalysis: IAnalysis[];
-    allNews: INews[]
-} 
+    allNews: INews[];
+}
+
+const ORDER: { key: Sentiment; Icon: typeof Smile }[] = [
+    { key: "positive", Icon: Smile },
+    { key: "neutral", Icon: Meh },
+    { key: "negative", Icon: Frown },
+];
 
 const ClassificationSection = ({ allAnalysis, allNews }: ClassificationSectionProps) => {
+    const t = useTranslations("DashboardPage");
 
-    const [allCalssifications, setAllcassifications] = useState<IDashboardClassify[]>(DashboardClassificationsDefault)
-
-    useEffect(() => {
-        if(allAnalysis && allNews) {
-            setAllcassifications(deriveClassifications(allAnalysis, allNews))
-        }
-    }, [allAnalysis, allNews])
-
-    const deriveClassifications = useCallback((analysisData: IAnalysis[], newsData: INews[]): IDashboardClassify[] => {
-        const positiveAnalysis = analysisData.filter(a => a.classify === AnalysisClassifyEnum.POSITIVE).length
-        const nuetralAnalysis = analysisData.filter(a => a.classify === AnalysisClassifyEnum.NEUTRAL).length
-        const negativeAnalysis = analysisData.filter(a => a.classify === AnalysisClassifyEnum.NEGATIVE).length
-        
-        const positiveNews = newsData.filter(a => a.classify === NewsClassifyEnum.POSITIVE).length
-        const nuetralNews = newsData.filter(a => a.classify === NewsClassifyEnum.NEUTRAL).length
-        const negativeNews = newsData.filter(a => a.classify === NewsClassifyEnum.NEGATIVE).length
-
-        return [
-            { type: AnalysisClassifyEnum.POSITIVE, count: positiveAnalysis + positiveNews },
-            { type: AnalysisClassifyEnum.NEUTRAL, count: nuetralAnalysis + nuetralNews },
-            { type: AnalysisClassifyEnum.NEGATIVE, count: negativeAnalysis + negativeNews},
-        ]
+    const { counts, total } = useMemo(() => {
+        const counts: Record<Sentiment, number> = { positive: 0, neutral: 0, negative: 0 };
+        (allAnalysis || []).forEach((a) => counts[analysisSentiment(a.classify)]++);
+        (allNews || []).forEach((n) => counts[newsSentiment(n.classify)]++);
+        return { counts, total: counts.positive + counts.neutral + counts.negative };
     }, [allAnalysis, allNews]);
 
-    const getClassificationIcon = useCallback((type: AnalysisClassifyEnum) => {
-        switch (type) {
-            case AnalysisClassifyEnum.POSITIVE:
-                // return <span className="text-4xl animate-bounce">😊</span>;
-                return <Smile className="text-green-400 w-16 h-16"/>
-            case AnalysisClassifyEnum.NEUTRAL:
-                // return <span className="text-4xl animate-pulse">😐</span>;
-                return <Meh className="text-gray-400 w-16 h-16"/>
-            case AnalysisClassifyEnum.NEGATIVE:
-                // return <span className="text-4xl animate-ping">😠</span>;
-                return <Frown className="text-red-400 w-16 h-16"/>
-        }
-    }, []);
-
     return (
-        <div className="w-full">
-            <div className="flex items-center justify-between gap-3">
-                {allCalssifications.map((cls, index) => (
-                    <motion.div 
-                        key={index} 
-                        className="flex flex-col items-center"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                    >
-                        <div className={`w-16 h-16 ${
-                            cls.type === AnalysisClassifyEnum.POSITIVE ? 'border-green-500 bg-green-500/10' : 
-                            cls.type === AnalysisClassifyEnum.NEUTRAL ? 'border-gray-500 bg-gray-500/10' : 
-                            'border-red-500 bg-red-500/10'
-                        } flex items-center justify-center shadow-lg rounded-full`}>
-                            {getClassificationIcon(cls.type)}
+        <div className="flex flex-col gap-1.5 rounded-lg border border-gray-700/50 bg-gray-900/40 p-2 backdrop-blur-sm">
+            <div className="grid grid-cols-3 gap-1.5">
+                {ORDER.map(({ key, Icon }) => {
+                    const color = SENTIMENT_COLOR[key];
+                    const pct = total ? Math.round((counts[key] / total) * 100) : 0;
+                    return (
+                        <div
+                            key={key}
+                            className="flex flex-col items-center gap-1 rounded-md px-2 py-1"
+                            style={{ background: `${color}14`, borderColor: `${color}40` }}
+                        >
+                            <div 
+                                className="flex w-full justify-between gap-.5"
+                            >
+                                <Icon className="h-6 w-6 shrink-0" style={{ color }} />
+                                <span className="text-sm font-semibold tabular-nums text-white">
+                                    {counts[key].toLocaleString()}
+                                </span>
+                            </div>
+                            <div className="flex w-full justify-between leading-tight">     
+                                <span className="truncate text-[8px]" style={{ color }}>
+                                    {t(key)}
+                                </span>
+                                <span className="truncate text-[8px]" style={{ color }}>
+                                    {pct}%   
+                                </span>
+                            </div>
                         </div>
-                        <div className={`px-3 py-1 rounded-full ${
-                            cls.type === AnalysisClassifyEnum.POSITIVE ? 'bg-green-500/20 text-green-400' : 
-                            cls.type === AnalysisClassifyEnum.NEUTRAL ? 'bg-gray-500/20 text-gray-400' : 
-                            'bg-red-500/20 text-red-400'
-                        } text-xl font-bold`}>
-                            {cls.count}
-                        </div>
-                    </motion.div>
+                    );
+                })}
+            </div>
+
+            <div className="flex h-1 overflow-hidden rounded-full bg-gray-700/40">
+                {ORDER.map(({ key }) => (
+                    <div
+                        key={key}
+                        className="h-full transition-all duration-500"
+                        style={{ width: total ? `${(counts[key] / total) * 100}%` : "0%", background: SENTIMENT_COLOR[key] }}
+                    />
                 ))}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default ClassificationSection;

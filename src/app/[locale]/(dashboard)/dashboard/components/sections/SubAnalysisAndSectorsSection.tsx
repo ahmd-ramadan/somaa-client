@@ -244,10 +244,10 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
     }, [isSubAnalysisAnimating, controls, allSubAnalysis]);
 
     return (
-        <div className="min-h-36 w-full bg-transparent/20 shadow-secondary shadow-md flex flex-col lg:flex-row gap-1 overflow-hidden backdrop-blur-sm">
+        <div className="min-h-36 w-full bg-transparent/20 flex flex-col lg:flex-row gap-1 overflow-hidden backdrop-blur-sm">
             <motion.div
                 // className="absolute top-0 left-0 right-0 flex flex-col gap-2"
-                className="w-full lg:w-1/2 h-full border border-gray-700/50 rounded-lmdg bg-transparent/20 shadow-secondary shadow-lg hover:shadow-xl transition-all duration-300"
+                className="w-full h-full border border-gray-700/50 rounded-lmdg bg-transparent/20 hover:shadow-xl transition-all duration-300"
             >
                 <table className="w-full text-sm" dir="rtl">
                     <thead className="">
@@ -270,8 +270,7 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
                     </tbody>
                 </table>
             </motion.div>
-            <motion.div
-                // className="absolute top-0 left-0 right-0 flex flex-col gap-2"
+            {/*<motion.div
                 className="w-full lg:w-1/2 h-full border border-gray-700/50 rounded-lg bg-transparent/20 shadow-secondary shadow-md hover:shadow-xl transition-all duration-300"
             >
                 <table className="w-full text-sm" dir="rtl">
@@ -294,7 +293,7 @@ const SubAnalysisAndSectorsSection = ({ allAnalysis, allNews }: ISubAnalysisSect
                         ))}
                     </tbody>
                 </table>
-            </motion.div>
+            </motion.div>*/}
         </div>
     )
 }

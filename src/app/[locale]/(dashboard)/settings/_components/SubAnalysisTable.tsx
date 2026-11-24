@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { fetchAllSubAnalysis, updateSubAnalysis, addSubAnalysis } from '@/lib/features/subAnalysis/subAnalysisThunks';
 import { RootState } from '@/lib/store';
 import { Edit, Plus, SearchX } from 'lucide-react';
 import EditModal from './EditModal';
 import AddSubAnalysisModal from './AddSubAnalysisModal';
+import SettingsPagination from './SettingsPagination';
+import SettingsToolbar from './SettingsToolbar';
 import { ISubAnalysis } from '@/interfaces/subAnalysis.types';
 import { useLocale, useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
@@ -13,6 +15,7 @@ import Spinner from '@/components/ui/Spinner';
 
 const SubAnalysisTable = () => {
   const t = useTranslations("SettingsPage.SubAnalysisPage");
+  const tf = useTranslations("SettingsPage.filters");
 
   const dispatch = useAppDispatch();
   const locale = useLocale();
@@ -22,16 +25,45 @@ const SubAnalysisTable = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [search, setSearch] = useState('');
+  const [monitoringFilter, setMonitoringFilter] = useState<'all' | 'withMentions'>('all');
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'mostMentions'>('newest');
 
   useEffect(() => {
     if(allSubAnalysisStatus !== 'succeeded') dispatch(fetchAllSubAnalysis());
   }, [dispatch]);
 
+  const filteredSubAnalysis = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    const list = allSubAnalysis.filter((analysis) => {
+      const matchesSearch = !term || analysis.body?.toLowerCase().includes(term);
+      const matchesFilter = monitoringFilter === 'all' || (analysis.socialMediaMonitoringCount || 0) > 0;
+      return matchesSearch && matchesFilter;
+    });
+
+    return [...list].sort((a, b) => {
+      switch (sortBy) {
+        case 'oldest':
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case 'mostMentions':
+          return (b.socialMediaMonitoringCount || 0) - (a.socialMediaMonitoringCount || 0);
+        default:
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+    });
+  }, [allSubAnalysis, search, monitoringFilter, sortBy]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, monitoringFilter, sortBy]);
+
+  const isFiltered = search.trim() !== '' || monitoringFilter !== 'all';
+
   // Calculate pagination
-  const totalPages = Math.ceil(allSubAnalysis.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredSubAnalysis.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentSubAnalysis = allSubAnalysis.slice(startIndex, endIndex);
+  const currentSubAnalysis = filteredSubAnalysis.slice(startIndex, endIndex);
 
   const handleEdit = (analysis: ISubAnalysis) => {
     setEditingAnalysis(analysis);
@@ -77,7 +109,7 @@ const SubAnalysisTable = () => {
     <div className='h-full'>
       <div className="flex gap-1 justify-between items-center mb-4 px-2">
         <h2 className="text-base lg:text-xl font-semibold text-primary">
-         {t("totalShowedSubAnalysis")}: <strong className='text-secondary'>{allSubAnalysis.length}</strong>
+         {t("totalShowedSubAnalysis")}: <strong className='text-secondary'>{filteredSubAnalysis.length}</strong>
         </h2>
         <button
           onClick={() => setIsAddModalOpen(true)}
@@ -87,6 +119,39 @@ const SubAnalysisTable = () => {
           { t("addSubAnalysis") }
         </button>
       </div>
+
+      <SettingsToolbar
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder={tf("searchPlaceholder")}
+        filters={[
+          {
+            value: monitoringFilter,
+            onChange: (value) => setMonitoringFilter(value as 'all' | 'withMentions'),
+            ariaLabel: tf("filterBy"),
+            options: [
+              { value: 'all', label: tf("allRecords") },
+              { value: 'withMentions', label: tf("withMentions") },
+            ],
+          },
+        ]}
+        sort={{
+          value: sortBy,
+          onChange: (value) => setSortBy(value as 'newest' | 'oldest' | 'mostMentions'),
+          ariaLabel: tf("sortBy"),
+          options: [
+            { value: 'newest', label: tf("newestFirst") },
+            { value: 'oldest', label: tf("oldestFirst") },
+            { value: 'mostMentions', label: tf("mostMentions") },
+          ],
+        }}
+        isDirty={isFiltered}
+        onClear={() => {
+          setSearch('');
+          setMonitoringFilter('all');
+        }}
+        clearLabel={tf("clear")}
+      />
 
       { allSubAnalysisStatus === 'loading' && 
         <div 
@@ -159,40 +224,13 @@ const SubAnalysisTable = () => {
         </table>
       }
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 py-4">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {t("prev")}
-          </button>
-          
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => handlePageChange(page)}
-              className={`px-3 py-1 text-sm border rounded-md ${
-                currentPage === page
-                  ? 'bg-primary text-white border-primary'
-                  : 'border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-          
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {t("next")}
-          </button>
-        </div>
-      )}
+      <SettingsPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={filteredSubAnalysis.length}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+      />
 
       { editingAnalysis  && <EditModal
         isOpen={!!editingAnalysis}

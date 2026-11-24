@@ -267,6 +267,7 @@ export const SideBarLinks: ISideBarLinks[] = [
         name: "dashboard",
         link: "dashboard",
         permission: "forAll",
+        isNew: true
     },
     {
         name: "liveMonitoring",

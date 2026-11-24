@@ -28,6 +28,6 @@ export const AddUserSchema = yup.object().shape({
         // .min(1, formatValidationMessage('min', 1))
         .required(formatValidationMessage('required')),
     role: yup.string()
-        .oneOf(['user', 'moderator', 'monitor'], formatValidationMessage('required'))
+        .oneOf(['user', 'moderator', 'monitor', 'admin', 'super_admin'], formatValidationMessage('required'))
         .required(formatValidationMessage('required')),
 });

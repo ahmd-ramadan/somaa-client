@@ -53,9 +53,9 @@ const TableHeader: React.FC<TableHeaderProps> = ({
                         }}
                     />
                 </th>
-                <th scope="col" className="px-2 py-1 text-start">{t("url")}</th>
+                <th scope="col" className="px-2 py-1 wtext-start">{t("url")}</th>
                 <th scope="col" className="px-2 py-1 text-start">{t("publisher")}</th>
-                <th scope="col" className="px-2 py-1 text-start">{t("sector")}</th>
+                <th scope="col" className="px-2 py-1 w-40 text-start">{t("sector")}</th>
                 <th scope="col" className="px-2 py-1 text-start">{t("classify")}</th>
                 <th scope="col" className="px-2 py-1 text-start">{t("analysis")}</th>
                 <th scope="col" className="px-2 py-1">
