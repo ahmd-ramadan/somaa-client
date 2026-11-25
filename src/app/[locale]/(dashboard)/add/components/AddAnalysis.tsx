@@ -110,8 +110,8 @@ const AddAnalysis = () => {
     const urlInput = watch('url');
     const selectedPlatform = watch('platform');
     // Facebook & LinkedIn can't be scraped for now, so the user enters the data manually
-    const isManualPlatform =
-        selectedPlatform === PlatformsEnum.FACEBOOK || selectedPlatform === PlatformsEnum.LINKEDIN;
+    const isManualPlatform = false
+        // selectedPlatform === PlatformsEnum.FACEBOOK || selectedPlatform === PlatformsEnum.LINKEDIN;
     
     // Add effect to detect platform from URL
     useEffect(() => {
